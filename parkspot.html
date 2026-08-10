@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ParkSpot — Never forget where you parked.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ===================== TOKENS ===================== */
+:root{
+  --asphalt:#17181A;
+  --asphalt-soft:#2A2C2F;
+  --concrete:#EDEAE2;
+  --concrete-deep:#DCD7C9;
+  --white:#FFFFFF;
+  --card:#FBFAF7;
+  --yellow:#F5B400;
+  --yellow-deep:#B8860A;
+  --ink:#161513;
+  --text-2:#635F58;
+  --text-3:#9B968C;
+  --border:#DAD4C6;
+
+  --font-display:'Oswald', sans-serif;
+  --font-body:'Inter', sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--concrete);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;border:none;background:none;cursor:pointer;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+}
+
+::selection{background:var(--yellow);color:var(--asphalt);}
+
+/* ===================== LAYOUT HELPERS ===================== */
+.section{ position:relative; padding:110px 8vw; }
+.section-tight{padding:80px 8vw;}
+.section-narrow{max-width:680px;margin:0 auto;}
+.section-dark{ background:var(--asphalt); color:var(--concrete); }
+.section-dark p{ color:#C9C6BE; }
+
+.eyebrow{
+  font-family:var(--font-display); font-weight:600; font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--yellow-deep); display:flex; align-items:center; gap:10px; margin-bottom:22px;
+}
+.section-dark .eyebrow{ color:var(--yellow); }
+.eyebrow::before{content:''; width:22px;height:2px; background:var(--yellow-deep); display:inline-block;}
+.section-dark .eyebrow::before{ background:var(--yellow); }
+
+h1,h2,h3{font-family:var(--font-display); line-height:1.08; letter-spacing:-0.01em; font-weight:600;}
+p{line-height:1.65; color:var(--text-2); font-weight:400; font-family:var(--font-body);}
+.lead{font-size:clamp(26px,3.4vw,42px); color:var(--ink); font-weight:600; line-height:1.18;}
+.section-dark .lead{ color:var(--white); }
+.body-lg{font-size:17px; line-height:1.7;}
+
+/* reveal on scroll */
+.reveal{opacity:0; transform:translateY(22px); transition:opacity .6s var(--ease), transform .6s var(--ease);}
+.reveal.in{opacity:1; transform:translateY(0);}
+.reveal-scale{opacity:0; transform:scale(.96); transition:opacity .65s var(--ease), transform .65s var(--ease);}
+.reveal-scale.in{opacity:1; transform:scale(1);}
+
+/* ===================== NAV ===================== */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 8vw;
+  background:rgba(237,234,226,0.82);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-mark{font-family:var(--font-display); font-weight:600; font-size:15px; letter-spacing:0.02em; color:var(--ink); display:flex; align-items:center; gap:8px; text-transform:uppercase;}
+.nav-mark .dot{width:9px;height:9px;border-radius:50%;background:var(--yellow); box-shadow:0 0 0 2px var(--asphalt) inset;}
+.back-work{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--border);border-radius:999px;font-weight:600;font-size:12px;color:var(--text-2);letter-spacing:.01em;background:rgba(237,234,226,.55);transition:transform .25s var(--ease),background .25s,color .25s,border-color .25s;}
+.back-work:hover{transform:translateX(-3px);color:var(--asphalt);border-color:var(--yellow);background:var(--card);}
+.nav-progress{ position:fixed; top:0; left:0; height:2px; background:var(--yellow); z-index:101; width:0%; }
+
+/* ===================== SIGNAGE CHIP (signature element) ===================== */
+.sign-chip{
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--asphalt); color:var(--yellow);
+  font-family:var(--font-display); font-weight:600; font-size:15px; letter-spacing:0.04em;
+  padding:11px 18px; border-radius:5px; position:relative;
+  box-shadow:0 10px 24px -12px rgba(0,0,0,0.5);
+}
+.sign-chip::before, .sign-chip::after{
+  content:''; position:absolute; width:5px; height:5px; border-radius:50%; background:#57544c; top:6px;
+}
+.sign-chip::before{ left:6px; }
+.sign-chip::after{ right:6px; }
+.sign-chip .sep{ color:#8B8880; font-weight:400; }
+
+/* ===================== SCREEN FRAME (real screenshots) ===================== */
+.screen-frame{
+  border-radius:34px; overflow:hidden; position:relative;
+  box-shadow:0 40px 80px -28px rgba(0,0,0,0.45);
+  background:var(--asphalt);
+}
+.screen-frame img{ display:block; width:100%; height:100%; object-fit:cover; }
+
+/* soft ambient pulse behind a framed screenshot, hints motion without touching the raster */
+.frame-glow{ position:relative; }
+.frame-glow::before{
+  content:''; position:absolute; inset:-8%; border-radius:44px;
+  background:radial-gradient(circle at 50% 34%, rgba(245,180,0,0.28), transparent 62%);
+  opacity:0; transition:opacity 1s var(--ease); z-index:-1;
+}
+.frame-glow.pulse::before{ opacity:1; animation:frameGlowPulse 2.8s var(--ease) infinite; }
+@keyframes frameGlowPulse{
+  0%,100%{ transform:scale(1); opacity:.55; }
+  50%{ transform:scale(1.06); opacity:.9; }
+}
+
+/* one-shot highlight ring for a specific spot on a screenshot (e.g. a button, an icon) */
+.spot-ring{
+  position:absolute; border-radius:16px;
+  box-shadow:0 0 0 2px rgba(245,180,0,0.9) inset, 0 0 24px 2px rgba(245,180,0,0.55);
+  opacity:0; transition:opacity .5s var(--ease);
+  pointer-events:none;
+}
+.spot-ring.in{ opacity:1; animation:spotRingPulse 1.8s var(--ease) 1; }
+@keyframes spotRingPulse{
+  0%{ opacity:0; transform:scale(.97); }
+  35%{ opacity:1; transform:scale(1.015); }
+  70%{ opacity:1; transform:scale(1); }
+  100%{ opacity:.85; transform:scale(1); }
+}
+
+/* P marker (signature traveling icon) */
+.p-marker{
+  width:26px; height:26px; border-radius:50%;
+  background:var(--yellow); color:var(--asphalt);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:700; font-size:13px;
+  box-shadow:0 8px 18px -6px rgba(184,134,10,0.6);
+  flex:0 0 auto;
+}
+
+/* ===================== 00 HERO ===================== */
+.hero{
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  background:
+    radial-gradient(ellipse 55% 45% at 50% 0%, rgba(245,180,0,0.10) 0%, transparent 62%),
+    var(--concrete);
+  padding:120px 8vw 70px;
+  position:relative; overflow:hidden;
+}
+.hero::before{
+  content:''; position:absolute; inset:0; pointer-events:none; opacity:.35;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 78px, var(--concrete-deep) 78px 80px),
+    repeating-linear-gradient(90deg, transparent 0 78px, var(--concrete-deep) 78px 80px);
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 20%, black 0%, transparent 75%);
+}
+.hero-word{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(52px, 11vw, 128px);
+  letter-spacing:-0.01em; text-transform:uppercase;
+  color:var(--ink); position:relative; z-index:2;
+}
+.hero-word span{ color:var(--yellow-deep); }
+.hero-tagline{
+  margin-top:18px; font-size:clamp(16px, 2vw, 21px); font-weight:600;
+  color:var(--asphalt); z-index:2; position:relative;
+}
+.hero-desc{
+  margin-top:18px; max-width:520px; font-size:16px; z-index:2; position:relative;
+}
+.hero-meta{
+  display:flex; flex-wrap:wrap; gap:44px; justify-content:center; margin-top:46px; z-index:2; position:relative;
+}
+.hero-meta div{ text-align:left; }
+.hero-meta .k{ font-family:var(--font-display); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-3); font-weight:600; margin-bottom:6px; }
+.hero-meta .v{ font-size:15px; font-weight:600; color:var(--ink); }
+
+/* Hero visual: real splash screenshot, framed */
+.hero-visual{
+  margin-top:64px; width:min(100%, 300px); position:relative; z-index:2;
+}
+.hero-visual .screen-frame{ aspect-ratio:1659/3036; }
+
+@keyframes splashPulse{
+  0%,100%{ transform:scale(1); box-shadow:0 0 0 0 rgba(245,180,0,0.35); }
+  50%{ transform:scale(1.045); box-shadow:0 0 0 14px rgba(245,180,0,0); }
+}
+
+.scroll-ind{
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  color:var(--text-3); font-family:var(--font-display); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; z-index:2;
+}
+.scroll-ind .line{width:1px; height:30px; background:var(--border); position:relative; overflow:hidden;}
+.scroll-ind .line::after{
+  content:''; position:absolute; top:-100%; left:0; width:100%; height:100%;
+  background:var(--yellow-deep); animation:scrollDrop 1.8s ease-in-out infinite;
+}
+@keyframes scrollDrop{ 0%{top:-100%;} 60%,100%{top:100%;} }
+
+/* ===================== 01 THE PROBLEM ===================== */
+.riddle-row{
+  display:flex; justify-content:center; gap:18px; margin-top:56px; flex-wrap:wrap;
+}
+.riddle-item{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.riddle-label{ font-family:var(--font-display); font-size:11px; letter-spacing:0.12em; color:var(--text-3); text-transform:uppercase; }
+.riddle-box{
+  width:78px; height:78px; border-radius:10px; background:var(--asphalt); color:var(--yellow);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:700; font-size:30px;
+  position:relative; overflow:hidden;
+}
+.riddle-box .q, .riddle-box .a{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  transition:opacity .35s var(--ease), transform .35s var(--ease);
+}
+.riddle-box .a{ opacity:0; transform:translateY(8px); }
+.riddle-box.solved .q{ opacity:0; transform:translateY(-8px); }
+.riddle-box.solved .a{ opacity:1; transform:translateY(0); }
+.riddle-arrow{ color:var(--text-3); font-size:20px; align-self:center; margin-top:34px; }
+
+/* ===================== 02 THE SOLUTION ===================== */
+.idea-grid-bg{
+  position:relative; margin-top:56px; padding:48px 24px; border-radius:18px;
+  background-image:
+    linear-gradient(var(--concrete-deep) 1px, transparent 1px),
+    linear-gradient(90deg, var(--concrete-deep) 1px, transparent 1px);
+  background-size:34px 34px;
+  background-color:var(--card);
+  border:1px solid var(--border);
+}
+.idea-steps{ display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap; position:relative; }
+.idea-step{ display:flex; flex-direction:column; align-items:center; gap:10px; width:120px; opacity:0; transform:translateY(14px); transition:all .5s var(--ease); }
+.idea-step.in{ opacity:1; transform:translateY(0); }
+.idea-step .k{ font-family:var(--font-display); font-size:11px; letter-spacing:0.12em; color:var(--text-3); text-transform:uppercase; }
+.idea-step .v{ font-family:var(--font-display); font-weight:700; font-size:26px; color:var(--ink); }
+.idea-connector{ width:40px; height:2px; background:var(--concrete-deep); position:relative; align-self:center; margin-top:-2px; }
+.idea-track{ position:relative; height:2px; width:100%; max-width:560px; margin:36px auto 0; }
+.idea-track-line{ position:absolute; inset:0; background:var(--concrete-deep); border-radius:2px; }
+.idea-marker{
+  position:absolute; top:50%; left:0; width:26px; height:26px; margin-top:-13px; margin-left:-13px;
+  opacity:0; transition:left 1.4s var(--ease), opacity .4s var(--ease);
+}
+.idea-marker.in{ opacity:1; }
+.idea-result{
+  display:flex; justify-content:center; margin-top:34px; opacity:0; transform:translateY(10px);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.idea-result.in{ opacity:1; transform:translateY(0); }
+
+/* ===================== 03 SAVE YOUR SPOT ===================== */
+.save-panel{
+  margin-top:56px; width:min(100%, 280px); margin-left:auto; margin-right:auto;
+  position:relative;
+}
+.save-panel .screen-frame{ aspect-ratio:1179/2556; }
+/* approximate box around the LEVEL·PILLAR summary chip and the SAVE SPOT button, as % of frame */
+.spot-ring.summary{ top:15.5%; left:8%; width:84%; height:6%; }
+.spot-ring.button{ top:51.5%; left:8%; width:84%; height:6.6%; }
+
+/* ===================== 04 PARKSPOT REMEMBERS ===================== */
+.widget-wrap{
+  width:min(100%, 280px);
+  margin:56px auto 0;
+  position:relative;
+}
+
+.widget-wrap .screen-frame{
+  width:100%;
+  aspect-ratio:1179/2556;
+}
+/* approximate box around the P badge and the Flashlight pill, as % of frame */
+.spot-ring.p-badge{ top:39.5%; left:9%; width:8%; height:3.8%; border-radius:9px; }
+.spot-ring.flashlight{ top:49%; left:9%; width:38%; height:5%; }
+.widget-caption{ margin-top:26px; text-align:center; max-width:440px; margin-left:auto; margin-right:auto; }
+.time-elapsed{
+  margin-top:22px; text-align:center;
+  font-family:var(--font-display); font-weight:600; font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--text-3); transition:opacity .5s var(--ease);
+}
+
+/* ===================== 05 FIND YOUR CAR ===================== */
+.payoff-stage{
+  margin-top:56px; display:flex; flex-direction:column; align-items:center; gap:18px; min-height:150px; justify-content:center;
+}
+.payoff-line{
+  font-family:var(--font-display); font-weight:600; font-size:clamp(20px,3vw,30px); text-align:center;
+  color:var(--text-3); position:absolute; opacity:1; transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.payoff-line.out{ opacity:0; transform:translateY(-10px); }
+.payoff-result{
+  display:flex; align-items:center; gap:14px; opacity:0; transform:translateY(10px);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.payoff-result.in{ opacity:1; transform:translateY(0); }
+.payoff-found{
+  font-family:var(--font-display); font-weight:600; font-size:13px; letter-spacing:0.1em; color:#4F7A3E;
+  opacity:0; transition:opacity .4s var(--ease); text-transform:uppercase;
+}
+.payoff-found.in{ opacity:1; }
+.payoff-tools{ display:flex; gap:32px; justify-content:center; margin-top:52px; flex-wrap:wrap; }
+.payoff-tool{ max-width:200px; text-align:center; }
+.payoff-tool .ic{ font-size:26px; margin-bottom:10px; }
+.payoff-tool h3{ font-size:14px; margin-bottom:6px; }
+.payoff-tool p{ font-size:13.5px; }
+
+/* ===================== 06 OUTCOME ===================== */
+.outcome-compare{ display:flex; flex-direction:column; gap:14px; margin-top:56px; max-width:640px; margin-left:auto; margin-right:auto; }
+.outcome-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.outcome-row .tag{ font-family:var(--font-display); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; width:70px; flex:0 0 70px; color:#9B968C; }
+.outcome-row.before .tag{ color:#B4756B; }
+.outcome-row.after .tag{ color:var(--yellow); }
+.outcome-chain{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-family:var(--font-display); font-size:14px; letter-spacing:0.02em; }
+.outcome-chain span.step{ padding:6px 12px; border-radius:6px; background:var(--asphalt-soft); }
+.outcome-chain .arrow{ color:#6E6B64; }
+
+.final-line{ margin-top:60px; text-align:center; }
+.final-line .big{ font-family:var(--font-display); font-weight:600; font-size:clamp(22px,3vw,32px); color:var(--ink); } 
+
+.final-track{ position:relative; max-width:420px; margin:56px auto 0; }
+.final-track-line{ position:relative; height:2px; background:#3A3C40; border-radius:2px; }
+.final-marker{
+  position:absolute; top:50%; left:0; margin-top:-13px; margin-left:-13px; opacity:0;
+  transition:left 1.8s var(--ease), opacity .4s var(--ease);
+}
+.final-marker.in{ opacity:1; }
+.final-labels{
+  max-width:420px;
+  margin:14px auto 0;
+  display:flex;
+  justify-content:space-between;
+  font-family:var(--font-display);
+  font-size:11.5px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:#9B968C;
+}
+.final-p-end{
+  width:44px; height:44px; border-radius:50%; background:var(--yellow); color:var(--asphalt);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; font-size:18px;
+  position:absolute; right:-6px; top:50%; margin-top:-22px; opacity:0; transition:opacity .4s var(--ease), transform .4s var(--ease); transform:scale(.6);
+}
+.final-p-end.in{ opacity:1; transform:scale(1); }
+.final-p-end.pulse{ animation:splashPulse 1.1s var(--ease) 1; }
+
+/* ===================== 07 THE JOURNEY ===================== */
+.journey-lead{ font-size:clamp(20px,2.6vw,28px); }
+.journey-track{ position:relative; max-width:640px; margin:48px auto 0; padding:0 4px; }
+.journey-track-line{ position:relative; height:2px; background:var(--concrete-deep); border-radius:2px; }
+.journey-nodes{ display:flex; justify-content:space-between; margin-top:-15px; }
+.journey-node{ display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0; transform:translateY(8px); transition:opacity .4s var(--ease), transform .4s var(--ease); }
+.journey-node.in{ opacity:1; transform:translateY(0); }
+.journey-node .dot{ width:9px; height:9px; border-radius:50%; background:var(--card); border:2px solid var(--yellow-deep); }
+.journey-node .name{ font-family:var(--font-display); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); margin-top:2px; }
+.journey-marker{
+  position:absolute; top:-3px; width:20px; height:20px; margin-left:-10px;
+  opacity:0; transition:left .9s var(--ease), opacity .4s var(--ease);
+}
+.journey-marker.in{ opacity:1; }
+.journey-marker.pulse{ animation:frameGlowPulse .5s var(--ease) 1; }
+.journey-result{ display:flex; justify-content:center; margin-top:38px; opacity:0; transform:translateY(8px); transition:opacity .5s var(--ease), transform .5s var(--ease); }
+.journey-result.in{ opacity:1; transform:translateY(0); }
+
+@media (max-width:600px){
+  .journey-nodes{ flex-wrap:wrap; gap:14px 0; justify-content:flex-start; }
+  .journey-track-line{ display:none; }
+  .journey-marker{ display:none; }
+  .journey-node{ width:33.33%; opacity:1; transform:none; }
+}
+
+/* ===================== 08 EXPERIENCE IT ===================== */
+.demo-frame{
+  max-width:360px; margin:44px auto 0; border-radius:22px; overflow:hidden;
+  background:var(--asphalt); color:var(--concrete); position:relative;
+  aspect-ratio:16/10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+  opacity:0; transform:scale(.96); transition:opacity .6s var(--ease), transform .6s var(--ease);
+}
+.demo-frame.in{ opacity:1; transform:scale(1); }
+.demo-play{
+  width:56px; height:56px; border-radius:50%; background:var(--yellow); color:var(--asphalt);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+  opacity:0; transition:opacity .5s var(--ease) .3s;
+}
+.demo-play.in{ opacity:1; }
+.demo-label{ font-family:var(--font-display); font-weight:600; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--yellow); }
+.demo-chain{ font-family:var(--font-display); font-size:13px; color:#C9C6BE; letter-spacing:0.02em; }
+.demo-track{ position:absolute; bottom:16px; left:8%; right:8%; height:2px; background:var(--asphalt-soft); border-radius:2px; }
+.demo-marker{
+  position:absolute; top:50%; left:0; width:14px; height:14px; margin-top:-7px; margin-left:-7px;
+  opacity:0; transition:left 1.6s var(--ease), opacity .4s var(--ease);
+}
+.demo-marker.in{ opacity:1; }
+.demo-cta{
+  display:flex; justify-content:center; margin-top:28px;
+}
+.demo-cta a{
+  font-family:var(--font-display); font-weight:600; font-size:13.5px; letter-spacing:0.04em;
+  color:var(--yellow-deep); display:inline-flex; align-items:center; gap:6px;
+}
+.demo-cta a .arrow{ transition:transform .3s var(--ease); }
+.demo-cta a:hover .arrow{ transform:translateX(5px); }
+
+/* ===================== 09 WHAT I LEARNED ===================== */
+.learned-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:48px; max-width:920px; margin-left:auto; margin-right:auto; }
+.learned-card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:26px 22px; }
+.learned-card .num{ font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--yellow-deep); letter-spacing:0.08em; margin-bottom:12px; }
+.learned-card h3{ font-size:16px; margin-bottom:10px; color:var(--ink); }
+.learned-card p{ font-size:14px; line-height:1.6; }
+@media (max-width:760px){ .learned-cards{ grid-template-columns:1fr; } }
+
+.learned-quote{ max-width:520px; margin:56px auto 0; text-align:center; }
+.learned-quote p{ font-family:var(--font-display); font-weight:600; font-size:clamp(18px,2.4vw,24px); color:var(--ink); line-height:1.4; }
+
+.learned-track{ display:flex; align-items:center; justify-content:center; gap:10px; margin-top:36px; flex-wrap:wrap; }
+.learned-word{
+  font-family:var(--font-display); font-weight:600; font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--text-3); opacity:0; transform:translateY(8px); transition:opacity .4s var(--ease), transform .4s var(--ease);
+  display:flex; align-items:center; gap:10px;
+}
+.learned-word.in{ opacity:1; transform:translateY(0); }
+.learned-word .arrow{ color:var(--text-3); font-weight:400; }
+.learned-word.final{ color:var(--yellow-deep); }
+.learned-word .p-marker{ width:20px; height:20px; font-size:10px; opacity:0; transition:opacity .4s var(--ease); }
+.learned-word .p-marker.in{ opacity:1; }
+
+/* ===================== 10 NEXT PROJECT ===================== */
+.next{ background:var(--ink); color:#fff; text-align:center; padding:150px 8vw 90px; }
+.next .k{color:var(--text-3); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:18px;}
+.next h2{color:#fff; font-size:clamp(32px,6vw,68px); font-weight:700;}
+.next h2 .arrow{color:var(--yellow); display:inline-block; transition:transform .3s;}
+.next a:hover h2 .arrow{transform:translateX(10px);}
+.next .d{color:var(--text-3); margin-top:16px; font-size:14.5px;}
+.footer{ background:var(--ink); color:var(--text-3); text-align:center; padding:36px 8vw 56px; font-size:12.5px; border-top:1px solid rgba(255,255,255,0.08); }
+.footer{ padding:60px 8vw; text-align:center; }
+.footer p{ font-size:13px; color:var(--text-3); }
+
+@media (max-width:700px){
+  .section{ padding:80px 6vw; }
+  .section-tight{ padding:64px 6vw; }
+  .riddle-row{ gap:10px; }
+  .riddle-box{ width:64px; height:64px; font-size:24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="nav-progress" id="navProgress"></div>
+<nav class="nav">
+  <div class="nav-mark"><span class="dot"></span>ParkSpot</div>
+  <a class="back-work" href="index.html#work" aria-label="Back to Work">← Back to Work</a>
+</nav>
+
+<!-- ============ 00 HERO ============ -->
+<section class="hero">
+  <div class="eyebrow reveal-scale in" style="justify-content:center;">Parking Memory Feature</div>
+  <div class="hero-word reveal-scale in">ParkSpot<span>.</span></div>
+  <div class="hero-tagline reveal-scale in">Never forget where you parked.</div>
+  <p class="hero-desc reveal-scale in">A simple parking-memory feature that helps users save their exact parking location and find their car when they're ready to leave.</p>
+
+  <div class="hero-meta">
+    <div><div class="k">Role</div><div class="v">UI/UX Designer</div></div>
+    <div><div class="k">Platform</div><div class="v">Mobile Feature</div></div>
+    <div><div class="k">Tools</div><div class="v">Figma</div></div>
+  </div>
+
+  <div class="hero-visual reveal-scale in">
+    <div class="screen-frame frame-glow" id="splashPanel">
+      <img src="assets/parkspot/home.png" alt="ParkSpot splash screen locating the last parked spot">
+    </div>
+  </div>
+
+  <div class="scroll-ind"><span>Scroll</span><div class="line"></div></div>
+</section>
+
+<!-- ============ 01 THE PROBLEM ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">01 — The Problem</div>
+    <h2 class="lead">You remember the car.<br>But not always the spot.</h2>
+    <p class="body-lg" style="margin-top:20px;">In large parking areas, finding the car can become a memory game.</p>
+  </div>
+
+  <div class="riddle-row" id="riddleRow">
+    <div class="riddle-item">
+      <div class="riddle-label">Level</div>
+      <div class="riddle-box" id="riddleLevel"><span class="q">?</span><span class="a">B1</span></div>
+    </div>
+    <div class="riddle-arrow">→</div>
+    <div class="riddle-item">
+      <div class="riddle-label">Pillar</div>
+      <div class="riddle-box" id="riddlePillar"><span class="q">?</span><span class="a">A</span></div>
+    </div>
+    <div class="riddle-arrow">→</div>
+    <div class="riddle-item">
+      <div class="riddle-label">Spot</div>
+      <div class="riddle-box" id="riddleSpot"><span class="q">?</span><span class="a">1</span></div>
+    </div>
+  </div>
+
+  <div class="section-narrow" style="text-align:center; margin-top:44px;">
+    <p class="body-lg" style="color:var(--ink); font-weight:600;">The problem wasn't parking the car.<br>It was remembering where it was left.</p>
+  </div>
+</section>
+
+<!-- ============ 02 THE SOLUTION ============ -->
+<section class="section section-tight">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">02 — The Solution</div>
+    <h2 class="lead">Save it once.<br>Find it when you need it.</h2>
+    <p class="body-lg" style="margin-top:20px;">ParkSpot turns a parking location into three simple choices — then saves them as one clear reference.</p>
+  </div>
+
+  <div class="idea-grid-bg">
+    <div class="idea-steps" id="ideaSteps">
+      <div class="idea-step"><div class="k">Level</div><div class="v">B1</div></div>
+      <div class="idea-connector"></div>
+      <div class="idea-step"><div class="k">Pillar</div><div class="v">A</div></div>
+      <div class="idea-connector"></div>
+      <div class="idea-step"><div class="k">Spot</div><div class="v">1</div></div>
+      <div class="idea-connector"></div>
+      <div class="idea-step"><div class="k">&nbsp;</div><div class="v" style="color:var(--yellow-deep);">Save</div></div>
+    </div>
+
+    <div class="idea-track" id="ideaTrack">
+      <div class="idea-track-line"></div>
+      <div class="idea-marker p-marker" id="ideaMarker">P</div>
+    </div>
+
+    <div class="idea-result" id="ideaResult">
+      <div class="sign-chip">B1<span class="sep">·</span>PILLAR A-1</div>
+    </div>
+  </div>
+
+  <div class="section-narrow" style="text-align:center; margin-top:36px;">
+    <p class="body-lg">One small interaction turns an easy-to-forget location into something the user can rely on later.</p>
+  </div>
+</section>
+
+<!-- ============ 03 SAVE YOUR SPOT ============ -->
+<section class="section section-tight section-dark">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">03 — Save Your Spot</div>
+    <h2 class="lead">Record it before you forget it.</h2>
+    <p class="body-lg" style="margin-top:20px;">After parking, users select their level, pillar and spot, then save the location.</p>
+  </div>
+
+  <div class="save-panel" id="savePanel">
+    <div class="screen-frame">
+      <img src="assets/parkspot/save.png" alt="Parked Location screen with level, pillar and spot selectors and a Save Spot button">
+    </div>
+    <div class="spot-ring summary" id="ringSummary"></div>
+    <div class="spot-ring button" id="ringButton"></div>
+  </div>
+
+  <p class="body-lg" style="text-align:center; margin-top:26px; color:var(--concrete);">The user only needs to record the location once.</p>
+</section>
+
+<!-- ============ 04 PARKSPOT REMEMBERS ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">04 — ParkSpot Remembers</div>
+    <h2 class="lead">The location stays with you.</h2>
+    <p class="body-lg" style="margin-top:20px;">Once saved, ParkSpot keeps the location visible so the user doesn't have to rely on memory later.</p>
+  </div>
+
+  <div class="widget-wrap" id="widgetWrap">
+    <div class="screen-frame">
+      <img src="assets/parkspot/widget.png" alt="Lock screen widget showing Parked Spot, Level B1, Pillar A-1, with Flashlight and View Photo actions">
+    </div>
+    <div class="spot-ring p-badge" id="ringPBadge"></div>
+    <div class="spot-ring flashlight" id="ringFlashlight"></div>
+  </div>
+
+  <div class="time-elapsed" id="timeElapsed">Just parked</div>
+
+  <p class="body-lg widget-caption" style="color:var(--ink); font-weight:600;">Time changes.<br>The location doesn't.</p>
+</section>
+
+<!-- ============ 05 FIND YOUR CAR ============ -->
+<section class="section section-tight section-dark">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">05 — Find Your Car</div>
+    <h2 class="lead">No guessing.<br>Just check the spot.</h2>
+    <p class="body-lg" style="margin-top:20px;">When the user is ready to leave, they don't need to reconstruct the location from memory. They simply check the spot and head back to the car.</p>
+  </div>
+
+  <div class="payoff-stage" id="payoffStage">
+    <div class="payoff-line" id="payoffQuestion">WHERE DID I PARK?</div>
+    <div class="payoff-result" id="payoffResult">
+      <div class="p-marker">P</div>
+      <div class="sign-chip">B1<span class="sep">·</span>A-1</div>
+    </div>
+  </div>
+  <div style="text-align:center;">
+    <div class="payoff-found" id="payoffFound">✓ Found</div>
+  </div>
+
+  <div class="payoff-tools">
+    <div class="payoff-tool">
+      <div class="ic">🔦</div>
+      <h3 style="color:var(--white);">Flashlight</h3>
+      <p>For darker parking areas.</p>
+    </div>
+    <div class="payoff-tool">
+      <div class="ic">📷</div>
+      <h3 style="color:var(--white);">View Photo</h3>
+      <p>For an additional visual reference.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 OUTCOME ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">06 — Outcome</div>
+    <h2 class="lead">A small feature.<br>A simple problem solved.</h2>
+  </div>
+
+  <div class="outcome-compare">
+    <div class="outcome-row before">
+      <div class="tag">Before</div>
+      <div class="outcome-chain">
+        <span class="step">Park</span><span class="arrow">→</span>
+        <span class="step">Forget</span><span class="arrow">→</span>
+        <span class="step">Search</span><span class="arrow">→</span>
+        <span class="step">Frustration</span>
+      </div>
+    </div>
+    <div class="outcome-row after">
+      <div class="tag">With ParkSpot</div>
+      <div class="outcome-chain">
+        <span class="step">Park</span><span class="arrow">→</span>
+        <span class="step">Save</span><span class="arrow">→</span>
+        <span class="step">Remember</span><span class="arrow">→</span>
+        <span class="step">Find</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="final-line">
+    <div class="big">You park.<br>ParkSpot remembers.</div>
+  </div>
+
+  <div class="final-track" id="finalTrack">
+    <div class="final-track-line"></div>
+    <div class="final-marker p-marker" id="finalMarker">P</div>
+    <div class="final-p-end" id="finalPEnd">P</div>
+  </div>
+  <div class="final-labels">
+    <span>Park</span><span>Save</span><span>Find</span>
+  </div>
+</section>
+
+<!-- ============ 07 THE JOURNEY ============ -->
+<section class="section section-tight">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">07 — The Journey</div>
+    <h2 class="lead journey-lead">Park. Save. Remember. Return.</h2>
+    <p class="body-lg" style="margin-top:16px;">ParkSpot reduces a forgotten location to one simple flow — record where you parked, keep it with you, and retrieve it when it's time to leave.</p>
+  </div>
+
+  <div class="journey-track" id="journeyTrack">
+    <div class="journey-track-line"></div>
+    <div class="journey-marker p-marker" id="journeyMarker">P</div>
+    <div class="journey-nodes" id="journeyNodes">
+      <div class="journey-node"><div class="dot"></div><div class="name">Park</div></div>
+      <div class="journey-node"><div class="dot"></div><div class="name">Select</div></div>
+      <div class="journey-node"><div class="dot"></div><div class="name">Save</div></div>
+      <div class="journey-node"><div class="dot"></div><div class="name">Remember</div></div>
+      <div class="journey-node"><div class="dot"></div><div class="name">Return</div></div>
+      <div class="journey-node"><div class="dot"></div><div class="name">Find</div></div>
+    </div>
+  </div>
+
+  <div class="journey-result" id="journeyResult">
+    <div class="sign-chip">B1<span class="sep">·</span>A-1</div>
+  </div>
+</section>
+
+
+<!-- ============ 08 EXPERIENCE IT ============ -->
+<section class="section section-experience section-dark">
+  <div class="proto reveal" style="text-align:center; max-width:680px; margin:0 auto;">
+
+    <div class="eyebrow" style="justify-content:center;">
+      08 — Experience It
+    </div>
+
+    <h2 class="lead">
+      Don't just read about ParkSpot. Try it.
+    </h2>
+
+    <p class="proto-caption" style="margin:20px auto 28px; color:#C9C6BE;">
+      Explore the interactive prototype and experience the parking flow yourself.
+    </p>
+
+    <a
+      href="https://www.figma.com/proto/iBx4kkVCfUnNT0GpkA3fEf/Ravish-Shetty?page-id=20%3A73&node-id=33-14&viewport=-48578%2C4000%2C2.33&t=G0RsLpY0XiETroBd-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=184%3A429&show-proto-sidebar=1"
+      class="btn-primary"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      View Prototype →
+    </a>
+
+  </div>
+</section>
+
+<!-- ============ 09 WHAT I LEARNED ============ -->
+<section class="section section-tight">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">09 — What I Learned</div>
+    <h2 class="lead journey-lead">A small interaction can remove a surprisingly frustrating moment.</h2>
+    <p class="body-lg" style="margin-top:16px;">ParkSpot started as a simple idea: help people remember where they parked. Designing the flow made me think more carefully about how little information a user actually needs at the right moment.</p>
+  </div>
+
+  <div class="learned-cards">
+    <div class="learned-card">
+      <div class="num">01</div>
+      <h3>Keep the interaction small</h3>
+      <p>The user shouldn't have to describe their entire parking location. Level, pillar and spot are enough to create a useful reference.</p>
+    </div>
+    <div class="learned-card">
+      <div class="num">02</div>
+      <h3>Design for the moment after the action</h3>
+      <p>Saving the location is only half of the experience. The real value appears later, when the user has forgotten the spot and needs the information again.</p>
+    </div>
+    <div class="learned-card">
+      <div class="num">03</div>
+      <h3>Simplicity is the feature</h3>
+      <p>Because ParkSpot solves one specific problem, every interaction should stay focused on that problem. There's no need to turn a small utility into a complicated parking app.</p>
+    </div>
+  </div>
+
+  <div class="learned-quote">
+    <p>I didn't design a parking system.<br>I designed a way to remember one small thing.</p>
+  </div>
+
+  <div class="learned-track" id="learnedTrack">
+    <div class="learned-word" id="learnedPark">Park</div>
+    <span class="arrow">→</span>
+    <div class="learned-word" id="learnedSave">Save</div>
+    <span class="arrow">→</span>
+    <div class="learned-word" id="learnedRemember">Remember</div>
+    <span class="arrow">→</span>
+    <div class="learned-word final" id="learnedFind">Find <span class="p-marker" id="learnedMarker">P</span></div>
+  </div>
+</section>
+
+<!-- ============ 10 NEXT PROJECT ============ -->
+<a href="index.html" style="display:block;">
+<section class="next">
+  <div class="k">Next up</div>
+  <h2>Project New <span class="arrow">→</span></h2>
+  <div class="d">work in progress</div>
+</section>
+</a>
+
+<div class="footer">
+  <p>ParkSpot —  A case study of small parking-memory feature by Ravish Shetty · Designed &amp; built in Figma.</p>
+</div>
+
+<script>
+/* ===== nav progress ===== */
+const navProgress = document.getElementById('navProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  navProgress.style.width = scrolled + '%';
+});
+
+/* ===== generic reveal ===== */
+const revealEls = document.querySelectorAll('.reveal, .reveal-scale');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.2 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+/* ===== 00 Hero splash: soft glow breathes behind the real screenshot, then settles ===== */
+const splashPanel = document.getElementById('splashPanel');
+const heroObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      setTimeout(() => { splashPanel.classList.add('pulse'); }, 400);
+      setTimeout(() => { splashPanel.classList.remove('pulse'); }, 400 + 2800*2);
+      heroObserver.disconnect();
+    }
+  });
+}, { threshold: 0.4 });
+heroObserver.observe(splashPanel);
+
+/* ===== 01 Problem riddle: ? -> B1 / A / 1, quick sequential swap ===== */
+const riddleRow = document.getElementById('riddleRow');
+const riddleObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const boxes = ['riddleLevel','riddlePillar','riddleSpot'].map(id => document.getElementById(id));
+      boxes.forEach((box, i) => { setTimeout(() => box.classList.add('solved'), 300 + i*380); });
+      riddleObserver.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+riddleObserver.observe(riddleRow);
+
+/* ===== 02 Idea: steps reveal, marker travels B1->A->1, lands on result chip ===== */
+const ideaSteps = document.getElementById('ideaSteps');
+const ideaMarker = document.getElementById('ideaMarker');
+const ideaResult = document.getElementById('ideaResult');
+const ideaObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const steps = ideaSteps.querySelectorAll('.idea-step');
+      steps.forEach((el,i) => setTimeout(() => el.classList.add('in'), i*150));
+      const markerDelay = steps.length*150 + 200;
+      setTimeout(() => {
+        ideaMarker.classList.add('in');
+        ideaMarker.style.left = '2%';
+        requestAnimationFrame(() => { setTimeout(() => { ideaMarker.style.left = '97%'; }, 60); });
+      }, markerDelay);
+      setTimeout(() => { ideaResult.classList.add('in'); }, markerDelay + 1500);
+      ideaObserver.disconnect();
+    }
+  });
+}, { threshold: 0.35 });
+ideaObserver.observe(ideaSteps);
+
+/* ===== 03 Save the spot: highlight the merged summary, then the Save Spot button ===== */
+const savePanel = document.getElementById('savePanel');
+const saveObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      setTimeout(() => { document.getElementById('ringSummary').classList.add('in'); }, 400);
+      setTimeout(() => { document.getElementById('ringButton').classList.add('in'); }, 1600);
+      saveObserver.disconnect();
+    }
+  });
+}, { threshold: 0.35 });
+saveObserver.observe(savePanel);
+
+/* ===== 04 Widget: gently ring the P badge, then the Flashlight action; time passes, location stays ===== */
+const widgetWrap = document.getElementById('widgetWrap');
+const timeElapsed = document.getElementById('timeElapsed');
+const widgetObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      setTimeout(() => { document.getElementById('ringPBadge').classList.add('in'); }, 400);
+      setTimeout(() => { document.getElementById('ringFlashlight').classList.add('in'); }, 1600);
+      setTimeout(() => {
+        timeElapsed.style.opacity = '0';
+        setTimeout(() => { timeElapsed.textContent = '2h 15m ago'; timeElapsed.style.opacity = '1'; }, 500);
+      }, 2600);
+      widgetObserver.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+widgetObserver.observe(widgetWrap);
+
+/* ===== 05 Payoff: WHERE DID I PARK? fades out -> B1 · A-1 fades in -> FOUND ===== */
+const payoffStage = document.getElementById('payoffStage');
+const payoffQuestion = document.getElementById('payoffQuestion');
+const payoffResult = document.getElementById('payoffResult');
+const payoffFound = document.getElementById('payoffFound');
+const payoffObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      setTimeout(() => { payoffQuestion.classList.add('out'); }, 500);
+      setTimeout(() => { payoffResult.classList.add('in'); }, 850);
+      setTimeout(() => { payoffFound.classList.add('in'); }, 1500);
+      payoffObserver.disconnect();
+    }
+  });
+}, { threshold: 0.4 });
+payoffObserver.observe(payoffStage);
+
+/* ===== 06 Final: marker travels Park -> Save -> Find, stops at P, pulses once, stills ===== */
+const finalTrack = document.getElementById('finalTrack');
+const finalMarker = document.getElementById('finalMarker');
+const finalPEnd = document.getElementById('finalPEnd');
+const finalObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      finalMarker.classList.add('in');
+      finalMarker.style.left = '2%';
+      requestAnimationFrame(() => { setTimeout(() => { finalMarker.style.left = '94%'; }, 60); });
+      setTimeout(() => {
+        finalMarker.style.opacity = '0';
+        finalPEnd.classList.add('in');
+        finalPEnd.classList.add('pulse');
+      }, 2000);
+      finalObserver.disconnect();
+    }
+  });
+}, { threshold: 0.4 });
+finalObserver.observe(finalTrack);
+
+/* ===== 07 Journey: nodes reveal, marker travels Park->Save with a pause+pulse, then Save->Find, then chip appears ===== */
+const journeyTrack = document.getElementById('journeyTrack');
+const journeyMarker = document.getElementById('journeyMarker');
+const journeyResult = document.getElementById('journeyResult');
+const journeyObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const nodes = document.querySelectorAll('#journeyNodes .journey-node');
+      nodes.forEach((el,i) => setTimeout(() => el.classList.add('in'), i*80));
+      const startDelay = nodes.length*80 + 150;
+      setTimeout(() => {
+        journeyMarker.classList.add('in');
+        journeyMarker.style.left = '2%';
+        requestAnimationFrame(() => { setTimeout(() => { journeyMarker.style.left = '41%'; }, 60); });
+      }, startDelay);
+      setTimeout(() => { journeyMarker.classList.add('pulse'); }, startDelay + 950);
+      setTimeout(() => { journeyMarker.classList.remove('pulse'); journeyMarker.style.left = '98%'; }, startDelay + 1450);
+      setTimeout(() => { journeyResult.classList.add('in'); }, startDelay + 2450);
+      journeyObserver.disconnect();
+    }
+  });
+}, { threshold: 0.4 });
+journeyObserver.observe(journeyTrack);
+
+/* ===== 09 What I learned: four words reveal in sequence, marker lands on Find ===== */
+const learnedTrack = document.getElementById('learnedTrack');
+const learnedObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const words = ['learnedPark','learnedSave','learnedRemember','learnedFind'].map(id => document.getElementById(id));
+      words.forEach((el,i) => setTimeout(() => el.classList.add('in'), i*280));
+      setTimeout(() => { document.getElementById('learnedMarker').classList.add('in'); }, words.length*280 + 250);
+      learnedObserver.disconnect();
+    }
+  });
+}, { threshold: 0.4 });
+learnedObserver.observe(learnedTrack);
+</script>
+
+</body>
+</html>

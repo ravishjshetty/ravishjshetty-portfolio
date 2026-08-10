@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume | Ravish J Shetty — Product Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Resume Page Styles & Component Architecture */
+        .resume-hero-section {
+            padding-top: 140px;
+            padding-bottom: 40px;
+            background: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .hero-meta-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .availability-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .avail-label {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
+
+        .avail-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .avail-pill span {
+            color: #10b981;
+            font-weight: 900;
+        }
+
+        .update-date {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .resume-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .resume-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        /* Resume Quick Stats Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0 60px;
+            padding: 30px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            text-align: center;
+        }
+
+        .stat-item {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1;
+            margin-bottom: 6px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* Quick Summary Section */
+        .summary-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.04);
+        }
+
+        .summary-lead {
+            font-size: 1.1rem;
+            line-height: 1.75;
+            color: #334155;
+            margin-bottom: 24px;
+        }
+
+        /* Snapshot Grid */
+        .snapshot-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .snapshot-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .snapshot-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .snapshot-card h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .snapshot-card p {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Consolidated Action Card Wrapper */
+        .action-card-container {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
+        .action-card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .action-card-subtitle {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        /* Modern Pill Buttons */
+        .pill-button-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .pill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pill-btn-primary {
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid #0f172a;
+        }
+
+        .pill-btn-primary:hover {
+            background: #334155;
+            border-color: #334155;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+
+        .pill-btn-secondary {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid var(--border-color);
+        }
+
+        .pill-btn-secondary:hover {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        /* Clean Tip Box (No Duplicate Links) */
+        .preview-tip-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* PDF Viewport (Optimized Height to Remove Empty Bottom Gap) */
+        .pdf-viewport-container {
+            position: relative;
+            width: 100%;
+            height: 920px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 80px;
+        }
+
+        .pdf-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: #64748b;
+            font-weight: 600;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .pdf-loader .sub-text {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #cbd5e1;
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pdf-iframe {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 2;
+            background: transparent;
+        }
+
+        /* Mobile Viewport Fallback */
+        .mobile-pdf-notice {
+            display: none;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 36px 24px;
+            text-align: center;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.04);
+        }
+
+        /* Let's Connect Card Block */
+        .connect-card {
+            margin-top: 60px;
+            padding: 40px 24px;
+            background: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .connect-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .connect-desc {
+            color: #64748b;
+            max-width: 520px;
+            margin: 0 auto 24px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Icon-Only Hover Sticky Download Button */
+        .sticky-resume-btn {
+            position: fixed;
+            top: 90px;
+            right: 24px;
+            z-index: 99;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 12px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .sticky-resume-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sticky-resume-btn .btn-text {
+            max-width: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .sticky-resume-btn:hover .btn-text {
+            max-width: 150px;
+            opacity: 1;
+            margin-left: 4px;
+        }
+
+        @media (max-width: 968px) {
+            .snapshot-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 30px 10px; }
+            .stat-item { border-right: none; }
+            .sticky-resume-btn { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .pdf-viewport-container { display: none; }
+            .preview-tip-box { display: none; }
+            .mobile-pdf-notice { display: block; }
+            .snapshot-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR HEADER -->
+    <header class="navbar">
+        <a href="index.html" class="logo">rjs<span>.</span></a>
+        <nav class="nav-links">
+            <a href="index.html">← Back to Work</a>
+        </nav>
+    </header>
+
+    <!-- COMPACT HOVER-EXPAND STICKY DOWNLOAD BUTTON -->
+    <a href="assets/rjs.pdf" download class="pill-btn pill-btn-primary sticky-resume-btn" id="stickyBtn" aria-label="Download Resume">
+        <span style="font-size: 1.1rem; font-weight: 800;">↓</span>
+        <span class="btn-text">Download Resume</span>
+    </a>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="resume-hero-section">
+            <div class="container-small">
+                <h1 class="resume-title">Resume</h1>
+                <p class="resume-subtitle">Product Designer · Designing thoughtful digital experiences through user research, interaction design, and visual design.</p>
+                
+                <div class="hero-meta-bar">
+                    <div class="availability-group">
+                        <span class="avail-label">Available for:</span>
+                        <span class="avail-pill"><span>✓</span> Full-time</span>
+                        <span class="avail-pill"><span>✓</span> Internship</span>
+                        <span class="avail-pill"><span>✓</span> Freelance</span>
+                    </div>
+                    <span class="update-date">Last Updated: August 2026</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="container-small">
+
+            <!-- RESUME STATS BAR -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">1+</div>
+                    <div class="stat-label">Years Learning UI/UX</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">UX Case Studies</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">60+</div>
+                    <div class="stat-label">Screens Designed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Industry Internship</div>
+                </div>
+            </div>
+
+            <!-- QUICK SUMMARY CARD -->
+            <section class="summary-box">
+                <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; color: #0f172a;">About Me</h2>
+                <div class="summary-lead">
+                    I'm a final-year Information Science Engineering student and an aspiring Product Designer focused on creating intuitive, user-centered digital experiences. I enjoy simplifying complex workflows into clean, accessible interfaces through research, interaction design, and rapid prototyping.
+                    <br><br>
+                    <strong>My design approach focuses on simplifying complex user journeys into intuitive and accessible digital experiences.</strong>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;">
+
+                <h3 style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; margin-bottom: 16px;">Quick Snapshot</h3>
+                <div class="snapshot-grid">
+                    <div class="snapshot-card">
+                        <span class="snapshot-icon">🎓</span>
+                        <h4>Education</h4>
+                        <p>BE Information Science & Eng.</p>
+                    </div>
+                    <div class="snapshot-card">
+                        <span class="snapshot-icon">💼</span>
+                        <h4>Experience</h4>
+                        <p>UI/UX Design Internship</p>
+                    </div>
+                    <div class="snapshot-card">
+                        <span class="snapshot-icon">📱</span>
+                        <h4>Projects</h4>
+                        <p>Smart Parking, Bus Companion, Eventra</p>
+                    </div>
+                    <div class="snapshot-card">
+                        <span class="snapshot-icon">🛠</span>
+                        <h4>Tools</h4>
+                        <p>Figma, FigJam, HTML, CSS</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RESUME ACTIONS CARD -->
+            <section id="actionSection">
+                <div class="action-card-container">
+                    <div class="action-card-title">Resume Actions</div>
+                    <div class="action-card-subtitle">View online or download a copy to keep.</div>
+                    
+                    <div class="pill-button-group">
+                        <a href="assets/rjs.pdf" target="_blank" class="pill-btn pill-btn-secondary">
+                            <span>📄 Open PDF in New Tab</span>
+                        </a>
+                        <a href="assets/rjs.pdf" download class="pill-btn pill-btn-primary">
+                            <span>↓ Download Resume</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CLEAN INFO BOX (No Duplicated Links) -->
+                <div class="preview-tip-box">
+                    💡 <strong>Tip:</strong> For the best viewing experience, open the PDF in a new tab to use your browser's native zoom, search, and print tools.
+                </div>
+
+                <!-- DESKTOP EMBEDDED PREVIEW -->
+                <div class="pdf-viewport-container" id="pdfContainer">
+                    <div class="pdf-loader">
+                        <div class="spinner"></div>
+                        <span>Loading Resume...</span>
+                        <span class="sub-text">Preparing PDF Preview...</span>
+                    </div>
+                    <iframe 
+                        src="assets/rjs.pdf#toolbar=0&navpanes=0&scrollbar=1" 
+                        class="pdf-iframe" 
+                        title="Ravish J Shetty Resume Preview"
+                        onload="hideLoader()">
+                    </iframe>
+                </div>
+
+                <!-- MOBILE FALLBACK CARD -->
+                <div class="mobile-pdf-notice">
+                    <span style="font-size: 2.5rem; display: block; margin-bottom: 12px;">📄</span>
+                    <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: #0f172a;">Resume Preview</h3>
+                    <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 24px; line-height: 1.6; max-width: 420px; margin-left: auto; margin-right: auto;">
+                        For the best reading experience, open the PDF in a new tab or download a copy to your device.
+                    </p>
+                    <div class="pill-button-group" style="flex-direction: column; max-width: 280px; margin: 0 auto;">
+                        <a href="assets/rjs.pdf" target="_blank" class="pill-btn pill-btn-secondary" style="width: 100%; justify-content: center;">
+                            <span>📄 Open PDF</span>
+                        </a>
+                        <a href="assets/rjs.pdf" download class="pill-btn pill-btn-primary" style="width: 100%; justify-content: center;">
+                            <span>↓ Download Resume</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LET'S CONNECT CARD -->
+            <section class="connect-card">
+                <h2 class="connect-title">Let's Connect</h2>
+                <p class="connect-desc">
+                    Interested in designing meaningful digital experiences together? I'd love to connect and discuss potential opportunities.
+                </p>
+                <div class="pill-button-group">
+                    <a href="assets/rjs.pdf" download class="pill-btn pill-btn-primary">
+                        <span>↓ Resume</span>
+                    </a>
+                    <a href="mailto:ravishjshetty@gmail.com" class="pill-btn pill-btn-secondary">
+                        <span>✉ Email</span>
+                    </a>
+                    <a href="https://linkedin.com/in/ravishshetty" target="_blank" class="pill-btn pill-btn-secondary">
+                        <span>in LinkedIn</span>
+                    </a>
+                    <a href="index.html#work" class="pill-btn pill-btn-secondary">
+                        <span>👨‍💻 Portfolio</span>
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="section dark-theme-block text-center" style="padding: 40px 0; margin-top: 80px;">
+        <div class="container-small">
+            <p style="font-size: 0.9rem; color: #71717a; margin-bottom: 6px;">© 2026 Ravish J Shetty</p>
+            <p style="font-size: 0.8rem; color: #52525b; margin: 0;">Designed & Developed by Me.</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTION LOGIC -->
+    <script>
+        // Hide loader when iframe finishes loading
+        function hideLoader() {
+            const loader = document.querySelector('.pdf-loader');
+            if (loader) {
+                loader.style.display = 'none';
+            }
+        }
+
+        // Toggle sticky download button on scroll
+        const actionSection = document.getElementById('actionSection');
+        const stickyBtn = document.getElementById('stickyBtn');
+
+        window.addEventListener('scroll', () => {
+            if (!actionSection || !stickyBtn) return;
+            const rect = actionSection.getBoundingClientRect();
+            if (rect.bottom < 0) {
+                stickyBtn.classList.add('visible');
+            } else {
+                stickyBtn.classList.remove('visible');
+            }
+        });
+    </script>
+</body>
+</html>

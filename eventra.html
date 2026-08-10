@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eventra — Discover. Plan. Book. Experience.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ===================== TOKENS ===================== */
+:root{
+  --white:#FFFFFF;
+  --slate-50:#F8FAFC;
+  --slate-100:#F1F5F9;
+  --ink:#111111;
+  --slate-600:#475569;
+  --slate-500:#64748B;
+  --green-600:#16A34A;
+  --green-700:#15803D;
+  --green-100:#DCFCE7;
+  --green-50:#F0FDF4;
+  --border:#E5E7EB;
+
+  --font: 'Poppins', sans-serif;
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  background:var(--white);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+}
+
+::selection{background:var(--green-100);color:var(--green-700);}
+
+/* ===================== LAYOUT HELPERS ===================== */
+.section{ position:relative; padding:72px 8vw; }
+.section-tight{padding:70px 8vw;}
+.section-narrow{max-width:680px;margin:0 auto;}
+.eyebrow{
+  font-weight:600; font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--green-600); display:flex; align-items:center; gap:10px; margin-bottom:20px;
+}
+.eyebrow::before{content:''; width:22px;height:1px; background:var(--green-600); display:inline-block;}
+h1,h2,h3{font-family:var(--font); line-height:1.1; letter-spacing:-0.02em; font-weight:600;}
+p{line-height:1.7; color:var(--slate-600); font-weight:400;}
+.lead{font-size:clamp(20px,2.3vw,27px); color:var(--ink); font-weight:500; line-height:1.4; letter-spacing:-0.01em;}
+
+/* reveal on scroll */
+.reveal{opacity:0; transform:translateY(26px); transition:opacity .9s var(--ease), transform .9s var(--ease);}
+.reveal.in{opacity:1; transform:translateY(0);}
+.reveal-scale{opacity:0; transform:scale(.95); transition:opacity 1s var(--ease), transform 1s var(--ease);}
+.reveal-scale.in{opacity:1; transform:scale(1);}
+
+/* ===================== REUSABLE IMAGE COMPONENTS ===================== */
+/* .shot-phone — device-style frame for a single app screen */
+.shot-phone{
+  width:270px;
+  border-radius:38px;
+  background:var(--ink);
+  padding:10px;
+  box-shadow:0 40px 80px -30px rgba(17,17,17,0.35);
+  position:relative;
+}
+.shot-phone .frame-inner{
+  width:100%;
+  aspect-ratio:392 / 852;
+  border-radius:28px;
+  overflow:hidden;
+  background:var(--slate-100);
+  position:relative;
+}
+.shot-phone .notch{
+  position:absolute; top:10px; left:50%; transform:translateX(-50%);
+  width:60px; height:6px; background:rgba(0,0,0,0.35); border-radius:10px; z-index:5;
+}
+.shot-phone img{width:100%; height:100%; object-fit:contain; background:var(--slate-100);}
+
+/* .shot-panel — plain rounded image panel (collages, why-cards, prototype) */
+.shot-panel{
+  border-radius:18px; overflow:hidden; background:var(--slate-100);
+  border:1px solid var(--border);
+  box-shadow:0 20px 45px -25px rgba(17,17,17,0.2);
+  position:relative;
+}
+.shot-panel img{width:100%; height:100%; object-fit:contain; background:var(--slate-100);}
+.ar-portrait{aspect-ratio:3/4;}
+.ar-square{aspect-ratio:1/1;}
+.ar-wide{aspect-ratio:16/10;}
+.ar-video{aspect-ratio:16/9;}
+
+.shot-label{margin-top:14px; font-size:12px; color:var(--slate-500); text-align:center; font-weight:500;}
+figure{margin:0;}
+
+/* ===================== NAV ===================== */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 8vw;
+  background:rgba(255,255,255,0.75);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-mark{font-weight:600; font-size:15px; letter-spacing:-0.01em; color:var(--ink);}
+.back-work{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--border);border-radius:999px;font-weight:600;font-size:12.5px;color:var(--slate-500);background:rgba(255,255,255,.55);transition:transform .25s var(--ease),background .25s,color .25s,border-color .25s;}
+.back-work:hover{transform:translateX(-3px);color:var(--green-700);border-color:var(--green-600);background:var(--white);}
+.nav-progress{ position:fixed; top:0; left:0; height:2px; background:var(--green-600); z-index:101; width:0%; }
+
+/* ===================== 00 HERO ===================== */
+.hero{
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, var(--green-50) 0%, transparent 60%), var(--white);
+  padding:140px 8vw 80px;
+  position:relative; overflow:hidden;
+}
+.hero-word{ font-weight:800; font-size:clamp(48px, 11vw, 130px); letter-spacing:-0.04em; color:var(--ink); position:relative; z-index:2; }
+.hero-word span{color:var(--green-600);}
+.hero-tagline{ margin-top:16px; font-size:clamp(15px,2vw,20px); font-weight:500; color:var(--slate-600); z-index:2; }
+.hero-desc{ margin-top:20px; max-width:520px; font-size:16px; z-index:2; }
+.hero-meta{ display:flex; flex-wrap:wrap; gap:44px; justify-content:center; margin-top:60px; z-index:2; }
+.hero-meta div{text-align:left;}
+.hero-meta .k{font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--slate-500); font-weight:600; margin-bottom:6px;}
+.hero-meta .v{font-size:15px; font-weight:600; color:var(--ink);}
+
+.hero-phones{
+  width:min(100%, 300px);
+  margin:64px auto 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+  z-index:2;
+}
+
+.hero-phones img{
+  width:100%;
+  height:auto;
+  display:block;
+  animation:heroFloat 6s ease-in-out infinite;
+}
+@keyframes heroFloat{0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);}}
+
+/* ambient confetti — evokes the energy of a live event, drifts up and fades, never distracting */
+.hero-confetti{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:3;}
+.hero-confetti span{
+  position:absolute; bottom:-40px; border-radius:2px; opacity:0;
+  background:var(--green-600); animation:confettiDrift linear infinite;
+}
+.hero-confetti span:nth-child(1){left:8%;  width:7px; height:7px; border-radius:50%; animation-duration:11s; animation-delay:0s;}
+.hero-confetti span:nth-child(2){left:22%; width:6px; height:10px; animation-duration:13s; animation-delay:1.5s; background:var(--ink);}
+.hero-confetti span:nth-child(3){left:38%; width:8px; height:8px; border-radius:50%; animation-duration:9s;  animation-delay:3s;}
+.hero-confetti span:nth-child(4){left:55%; width:6px; height:6px; border-radius:50%; animation-duration:14s; animation-delay:.8s;}
+.hero-confetti span:nth-child(5){left:70%; width:7px; height:11px; animation-duration:10s; animation-delay:2.4s; background:var(--ink);}
+.hero-confetti span:nth-child(6){left:85%; width:8px; height:8px; border-radius:50%; animation-duration:12s; animation-delay:4.2s;}
+.hero-confetti span:nth-child(7){left:93%; width:6px; height:9px; animation-duration:15s; animation-delay:1.1s; background:var(--ink);}
+@keyframes confettiDrift{
+  0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+  8%{ opacity:.22; }
+  85%{ opacity:.12; }
+  100%{ transform:translateY(-92vh) rotate(220deg); opacity:0; }
+}
+
+@keyframes phoneUp{to{opacity:1; transform:translateY(0);}}
+
+@media (max-width:700px){
+  .hero-phones{
+    width:100%;
+    margin:40px auto 0;
+    padding:0 4vw;
+  }
+
+  .hero-phones img{
+    width:100%;
+    height:auto;
+  }
+}
+
+.scroll-ind{
+  position:absolute; bottom:34px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  color:var(--slate-500); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; z-index:2;
+}
+.scroll-ind .line{width:1px; height:30px; background:var(--border); position:relative; overflow:hidden;}
+.scroll-ind .line::after{
+  content:''; position:absolute; top:-100%; left:0; width:100%; height:100%;
+  background:var(--green-600); animation:scrollDrop 1.8s ease-in-out infinite;
+}
+@keyframes scrollDrop{0%{top:-100%;} 60%{top:100%;} 100%{top:100%;}}
+
+/* ===================== 01 STARTING POINT ===================== */
+.chaos-wrap{ position:relative; height:320px; max-width:820px; margin:64px auto 0; }
+.chaos-item{
+  position:absolute; font-weight:600; font-size:15px; padding:12px 20px; border-radius:100px;
+  border:1px solid var(--border); background:var(--white); color:var(--slate-600);
+  box-shadow:0 10px 30px -15px rgba(17,17,17,0.12); opacity:0; transition:all 1.1s var(--ease);
+}
+.chaos-item.in{opacity:1;}
+.chaos-item:nth-child(1){top:0%; left:6%;}
+.chaos-item:nth-child(2){top:8%; left:60%;}
+.chaos-item:nth-child(3){top:42%; left:0%;}
+.chaos-item:nth-child(4){top:50%; left:66%;}
+.chaos-item:nth-child(5){top:80%; left:30%;}
+.chaos-wrap.settled .chaos-item{ top:44% !important; left:50% !important; transform:translate(-50%,-50%); opacity:0; }
+.eventra-pill{
+  position:absolute; top:44%; left:50%; transform:translate(-50%,-50%) scale(.7);
+  font-weight:700; font-size:22px; color:#fff; background:var(--green-600);
+  padding:18px 38px; border-radius:100px; opacity:0; transition:all 1s var(--ease) .3s;
+  letter-spacing:-0.01em; box-shadow:0 20px 40px -12px rgba(22,163,74,0.5);
+}
+.eventra-pill.in{opacity:1; transform:translate(-50%,-50%) scale(1);}
+
+/* burst of particles when the pill lands — the event "arriving" out of the noise */
+.burst-particles{position:absolute; top:44%; left:50%; width:0; height:0; pointer-events:none;}
+.burst-particles span{position:absolute; top:0; left:0; width:6px; height:6px; border-radius:50%; opacity:0; background:var(--green-600);}
+.burst-particles span:nth-child(2n){background:var(--ink);}
+.burst-particles.burst span{animation:burstPop .9s var(--ease) forwards;}
+.burst-particles span:nth-child(1){ --tx:-70px; --ty:-46px; animation-delay:.05s; }
+.burst-particles span:nth-child(2){ --tx:64px;  --ty:-52px; animation-delay:.1s; }
+.burst-particles span:nth-child(3){ --tx:-84px; --ty:14px;  animation-delay:0s;  }
+.burst-particles span:nth-child(4){ --tx:82px;  --ty:20px;  animation-delay:.12s;}
+.burst-particles span:nth-child(5){ --tx:-40px; --ty:58px;  animation-delay:.08s;}
+.burst-particles span:nth-child(6){ --tx:44px;  --ty:60px;  animation-delay:.04s;}
+.burst-particles span:nth-child(7){ --tx:0px;   --ty:-70px; animation-delay:.14s;}
+.burst-particles span:nth-child(8){ --tx:6px;   --ty:74px;  animation-delay:.02s;}
+@keyframes burstPop{
+  0%{ opacity:0; transform:translate(-50%,-50%) scale(.3); }
+  30%{ opacity:.9; }
+  100%{ opacity:0; transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1); }
+}
+
+/* ===================== 02 THE IDEA — orbit ===================== */
+.orbit-wrap{ position:relative; width:100%; max-width:600px; height:540px; margin:64px auto 0; }
+.orbit-center{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:168px; height:168px; border-radius:50%; background:var(--green-600);
+  box-shadow:0 30px 60px -18px rgba(22,163,74,0.45); display:flex; align-items:center; justify-content:center; z-index:3;
+  animation:orbitPulse 3.2s ease-in-out infinite;
+}
+@keyframes orbitPulse{
+  0%,100%{ box-shadow:0 30px 60px -18px rgba(22,163,74,0.45); }
+  50%{ box-shadow:0 30px 70px -12px rgba(22,163,74,0.65); }
+}
+.orbit-center::before{
+  content:'EVENTRA'; color:#fff; font-weight:700; letter-spacing:0.02em; font-size:16px; text-align:center;
+}
+.orbit-node{
+  position:absolute; width:108px; padding:14px 10px; text-align:center; background:var(--white);
+  border:1px solid var(--border); border-radius:16px; font-weight:600; font-size:13px; color:var(--ink);
+  box-shadow:0 12px 24px -14px rgba(17,17,17,0.15); opacity:0; transform:scale(.6); transition:all .8s var(--ease);
+}
+.orbit-node.in{opacity:1; transform:scale(1);}
+.orbit-node .dot{width:6px; height:6px; border-radius:50%; background:var(--green-600); margin:0 auto 8px; animation:orbitDotPulse 2.4s ease-in-out infinite;}
+@keyframes orbitDotPulse{
+  0%,100%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(1.5); opacity:.55; }
+}
+.orbit-node:nth-child(2){top:2%; left:50%; transform:translateX(-50%) scale(.6);}
+.orbit-node:nth-child(2).in{transform:translateX(-50%) scale(1);}
+.orbit-node:nth-child(3){top:20%; right:0%;}
+.orbit-node:nth-child(4){bottom:20%; right:2%;}
+.orbit-node:nth-child(5){bottom:2%; left:50%; transform:translateX(-50%) scale(.6);}
+.orbit-node:nth-child(5).in{transform:translateX(-50%) scale(1);}
+.orbit-node:nth-child(6){bottom:20%; left:0%;}
+.orbit-node:nth-child(7){top:20%; left:0%;}
+
+/* ===================== 03 INSIGHT CARDS ===================== */
+.insight-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:56px; }
+.insight-card{ padding:32px 26px; border:1px solid var(--border); border-radius:20px; background:var(--slate-50); }
+.insight-card .num{ font-weight:700; font-size:13px; color:var(--green-600); letter-spacing:0.06em; margin-bottom:18px; display:block; }
+.insight-card h3{font-size:18px; margin-bottom:10px; font-weight:600;}
+.insight-card p{font-size:14px;}
+
+/* ===================== 04 JOURNEY PATH ===================== */
+.journey-section{background:var(--slate-50); border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+.journey-path{ max-width:900px; margin:64px auto 0; position:relative; }
+.journey-svg-line{ stroke:var(--green-600); stroke-width:2; fill:none; stroke-dasharray:1000; stroke-dashoffset:1000; transition:stroke-dashoffset 1.6s var(--ease); }
+.journey-svg-line.in{stroke-dashoffset:0;}
+.journey-marker{
+  position:absolute; top:17px; width:26px; height:26px; margin-left:-13px;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+  background:var(--green-600); color:#fff; border-radius:50%;
+  box-shadow:0 8px 18px -6px rgba(22,163,74,0.5);
+  opacity:0; left:0%; transition:left 1.8s var(--ease), opacity .5s var(--ease); z-index:2;
+}
+.journey-marker.in{opacity:1;}
+.journey-stages{ display:flex; justify-content:space-between; margin-top:-38px; flex-wrap:wrap; gap:20px 0; }
+.journey-stage{ flex:1; min-width:100px; text-align:center; opacity:0; transform:translateY(14px); transition:all .7s var(--ease); }
+.journey-stage.in{opacity:1; transform:translateY(0);}
+.journey-stage .stage-dot{ width:14px; height:14px; border-radius:50%; background:var(--white); border:3px solid var(--green-600); margin:0 auto 12px; }
+.journey-stage .stage-name{font-weight:600; font-size:13.5px;}
+.journey-sub{ display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:50px; }
+.journey-sub span{ font-size:12px; color:var(--slate-500); border:1px solid var(--border); padding:7px 16px; border-radius:100px; background:var(--white); }
+
+/* ===================== 05 EXPERIENCE — chapter pattern ===================== */
+.chapter{ padding:110px 8vw; display:grid; grid-template-columns:0.85fr 1.15fr; gap:70px; align-items:center; }
+.chapter.reverse{grid-template-columns:1.15fr 0.85fr;}
+.chapter.reverse .chapter-text{order:2;}
+.chapter.reverse .chapter-visual{order:1;}
+.chapter-index{ font-weight:700; font-size:12.5px; color:var(--green-600); letter-spacing:0.1em; margin-bottom:16px; }
+.chapter-text h3{font-size:clamp(24px,2.8vw,32px); margin-bottom:14px; font-weight:600;}
+.chapter-text p{font-size:15.5px; max-width:420px;}
+.chapter-tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px;}
+.chapter-tags span{
+  font-size:12px; font-weight:500; color:var(--green-700); background:var(--green-50);
+  border:1px solid var(--green-100); padding:6px 14px; border-radius:100px;
+}
+.chapter-visual{display:flex; justify-content:center; gap:16px;}
+
+/* ===================== 06 THE TWO SIDES ===================== */
+.dual-flow{ display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:56px; }
+.dual-badge{ font-weight:700; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:#fff; background:var(--ink); padding:10px 24px; border-radius:100px; animation:badgePulse 2.6s ease-in-out infinite; }
+@keyframes badgePulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(17,17,17,0.16); }
+  50%{ box-shadow:0 0 0 10px rgba(17,17,17,0); }
+}
+.dual-connector{ font-size:20px; color:var(--slate-500); }
+.dual-cols{ display:grid; grid-template-columns:1fr 1fr; gap:28px; width:100%; max-width:760px; }
+.dual-col{ border:1px solid var(--border); border-radius:22px; padding:30px 24px; background:var(--slate-50); }
+.dual-col-title{ font-weight:700; font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--green-700); margin-bottom:20px; text-align:center; }
+.dual-step{ display:flex; flex-direction:column; align-items:center; }
+.dual-step span{ font-weight:600; font-size:14.5px; padding:11px 0; width:100%; text-align:center; color:var(--ink); }
+.dual-step .dual-step-arrow{ color:var(--slate-500); font-size:13px; font-weight:400; padding:0; }
+.dual-close{ text-align:center; font-size:15px; color:var(--ink); font-weight:500; max-width:520px; margin:44px auto 0; line-height:1.6; }
+
+/* ===================== 07 THE COMPLETE PRODUCT — full showcase ===================== */
+.showcase-section{ position:relative; }
+.showcase-section--attendee{ padding:100px 8vw 90px; --fade-color:var(--slate-50); }
+.showcase-section--organizer{ padding:90px 8vw 100px; --fade-color:var(--white); }
+
+.showcase-intro{ text-align:center; max-width:640px; margin:0 auto 70px; }
+.showcase-intro .eyebrow{ font-weight:700; font-size:13.5px; margin-bottom:22px; }
+.showcase-intro .lead{ margin-top:18px; font-size:clamp(34px,4vw,40px); font-weight:700; line-height:1.15; letter-spacing:-0.02em; }
+.showcase-intro p{ margin-top:18px; }
+
+.showcase-sub-head{ text-align:center; max-width:560px; margin:0 auto 30px; }
+.showcase-sub-eyebrow{ font-weight:600; font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--green-600); margin-bottom:12px; }
+.showcase-sub-head p{ margin-top:14px; font-size:14.5px; }
+
+.showcase-stagebar{ display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin-bottom:44px; }
+.showcase-stagebar .stage-chip{ font-weight:700; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); background:var(--white); border:1px solid var(--border); padding:10px 20px; border-radius:100px; }
+.showcase-stagebar .stage-arrow{ color:var(--green-600); font-size:14px; }
+
+.showcase-track-outer{ position:relative; }
+
+.showcase-track{
+  display:flex; align-items:center; gap:26px;
+  overflow-x:auto; scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
+  padding:30px 8vw 26px; margin:0 -8vw;
+  scrollbar-width:none; cursor:grab;
+}
+.showcase-track::-webkit-scrollbar{ display:none; }
+.showcase-track.dragging{ cursor:grabbing; scroll-behavior:auto; }
+
+.showcase-item{ flex-shrink:0; text-align:center; transition:transform .35s var(--ease); position:relative; z-index:1; }
+.showcase-item .shot-phone{ transition:transform .35s var(--ease), box-shadow .35s var(--ease); }
+.showcase-item:hover{ transform:translateY(-6px) scale(1.04); z-index:5; }
+.showcase-item:hover .shot-phone{ box-shadow:0 46px 90px -28px rgba(17,17,17,0.4); }
+.showcase-item-label{ margin-top:16px; font-size:12.5px; font-weight:600; color:var(--slate-600); display:flex; align-items:center; justify-content:center; gap:7px; white-space:nowrap; }
+.showcase-item-num{ font-size:10.5px; font-weight:700; color:var(--green-600); background:var(--green-50); border-radius:100px; padding:2px 7px; }
+
+.showcase-connector{ flex-shrink:0; color:var(--slate-500); font-size:15px; }
+
+.showcase-groupmark{ flex-shrink:0; display:flex; align-items:center; justify-content:center; align-self:stretch; padding:0 2px; }
+.showcase-groupmark span{
+  writing-mode:vertical-rl; transform:rotate(180deg);
+  font-size:10.5px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase;
+  color:var(--green-700); padding:16px 7px; border-left:2px solid var(--green-100); border-right:2px solid var(--green-100);
+  white-space:nowrap;
+}
+
+.showcase-progress{ position:relative; height:3px; background:var(--slate-100); border-radius:10px; margin-top:8px; overflow:hidden; }
+.showcase-progress-fill{ position:absolute; left:0; top:0; height:100%; background:var(--green-600); border-radius:10px; }
+
+.showcase-close{ text-align:center; margin-top:55px; }
+.showcase-close-title{ font-weight:700; font-size:clamp(26px,4vw,42px); line-height:1.18; letter-spacing:-0.01em; }
+.showcase-close-sub{ margin-top:18px; font-size:14.5px; color:var(--slate-500); line-height:1.6; }
+.showcase-connect{ margin-top:36px; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; font-weight:600; font-size:13.5px; letter-spacing:0.04em; text-transform:uppercase; }
+.showcase-connect .dot{ color:var(--green-600); font-size:16px; text-transform:none; }
+.showcase-connect .brand{ color:var(--green-600); }
+
+/* ===================== 08 SYSTEM ===================== */
+.system-board{ margin-top:36px; border:1px solid var(--border); border-radius:24px; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; }
+.sys-block{padding:40px; border-right:1px solid var(--border); border-bottom:1px solid var(--border);}
+.sys-block:nth-child(2n){border-right:none;}
+.sys-label{font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--slate-500); font-weight:600; margin-bottom:16px;}
+.sys-type-sample{font-size:32px; font-weight:700;}
+.sys-colors{display:flex; gap:10px;}
+.sys-colors .sw{width:42px; height:42px; border-radius:12px; border:1px solid var(--border);}
+.sys-components{display:flex; flex-wrap:wrap; gap:10px;}
+.sys-components span{font-size:12px; padding:8px 16px; border-radius:100px; border:1px solid var(--border); color:var(--slate-600);}
+.sys-icons-list{font-size:13px; color:var(--slate-600); letter-spacing:0.02em;}
+
+/* ===================== 09 MEET EVENTRA — climax ===================== */
+.climax{ background:var(--ink); color:#fff; padding:150px 0 130px; overflow:hidden; }
+.climax h2{color:#fff; text-align:center; font-size:clamp(30px,4vw,50px);}
+.climax .sub{text-align:center; color:var(--slate-500); margin-top:14px; max-width:460px; margin-left:auto; margin-right:auto;}
+.climax-track{ margin-top:80px; display:flex; gap:32px; padding:0 8vw 20px; overflow-x:auto; scroll-snap-type:x proximity; }
+.climax-track::-webkit-scrollbar{height:6px;}
+.climax-track::-webkit-scrollbar-thumb{background:var(--green-600); border-radius:10px;}
+.climax-item{flex-shrink:0; scroll-snap-align:center; text-align:center; opacity:0; transform:translateY(28px); transition:all .9s var(--ease);}
+.climax-item.in{opacity:1; transform:translateY(0);}
+.climax-item .shot-phone{width:320px; box-shadow:0 40px 100px -20px rgba(22,163,74,0.3);}
+.climax-item .lbl{margin-top:22px; font-weight:600; font-size:15px; color:#fff;}
+@media (max-width:560px){ .climax-item .shot-phone{width:230px;} }
+.climax-group-label{ text-align:center; color:var(--slate-500); font-size:12.5px; font-weight:600; letter-spacing:0.09em; text-transform:uppercase; margin-top:64px; }
+.climax-track{margin-top:34px;}
+.climax .sub + .climax-group-label{margin-top:56px;}
+.climax-final{ text-align:center; color:#fff; font-weight:600; font-size:clamp(17px,2.2vw,22px); margin-top:90px; letter-spacing:-0.01em; }
+
+/* ===================== 10 WHOLE JOURNEY RECAP ===================== */
+.recap{text-align:center;}
+.recap-flow{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; margin:32px 0 28px; }
+.recap-flow .node{ font-weight:600; font-size:14px; padding:13px 24px; border:1px solid var(--border); border-radius:100px; }
+.recap-flow .arrow{color:var(--slate-500); margin:0 12px; font-size:16px;}
+.recap-line{font-size:clamp(18px,2.1vw,23px); color:var(--ink); font-weight:500; max-width:620px; margin:0 auto; line-height:1.5;}
+.recap-group-label{font-weight:700; font-size:11.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--green-600); margin-top:30px;}
+.recap-group .recap-flow{margin:16px 0 0;}
+.recap-divider{font-size:20px; color:var(--slate-500); margin:2px 0 0;}
+.recap-sub{font-size:13.5px; color:var(--slate-500); margin-top:10px;}
+
+/* ===================== 11 PROTOTYPE ===================== */
+.section-experience{
+  min-height:calc(100vh - 60px);
+  display:flex; align-items:center; justify-content:center;
+  padding:24px 8vw;
+}
+.proto{ background:var(--green-50); border-radius:32px; margin:0 8vw; padding:24px 6vw; text-align:center; border:1px solid var(--green-100); }
+.proto .eyebrow{ margin-bottom:8px; }
+.proto-frame{
+  margin:14px auto 0; width:270px; max-width:270px;
+  aspect-ratio:392/852;
+  border-radius:20px; overflow:hidden; background:var(--white); border:1px dashed var(--border);
+  box-shadow:0 30px 70px -30px rgba(17,17,17,0.18);
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.proto-frame img{width:100%; height:100%; object-fit:contain; background:var(--slate-100);}
+.proto-frame .proto-placeholder{
+  display:flex; flex-direction:column; align-items:center; gap:14px; padding:70px 20px; color:var(--slate-500);
+}
+.proto-play{
+  width:56px; height:56px; border-radius:50%; background:var(--green-600);
+  display:flex; align-items:center; justify-content:center;
+}
+.proto-play::after{
+  content:''; width:0; height:0;
+  border-top:9px solid transparent; border-bottom:9px solid transparent; border-left:14px solid #fff;
+  margin-left:3px;
+}
+.proto-video{
+  width:100%; height:100%; display:block;
+  border-radius:20px; object-fit:contain; background:var(--slate-100);
+}
+.proto-caption{ margin-top:8px; font-size:13.5px; line-height:1.4; color:var(--slate-500); }
+.btn-primary{
+  display:inline-flex; align-items:center; gap:10px; margin-top:14px; padding:15px 30px; border-radius:100px;
+  background:var(--ink); color:#fff; font-weight:600; font-size:14px; transition:transform .3s var(--ease), background .3s;
+}
+.btn-primary:hover{background:var(--green-700); transform:translateY(-3px);}
+
+/* ===================== 10 EXPERIENCE IT — ONE SCREEN ===================== */
+.section-experience{
+  height:calc(100vh - 72px);
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 8vw;
+  overflow:hidden;
+}
+
+.proto{
+  width:100%;
+  height:100%;
+  max-height:calc(100vh - 92px);
+  background:var(--green-50);
+  border-radius:28px;
+  margin:0;
+  padding:18px 5vw;
+  text-align:center;
+  border:1px solid var(--green-100);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.proto .eyebrow{margin-bottom:6px;}
+
+.proto .lead{
+  font-size:clamp(22px,2.6vw,34px);
+  line-height:1.15;
+}
+
+.proto-frame{
+  margin:10px auto 0;
+  width:180px;
+  max-width:180px;
+  aspect-ratio:392/852;
+  border-radius:18px;
+  overflow:hidden;
+  background:var(--white);
+  border:1px dashed var(--border);
+  box-shadow:0 22px 50px -25px rgba(17,17,17,0.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  flex-shrink:0;
+  animation:protoGlow 3.4s ease-in-out infinite;
+}
+@keyframes protoGlow{
+  0%,100%{ box-shadow:0 22px 50px -25px rgba(17,17,17,0.18), 0 0 0 0 rgba(22,163,74,0.28); }
+  50%{ box-shadow:0 22px 50px -25px rgba(17,17,17,0.18), 0 0 0 10px rgba(22,163,74,0); }
+}
+
+.proto-frame img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:var(--slate-100);
+}
+
+.proto-frame .proto-placeholder{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  padding:50px 16px;
+  color:var(--slate-500);
+}
+
+.proto-play{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:var(--green-600);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.proto-play::after{
+  content:'';
+  width:0;
+  height:0;
+  border-top:8px solid transparent;
+  border-bottom:8px solid transparent;
+  border-left:12px solid #fff;
+  margin-left:3px;
+}
+
+.proto-video{
+  width:100%;
+  height:100%;
+  display:block;
+  border-radius:18px;
+  object-fit:contain;
+  background:var(--slate-100);
+}
+
+.proto-caption{
+  margin-top:6px;
+  font-size:11.5px;
+  line-height:1.3;
+  color:var(--slate-500);
+}
+
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:9px;
+  padding:11px 24px;
+  border-radius:100px;
+  background:var(--ink);
+  color:#fff;
+  font-weight:600;
+  font-size:12px;
+  transition:transform .3s var(--ease), background .3s;
+}
+
+.btn-primary:hover{
+  background:var(--green-700);
+  transform:translateY(-3px);
+}
+
+@media (max-width:700px){
+  .section-experience{
+    height:calc(100vh - 64px);
+    padding:8px 4vw;
+  }
+
+  .proto{
+    max-height:calc(100vh - 80px);
+    padding:14px 4vw;
+    border-radius:22px;
+  }
+
+  .proto-frame{
+    width:150px;
+    max-width:150px;
+  }
+
+  .proto .lead{font-size:22px;}
+
+  .proto-caption{font-size:10.5px;}
+
+  .btn-primary{
+    padding:10px 20px;
+    font-size:11px;
+  }
+}
+
+.section-quote-final{ padding:68px 8vw; display:flex; align-items:center; justify-content:center; min-height:0; }
+.reflect{max-width:660px; margin:0 auto; text-align:center;}
+.reflect .lead{margin-bottom:22px;}
+.reflect .quote{ font-weight:600; font-size:clamp(19px,2.4vw,26px); color:var(--green-700); line-height:1.5; margin-top:8px; }
+.reflect-final{ margin-top:26px; font-size:14px; color:var(--slate-500); font-style:italic; }
+
+/* ===================== 13 NEXT PROJECT ===================== */
+.next{ background:var(--ink); color:#fff; text-align:center; padding:150px 8vw 90px; }
+.next .k{color:var(--slate-500); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:18px;}
+.next h2{color:#fff; font-size:clamp(32px,6vw,68px); font-weight:700;}
+.next h2 .arrow{color:var(--green-600); display:inline-block; transition:transform .3s;}
+.next a:hover h2 .arrow{transform:translateX(10px);}
+.next .d{color:var(--slate-500); margin-top:16px; font-size:14.5px;}
+.footer{ background:var(--ink); color:var(--slate-500); text-align:center; padding:36px 8vw 56px; font-size:12.5px; border-top:1px solid rgba(255,255,255,0.08); }
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width:900px){
+  .chapter, .chapter.reverse{grid-template-columns:1fr; gap:40px;}
+  .chapter.reverse .chapter-text, .chapter.reverse .chapter-visual{order:unset;}
+  .dual-cols{grid-template-columns:1fr;}
+  .system-board{grid-template-columns:1fr;}
+  .sys-block{border-right:none !important;}
+  .insight-grid{grid-template-columns:1fr; gap:16px;}
+  .orbit-wrap{transform:scale(0.8); margin-top:10px;}
+  .recap-flow .node{font-size:12px; padding:10px 16px;}
+  .showcase-track{gap:18px;}
+  .showcase-stagebar{gap:10px;}
+  .showcase-section--attendee{padding:80px 8vw 70px;}
+  .showcase-section--organizer{padding:70px 8vw 80px;}
+}
+@media (max-width:560px){
+  .section{padding:80px 6vw;}
+  .chapter{padding:80px 6vw;}
+  .shot-phone{width:220px;}
+  .proto-frame{width:220px; max-width:220px;}
+  .showcase-groupmark span{padding:12px 5px; font-size:9.5px;}
+  .showcase-item:hover{transform:translateY(-4px) scale(1.03);}
+}
+</style>
+</head>
+<body>
+
+<div class="nav-progress" id="navProgress"></div>
+<nav class="nav">
+  <span class="nav-mark">EVENTRA</span>
+  <a class="back-work" href="index.html#work" aria-label="Back to Work">← Back to Work</a>
+</nav>
+
+<!-- ============ 00 HERO ============ -->
+<section class="hero">
+  <div class="hero-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="hero-word reveal-scale in">EVENTRA<span>.</span></div>
+  <div class="hero-tagline reveal-scale in">Discover. Plan. Book. Experience.</div>
+  <p class="hero-desc reveal-scale in">A mobile event platform designed to make discovering, planning and experiencing events feel more connected.</p>
+
+  <div class="hero-meta">
+    <div><div class="k">Role</div><div class="v">UI/UX Designer</div></div>
+    <div><div class="k">Platform</div><div class="v">Mobile App</div></div>
+    <div><div class="k">Tools</div><div class="v">Figma</div></div>
+  </div>
+
+  <div class="hero-phones">
+    <img
+      src="assets/eventra/mckup.jpg"
+      alt="Eventra app showing Home, Event Details and My Ticket"
+      loading="eager"
+    >
+  </div>
+
+  <div class="scroll-ind"><span>Scroll</span><div class="line"></div></div>
+</section>
+
+<!-- ============ 01 STARTING POINT ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">01 — The Starting Point</div>
+    <h2 class="lead">What are we doing this weekend?</h2>
+    <p style="margin-top:16px; font-size:15.5px;">A simple question. But finding the answer often means jumping between social media, search, conversations and ticketing platforms.</p>
+  </div>
+
+  <div class="chaos-wrap reveal" id="chaosWrap">
+    <div class="chaos-item">Instagram</div>
+    <div class="chaos-item">Search</div>
+    <div class="chaos-item">WhatsApp</div>
+    <div class="chaos-item">Ticketing</div>
+    <div class="chaos-item">Calendar</div>
+    <div class="eventra-pill" id="eventraPill">EVENTRA</div>
+    <div class="burst-particles" id="burstParticles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+<!-- ============ 02 THE IDEA ============ -->
+<section class="section" style="background:var(--slate-50); padding-top:72px; padding-bottom:72px;">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">02 — The Idea</div>
+    <h2 class="lead">Not just another place to buy tickets.</h2>
+    <p style="margin-top:16px; font-size:15.5px;">Eventra brings the important parts together — Discover, Explore, Plan, Book, Manage.</p>
+  </div>
+
+  <div class="orbit-wrap" id="orbitWrap">
+    <div class="orbit-center"></div>
+    <div class="orbit-node"><div class="dot"></div>Discover</div>
+    <div class="orbit-node"><div class="dot"></div>Explore</div>
+    <div class="orbit-node"><div class="dot"></div>Saved</div>
+    <div class="orbit-node"><div class="dot"></div>Calendar</div>
+    <div class="orbit-node"><div class="dot"></div>Tickets</div>
+    <div class="orbit-node"><div class="dot"></div>Profile</div>
+  </div>
+</section>
+
+<!-- ============ 03 LOOKING CLOSER ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">03 — Looking Closer</div>
+    <h2 class="lead">The problem wasn't just booking. It was everything around it.</h2>
+  </div>
+
+  <div class="insight-grid">
+    <div class="insight-card reveal"><span class="num">01</span><h3>I designed for discovery first.</h3><p>Before anyone can decide to attend something, they need to see it — so the experience starts with discovery, not a search bar.</p></div>
+    <div class="insight-card reveal"><span class="num">02</span><h3>I gave choice more context.</h3><p>An event page only earns a decision if it answers the key questions first — what, where, when, and how much.</p></div>
+    <div class="insight-card reveal"><span class="num">03</span><h3>I gave plans a place to live.</h3><p>Once something felt worth attending, it needed a home — so saving and revisiting became core, not an afterthought.</p></div>
+  </div>
+</section>
+
+<!-- ============ 04 RETHINKING THE JOURNEY ============ -->
+<section class="section journey-section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">04 — Rethinking the Journey</div>
+    <h2 class="lead">I stopped designing around the transaction. I designed around the experience.</h2>
+  </div>
+
+  <div class="journey-path">
+    <svg viewBox="0 0 900 60" width="100%" height="60" id="journeySvg">
+      <path class="journey-svg-line" id="journeyLine" d="M20,30 C150,30 150,30 260,30 C370,30 370,30 480,30 C590,30 590,30 700,30 C810,30 810,30 880,30" />
+    </svg>
+    <div class="journey-marker" id="journeyMarker">🎟️</div>
+    <div class="journey-stages">
+      <div class="journey-stage"><div class="stage-dot"></div><div class="stage-name">Discover</div></div>
+      <div class="journey-stage"><div class="stage-dot"></div><div class="stage-name">Explore</div></div>
+      <div class="journey-stage"><div class="stage-dot"></div><div class="stage-name">Decide</div></div>
+      <div class="journey-stage"><div class="stage-dot"></div><div class="stage-name">Plan</div></div>
+      <div class="journey-stage"><div class="stage-dot"></div><div class="stage-name">Book</div></div>
+      <div class="journey-stage"><div class="stage-dot"></div><div class="stage-name">Manage</div></div>
+    </div>
+    <div class="journey-sub">
+      <span>Saved</span><span>Calendar</span><span>Tickets</span><span>Notifications</span><span>Profile</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 THE EXPERIENCE ============ -->
+<section class="section-tight" style="padding-bottom:0;">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">05 — The Experience</div>
+    <h2 class="lead">The experience, step by step.</h2>
+  </div>
+</section>
+
+<!-- 05.1 DISCOVER -->
+<div class="chapter">
+  <div class="chapter-text reveal">
+    <div class="chapter-index">05.1 — Discover</div>
+    <h3>Start with something worth discovering.</h3>
+    <p>Home surfaces featured events and nearby content, so exploring doesn't require knowing exactly what you want.</p>
+    <div class="chapter-tags"><span>Home</span><span>Popular</span><span>Nearby</span><span>Categories</span></div>
+  </div>
+  <div class="chapter-visual reveal">
+    <figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/Home-event.png" alt="Discover screen — Eventra home" loading="lazy"></div></figure>
+  </div>
+</div>
+
+<!-- 05.2 EXPLORE -->
+<div class="chapter reverse">
+  <div class="chapter-text reveal">
+    <div class="chapter-index">05.2 — Explore</div>
+    <h3>When you know what you're looking for, get there faster.</h3>
+    <p>Search and categories sit in the open, not behind extra taps.</p>
+    <div class="chapter-tags"><span>Search</span><span>Categories</span><span>Filters</span><span>Results</span></div>
+  </div>
+  <div class="chapter-visual reveal">
+    <figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/explorefilter.png" alt="Explore screen — Eventra search" loading="lazy"></div></figure>
+  </div>
+</div>
+
+<!-- 05.3 DECIDE -->
+<div class="chapter">
+  <div class="chapter-text reveal">
+    <div class="chapter-index">05.3 — Decide</div>
+    <h3>Before people book, they decide.</h3>
+    <p>The event page brings the key details together without overwhelming the screen.</p>
+    <div class="chapter-tags"><span>Date</span><span>Location</span><span>Price</span><span>Organizer</span></div>
+  </div>
+  <div class="chapter-visual reveal">
+    <figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/eventpage.png" alt="Decide screen — Eventra event details" loading="lazy"></div></figure>
+  </div>
+</div>
+
+<!-- 05.4 PLAN -->
+<div class="chapter reverse">
+  <div class="chapter-text reveal">
+    <div class="chapter-index">05.4 — Plan</div>
+    <h3>Found something? Save it and plan around it.</h3>
+    <p>Saved plans give people a place to collect outings and revisit them later.</p>
+    <div class="chapter-tags"><span>Saved</span><span>Calendar</span><span>Notifications</span><span>Share</span></div>
+  </div>
+  <div class="chapter-visual reveal">
+    <figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/saved events.png" alt="Plan screen — Eventra saved events" loading="lazy"></div></figure>
+  </div>
+</div>
+
+<!-- 05.5 BOOK -->
+<div class="chapter">
+  <div class="chapter-text reveal">
+    <div class="chapter-index">05.5 — Book</div>
+    <h3>Once you're ready, booking gets out of the way.</h3>
+    <p>Ticket selection to confirmation, with no unnecessary noise.</p>
+    <div class="chapter-tags"><span>Ticket</span><span>Quantity</span><span>Checkout</span><span>Confirmation</span></div>
+  </div>
+  <div class="chapter-visual reveal">
+    <figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/checkout.png" alt="Book screen — Eventra checkout" loading="lazy"></div></figure>
+  </div>
+</div>
+
+<!-- 05.6 MANAGE -->
+<div class="chapter reverse">
+  <div class="chapter-text reveal">
+    <div class="chapter-index">05.6 — Manage</div>
+    <h3>The experience doesn't end after payment.</h3>
+    <p>Your ticket stays accessible and your event stays organised.</p>
+    <div class="chapter-tags"><span>QR Ticket</span><span>Calendar</span><span>Profile</span></div>
+  </div>
+  <div class="chapter-visual reveal">
+    <figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/calendar.png" alt="Manage screen — Eventra ticket" loading="lazy"></div></figure>
+  </div>
+</div>
+
+<!-- ============ 06 THE TWO SIDES OF EVENTRA ============ -->
+<section class="section" style="padding-top:65px; padding-bottom:65px;">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">06 — The Two Sides</div>
+    <h2 class="lead">Events have two sides.</h2>
+    <p style="margin-top:18px;">Someone has to discover the event. Someone has to create it.</p>
+  </div>
+
+  <div class="dual-flow reveal">
+    <div class="dual-badge">EVENTRA</div>
+    <div class="dual-cols">
+      <div class="dual-col">
+        <div class="dual-col-title">Attendee</div>
+        <div class="dual-step">
+          <span>Discover</span><span class="dual-step-arrow">↓</span>
+          <span>Explore</span><span class="dual-step-arrow">↓</span>
+          <span>Decide</span><span class="dual-step-arrow">↓</span>
+          <span>Plan</span><span class="dual-step-arrow">↓</span>
+          <span>Book</span><span class="dual-step-arrow">↓</span>
+          <span>Manage</span>
+        </div>
+      </div>
+      <div class="dual-col">
+        <div class="dual-col-title">Organizer</div>
+        <div class="dual-step">
+          <span>Create</span><span class="dual-step-arrow">↓</span>
+          <span>Add Details</span><span class="dual-step-arrow">↓</span>
+          <span>Set Tickets</span><span class="dual-step-arrow">↓</span>
+          <span>Publish</span><span class="dual-step-arrow">↓</span>
+          <span>Manage</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="dual-close">One platform, connecting the people who experience events with the people who create them.</p>
+</section>
+
+<!-- ============ 07 THE COMPLETE PRODUCT ============ -->
+
+<!-- 07.1 ATTENDEE SHOWCASE -->
+<section class="section showcase-section showcase-section--attendee" style="background:var(--slate-50);">
+  <div class="showcase-intro">
+    <div class="eyebrow" style="justify-content:center;">07 — The Complete Product</div>
+    <h2 class="lead">Explore the complete Eventra product, screen by screen.</h2>
+    <p>Every screen from both sides of the platform — the attendee experience and the organizer experience.</p>
+  </div>
+
+  <div class="showcase-sub-head">
+    <div class="showcase-sub-eyebrow">01 — Attendee Flow</div>
+    <h3 class="lead" style="font-size:clamp(28px,3.2vw,32px); font-weight:600;">From discovering an event to having your ticket ready.</h3>
+    <p>Nine screens, start to finish — discover, decide, book and manage, all in one connected flow.</p>
+  </div>
+
+  <div class="showcase-stagebar">
+    <span class="stage-chip">Discover</span><span class="stage-arrow">→</span>
+    <span class="stage-chip">Decide &amp; Book</span><span class="stage-arrow">→</span>
+    <span class="stage-chip">Experience &amp; Manage</span>
+  </div>
+
+  <div class="showcase-track-outer">
+    <div class="showcase-track reveal" data-showcase-track>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/splash.png" alt="Splash screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">01</span>Splash</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/login.png" alt="Login screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">02</span>Login</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/select location.png" alt="Select location screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">03</span>Select Location</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/Home-event.png" alt="Home screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">04</span>Home</div></div>
+
+      <div class="showcase-groupmark"><span>Decide &amp; Book</span></div>
+
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/eventpage.png" alt="Event details screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">05</span>Event Details</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/checkout.png" alt="Checkout screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">06</span>Checkout</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/booking confirmed.png" alt="Booking confirmed screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">07</span>Booking Confirmed</div></div>
+
+      <div class="showcase-groupmark"><span>Experience &amp; Manage</span></div>
+
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/ticket.png" alt="My ticket screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">08</span>My Ticket</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/calendar.png" alt="Calendar screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">09</span>Calendar</div></div>
+    </div>
+    <div class="showcase-progress"><div class="showcase-progress-fill" data-showcase-fill></div></div>
+  </div>
+</section>
+
+<!-- 07.2 ORGANIZER SHOWCASE -->
+<section class="section showcase-section showcase-section--organizer">
+  <div class="showcase-sub-head">
+    <div class="showcase-sub-eyebrow">02 — Organizer Flow</div>
+    <h3 class="lead" style="font-size:clamp(28px,3.2vw,32px); font-weight:600;">From an idea to a published, managed event.</h3>
+    <p>Seven screens covering how organizers create, prepare and publish an event on Eventra.</p>
+  </div>
+
+  <div class="showcase-stagebar">
+    <span class="stage-chip">Create</span><span class="stage-arrow">→</span>
+    <span class="stage-chip">Prepare</span><span class="stage-arrow">→</span>
+    <span class="stage-chip">Publish &amp; Manage</span>
+  </div>
+
+  <div class="showcase-track-outer">
+    <div class="showcase-track reveal" data-showcase-track>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/Event post.png" alt="Create event screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">01</span>Create Event</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/add details.png" alt="Event information screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">02</span>Event Information</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/tickets & contact.png" alt="Ticket and pricing screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">04</span>Ticket / Pricing</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/review.png" alt="Publish screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">06</span>Publish</div></div>
+      <div class="showcase-connector">→</div>
+      <div class="showcase-item"><figure class="shot-phone"><div class="notch"></div><div class="frame-inner"><img src="assets/eventra/manage event.png" alt="Manage event screen" loading="lazy"></div></figure><div class="showcase-item-label"><span class="showcase-item-num">07</span>Manage Event</div></div>
+    </div>
+    <div class="showcase-progress"><div class="showcase-progress-fill" data-showcase-fill></div></div>
+  </div>
+
+  <div class="showcase-close reveal">
+    <div class="showcase-close-title">One platform.<br>Two experiences.</div>
+    <p class="showcase-close-sub">For the people discovering events.<br>For the people creating them.</p>
+    <div class="showcase-connect">
+      <span>Attendee</span><span class="dot">↔</span><span class="brand">Eventra</span><span class="dot">↔</span><span>Organizer</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 THE SYSTEM ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">08 — The System</div>
+    <h2 class="lead">Consistency shouldn't be accidental.</h2>
+  </div>
+
+  <div class="system-board reveal">
+    <div class="sys-block">
+      <div class="sys-label">Typography</div>
+      <div class="sys-type-sample">Poppins</div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Color</div>
+      <div class="sys-colors">
+        <div class="sw" style="background:var(--green-600);"></div>
+        <div class="sw" style="background:var(--ink);"></div>
+        <div class="sw" style="background:var(--slate-500);"></div>
+        <div class="sw" style="background:var(--green-100);"></div>
+        <div class="sw" style="background:var(--slate-100);"></div>
+      </div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Components</div>
+      <div class="sys-components"><span>Buttons</span><span>Cards</span><span>Pills</span><span>Inputs</span><span>Navigation</span></div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Icons</div>
+      <div class="sys-icons-list">Search · Calendar · Ticket · Save · Profile · Notification</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 09 THE WHOLE JOURNEY ============ -->
+<section class="section recap">
+  <div class="eyebrow" style="justify-content:center;">09 — The Whole Journey</div>
+  <h2 class="lead">The whole journey.</h2>
+  <p class="recap-sub" style="margin-top:16px;">Different needs, one connected experience.</p>
+
+  <div class="recap-group">
+    <div class="recap-group-label">Attendee</div>
+    <div class="recap-flow">
+      <span class="node reveal">Discover</span><span class="arrow">→</span>
+      <span class="node reveal">Explore</span><span class="arrow">→</span>
+      <span class="node reveal">Decide</span><span class="arrow">→</span>
+      <span class="node reveal">Plan</span><span class="arrow">→</span>
+      <span class="node reveal">Book</span><span class="arrow">→</span>
+      <span class="node reveal">Manage</span>
+    </div>
+  </div>
+
+  <div class="recap-divider">↓</div>
+
+  <div class="recap-group">
+    <div class="recap-group-label">Organizer</div>
+    <div class="recap-flow">
+      <span class="node reveal">Create</span><span class="arrow">→</span>
+      <span class="node reveal">Publish</span><span class="arrow">→</span>
+      <span class="node reveal">Manage</span>
+    </div>
+  </div>
+
+  <p class="recap-line">Eventra connects the moments around an event — from creating it to experiencing it.</p>
+</section>
+
+<!-- ============ 10 EXPERIENCE IT ============ -->
+<section class="section section-experience">
+  <div class="proto reveal">
+    <div class="eyebrow" style="justify-content:center;">10 — Experience It</div>
+
+    <h2 class="lead">Don't just read about Eventra. Try it.</h2>
+
+    <p class="proto-caption">
+      Explore the interactive prototype and experience the journey yourself.
+    </p>
+
+    <a href="https://www.figma.com/proto/iBx4kkVCfUnNT0GpkA3fEf/Ravish-Shetty?node-id=20-73&p=f&viewport=-1654%2C3713%2C0.33&t=ZaIaJ42priw8kd5l-0&scaling=scale-down&content-scaling=fixed&starting-point-node-id=226%3A284&show-proto-sidebar=1"
+       class="btn-primary"
+       target="_blank">
+      View Prototype →
+    </a>
+  </div>
+</section>
+
+<!-- ============ 11 LOOKING BACK ============ -->
+<section class="section section-quote-final">
+  <div class="reflect reveal">
+    <div class="eyebrow" style="justify-content:center;">11 — Looking Back</div>
+    <p class="lead">I started with an event app. I ended up thinking about everything around the event.</p>
+    <p style="margin-top:22px; font-size:15px;">Designing Eventra made me look beyond the moment of booking. The experience starts much earlier — with discovery, continues through planning, and stays useful even after the ticket is booked.</p>
+    <div class="quote">"Good product design isn't always about adding more. Sometimes it's about making the whole journey feel connected."</div>
+    <p class="reflect-final">Eventra taught me to design the moments between the screens, not just the screens themselves.</p>
+  </div>
+</section>
+
+<!-- ============ 12 NEXT PROJECT ============ -->
+<a href="busflow.html" style="display:block;">
+<section class="next">
+  <div class="k">Next up</div>
+  <h2>Busflow. <span class="arrow">→</span></h2>
+  <div class="d">A smarter way to navigate everyday commutes.</div>
+</section>
+</a>
+
+<footer class="footer">
+  Eventra — A case study by Ravish Shetty · Designed &amp; built in Figma
+</footer>
+
+<script>
+const progress = document.getElementById('navProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  progress.style.width = scrolled + '%';
+});
+
+const revealEls = document.querySelectorAll('.reveal, .reveal-scale');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('in'); } });
+}, {threshold:0.18});
+revealEls.forEach(el => revealObserver.observe(el));
+
+const chaosWrap = document.getElementById('chaosWrap');
+const eventraPill = document.getElementById('eventraPill');
+const burstParticles = document.getElementById('burstParticles');
+const chaosObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      chaosWrap.querySelectorAll('.chaos-item').forEach((el,i)=>{ setTimeout(()=> el.classList.add('in'), i*150); });
+      setTimeout(()=>{
+        chaosWrap.classList.add('settled');
+        eventraPill.classList.add('in');
+        setTimeout(()=>{ burstParticles.classList.add('burst'); }, 350);
+      }, 1500);
+      chaosObserver.disconnect();
+    }
+  });
+}, {threshold:0.4});
+chaosObserver.observe(chaosWrap);
+
+const orbitWrap = document.getElementById('orbitWrap');
+const orbitObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      orbitWrap.querySelectorAll('.orbit-node').forEach((el,i)=>{ setTimeout(()=> el.classList.add('in'), i*120); });
+      orbitObserver.disconnect();
+    }
+  });
+},{threshold:0.35});
+orbitObserver.observe(orbitWrap);
+
+const journeyLine = document.getElementById('journeyLine');
+const journeyStages = document.querySelectorAll('.journey-stage');
+const journeyMarker = document.getElementById('journeyMarker');
+const journeyObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      journeyLine.classList.add('in');
+      journeyMarker.classList.add('in');
+      journeyStages.forEach((el,i)=>{
+        setTimeout(()=>{
+          el.classList.add('in');
+          const pct = (i/(journeyStages.length-1))*95 + 2.5;
+          journeyMarker.style.left = pct + '%';
+        }, 200 + i*180);
+      });
+      setTimeout(()=>{ journeyMarker.style.opacity = '0'; }, 200 + journeyStages.length*180 + 900);
+      journeyObserver.disconnect();
+    }
+  });
+},{threshold:0.3});
+journeyObserver.observe(document.querySelector('.journey-path'));
+
+const climaxItems = document.querySelectorAll('.climax-item');
+const climaxObserver = new IntersectionObserver((entries)=>{
+  entries.forEach((entry)=>{
+    if(entry.isIntersecting){
+      const items = Array.from(climaxItems);
+      const i = items.indexOf(entry.target);
+      setTimeout(()=> entry.target.classList.add('in'), i*100);
+    }
+  });
+},{threshold:0.2});
+climaxItems.forEach(el=>climaxObserver.observe(el));
+
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  const phones = document.querySelector('.hero-phones');
+  if(phones && y < window.innerHeight){
+    phones.style.transform = `translateY(${y*0.12}px)`;
+  }
+});
+</script>
+
+<script>
+// Section 07 — product showcase: draggable horizontal scroll + progress indicator
+(function(){
+  var tracks = document.querySelectorAll('[data-showcase-track]');
+  tracks.forEach(function(track){
+    var wrap = track.closest('.showcase-track-outer');
+    var fill = wrap ? wrap.querySelector('[data-showcase-fill]') : null;
+
+    function updateProgress(){
+      if(!fill) return;
+      var bar = fill.parentElement;
+      var barWidth = bar.clientWidth;
+      var ratio = track.clientWidth / track.scrollWidth;
+      var thumbWidth = Math.max(60, barWidth * ratio);
+      var maxScroll = track.scrollWidth - track.clientWidth;
+      var maxLeft = barWidth - thumbWidth;
+      var left = maxScroll > 0 ? (track.scrollLeft / maxScroll) * maxLeft : 0;
+      fill.style.width = thumbWidth + 'px';
+      fill.style.transform = 'translateX(' + left + 'px)';
+    }
+    track.addEventListener('scroll', updateProgress);
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+
+    var isDown = false, startX = 0, startScroll = 0;
+    track.addEventListener('mousedown', function(e){
+      isDown = true;
+      track.classList.add('dragging');
+      startX = e.pageX;
+      startScroll = track.scrollLeft;
+    });
+    window.addEventListener('mouseup', function(){
+      isDown = false;
+      track.classList.remove('dragging');
+    });
+    track.addEventListener('mouseleave', function(){
+      isDown = false;
+      track.classList.remove('dragging');
+    });
+    track.addEventListener('mousemove', function(e){
+      if(!isDown) return;
+      e.preventDefault();
+      track.scrollLeft = startScroll - (e.pageX - startX);
+    });
+  });
+})();
+</script>
+
+<script>
+// Section 11 — plays the Eventra prototype video only while it is in view
+(function(){
+  var eventraProtoVideo = document.getElementById('eventra-proto-video');
+  if (!eventraProtoVideo) return;
+
+  var eventraProtoObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        var playPromise = eventraProtoVideo.play();
+        if (playPromise !== undefined) playPromise.catch(function(){});
+      } else {
+        eventraProtoVideo.pause();
+      }
+    });
+  }, { threshold: 0.4 });
+
+  eventraProtoObserver.observe(eventraProtoVideo);
+})();
+</script>
+</body>
+</html>

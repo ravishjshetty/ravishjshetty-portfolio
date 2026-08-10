@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BusFlow — Know the bus. Know the time. Plan your day.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ===================== TOKENS ===================== */
+:root{
+  --brown:#8B4A2F;
+  --brown-deep:#542A1C;
+  --cream:#F8F5F0;
+  --white:#FFFDFC;
+  --beige:#EEE8E0;
+  --ink:#181614;
+  --text-2:#706B66;
+  --text-3:#A09A93;
+  --success:#4F7A5A;
+  --warning:#B47732;
+  --error:#A84A42;
+  --border:#E6DFD5;
+
+  --font:'Inter', sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  background:var(--white);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;border:none;background:none;cursor:pointer;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+}
+
+::selection{background:var(--beige);color:var(--brown-deep);}
+
+/* ===================== LAYOUT HELPERS ===================== */
+.section{ position:relative; padding:100px 8vw; }
+.section-tight{padding:76px 8vw;}
+.section-narrow{max-width:700px;margin:0 auto;}
+.eyebrow{
+  font-weight:600; font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--brown); display:flex; align-items:center; gap:10px; margin-bottom:22px;
+}
+.eyebrow::before{content:''; width:22px;height:1px; background:var(--brown); display:inline-block;}
+h1,h2,h3{font-family:var(--font); line-height:1.12; letter-spacing:-0.02em; font-weight:600;}
+p{line-height:1.6; color:var(--text-2); font-weight:400;}
+.lead{font-size:clamp(24px,3vw,38px); color:var(--ink); font-weight:600; line-height:1.22; letter-spacing:-0.02em;}
+.body-lg{font-size:17px; line-height:1.65;}
+
+/* reveal on scroll */
+.reveal{opacity:0; transform:translateY(24px); transition:opacity .6s var(--ease), transform .6s var(--ease);}
+.reveal.in{opacity:1; transform:translateY(0);}
+.reveal-scale{opacity:0; transform:scale(.96); transition:opacity .65s var(--ease), transform .65s var(--ease);}
+.reveal-scale.in{opacity:1; transform:scale(1);}
+
+/* ===================== NAV ===================== */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 8vw;
+  background:rgba(255,253,252,0.78);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-mark{font-weight:700; font-size:15px; letter-spacing:-0.01em; color:var(--ink); display:flex; align-items:center; gap:8px;}
+.nav-mark .dot{width:7px;height:7px;border-radius:50%;background:var(--brown);}
+.back-work{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--border);border-radius:999px;font-weight:600;font-size:12px;color:var(--text-2);letter-spacing:.01em;background:rgba(255,253,252,.55);transition:transform .25s var(--ease),background .25s,color .25s,border-color .25s;}
+.back-work:hover{transform:translateX(-3px);color:var(--brown-deep);border-color:var(--brown);background:var(--white);}
+.nav-progress{ position:fixed; top:0; left:0; height:2px; background:var(--brown); z-index:101; width:0%; }
+
+/* ===================== SCREEN FRAME (real screenshots) ===================== */
+.screen-frame{
+  width:280px;
+  aspect-ratio:1659/3036;
+  border-radius:30px;
+  overflow:hidden;
+  background:var(--cream);
+  box-shadow:0 40px 80px -32px rgba(84,42,28,0.32);
+  position:relative;
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.screen-frame img{width:100%;height:100%;object-fit:contain;}
+.screen-caption{margin-top:16px; font-size:12.5px; color:var(--text-2); text-align:center; font-weight:500;}
+figure{margin:0;}
+
+/* ===================== ROUTE LINE / BUS SIGNATURE ===================== */
+.route-track{position:relative;}
+.route-line-svg{width:100%; display:block; overflow:visible;}
+.route-path{
+  stroke:var(--brown); stroke-width:2; fill:none; stroke-linecap:round;
+  stroke-dasharray:2000; stroke-dashoffset:2000; transition:stroke-dashoffset 1.05s var(--ease);
+}
+.route-path.dashed{stroke-dasharray:6 10; stroke-dashoffset:0; opacity:.55;}
+.route-path.in{stroke-dashoffset:0;}
+.route-dot{fill:var(--brown);}
+.route-pin{fill:var(--error);}
+
+.bus-token{
+  position:absolute; top:50%; width:26px; height:26px; margin-top:-13px; margin-left:-13px;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+  background:var(--brown); color:#fff; border-radius:50%;
+  box-shadow:0 8px 18px -6px rgba(139,74,47,0.55);
+  opacity:0; left:0%;
+  transition:left 1.5s var(--ease), opacity .4s var(--ease);
+}
+.bus-token.in{opacity:1;}
+
+.hero-route-wrap{position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:160%; max-width:640px; height:60px; z-index:1; pointer-events:none;}
+.hero-route-wrap .hero-route-svg{position:static; width:100%; transform:none;}
+
+/* Bus must render ABOVE the mockup image (which has an opaque background),
+   so it lives in its own stacking layer, not inside .hero-route-wrap. */
+.hero-bus-wrap{position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:160%; max-width:640px; height:60px; z-index:3; pointer-events:none;}
+.hero-bus-wrap .bus-token{top:50%;}
+
+.gps-pin{
+  position:relative;
+  width:16px !important;
+  height:16px;
+  flex:0 0 16px;
+  padding:0 !important;
+}.gps-pin::before{
+  content:''; position:absolute; inset:0; border-radius:50%; background:var(--brown); opacity:.9;
+}
+.gps-pin::after{
+  content:''; position:absolute; inset:-8px; border-radius:50%; border:2px solid var(--brown); opacity:0;
+}
+.gps-pin.pulse-twice::after{animation:gpsPulse 950ms var(--ease) 2;}
+.gps-pin.settled::after{animation:none; opacity:0; transition:opacity .4s var(--ease);}
+.gps-pin.settled::before{transition:transform .4s var(--ease); transform:scale(1);}
+@keyframes gpsPulse{
+  0%{opacity:.6; transform:scale(.4);}
+  70%{opacity:0; transform:scale(1.7);}
+  100%{opacity:0; transform:scale(1.7);}
+}
+
+/* ===================== 00 HERO ===================== */
+
+.hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:
+    radial-gradient(
+      ellipse 60% 50% at 50% 0%,
+      rgba(139,74,47,0.08) 0%,
+      transparent 60%
+    ),
+    var(--white);
+  padding:110px 8vw 70px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* BUSFLOW title */
+.hero-word{
+  font-weight:800;
+  font-size:clamp(48px, 11vw, 130px);
+  letter-spacing:-0.04em;
+  color:var(--ink);
+  position:relative;
+  z-index:2;
+}
+
+.hero-word span{
+  color:var(--brown);
+}
+
+/* Tagline */
+.hero-tagline{
+  margin-top:16px;
+  font-size:clamp(15px, 2vw, 20px);
+  font-weight:500;
+  color:var(--brown);
+  z-index:2;
+}
+
+/* Description */
+.hero-desc{
+  margin-top:20px;
+  max-width:520px;
+  font-size:16px;
+  z-index:2;
+}
+
+/* Project information */
+.hero-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:44px;
+  justify-content:center;
+  margin-top:50px;
+  z-index:2;
+}
+
+.hero-meta div{
+  text-align:left;
+}
+
+.hero-meta .k{
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.hero-meta .v{
+  font-size:15px;
+  font-weight:600;
+  color:var(--ink);
+}
+
+
+/* ===================== BUSFLOW HERO VISUAL ===================== */
+
+.hero-stage{
+  width:min(100%, 300px);
+  margin:64px auto 0;
+  position:relative;
+  z-index:2;
+}
+.hero-phone-wrap{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:center;
+  margin-top:44px; /* clears the -30..+30 route/bus arc so it never overlaps the opaque jpg */
+}
+
+ .hero-phone-wrap .screen-frame{
+  width:280px;
+  max-width:280px;
+  aspect-ratio:1659 / 3036;
+  border-radius:30px;
+  overflow:hidden;
+  background:var(--cream);
+  box-shadow:0 40px 80px -32px rgba(84,42,28,0.32);
+}
+
+.hero-phone-wrap .screen-frame img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+  animation:heroFloat 6s ease-in-out infinite;
+}
+
+
+/* ===================== ROAD MOTION ===================== */
+
+.hero-route-svg{
+  position:absolute;
+  top:-125px;
+  left:50%;
+  transform:translateX(-50%);
+  width:70%;
+  max-width:800px;
+  z-index:1;
+  pointer-events:none;
+  opacity:.8;
+}
+
+/* subtle floating movement */
+@keyframes heroFloat{
+  0%,100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-8px);
+  }
+}
+
+
+/* ===================== MOBILE ===================== */
+
+@media (max-width:700px){
+
+  .hero{
+    padding:90px 5vw 50px;
+  }
+
+  .hero-meta{
+    gap:24px;
+    margin-top:40px;
+  }
+
+  .hero-stage{
+    width:100%;
+    margin:40px auto 0;
+    padding:0 4vw;
+  }
+
+  .hero-phone-wrap .screen-frame{
+    width:100%;
+    max-width:230px;
+    aspect-ratio:1659 / 3036;
+  }
+
+  .hero-phone-wrap .screen-frame img{
+    width:100%;
+    height:auto;
+  }
+
+  .hero-route-svg{
+    width:100%;
+  }
+}
+
+.scroll-ind{
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  color:var(--text-3); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; z-index:2;
+}
+.scroll-ind .line{width:1px; height:30px; background:var(--border); position:relative; overflow:hidden;}
+.scroll-ind .line::after{
+  content:''; position:absolute; top:-100%; left:0; width:100%; height:100%;
+  background:var(--brown); animation:scrollDrop 1.8s ease-in-out infinite;
+}
+@keyframes scrollDrop{0%{top:-100%;} 60%{top:100%;} 100%{top:100%;}}
+
+/* ===================== 01 THE CONTEXT ===================== */
+.context-questions{ display:flex; flex-direction:column; gap:0; max-width:420px; margin:52px auto 0; }
+.context-q{
+  display:flex; align-items:center; gap:16px; padding:18px 0; border-bottom:1px solid var(--border);
+  opacity:0; transform:translateX(-14px); transition:all .55s var(--ease);
+}
+.context-q.in{opacity:1; transform:translateX(0);}
+.context-q .qmark{font-weight:700; color:var(--brown); font-size:14px; width:20px;}
+.context-q .qtext{font-weight:500; font-size:16px; color:var(--ink);}
+.context-close{margin:44px auto 0; max-width:520px; text-align:center;}
+
+/* ===================== 01 WHY BUSFLOW (origin) ===================== */
+.origin-statement{ font-weight:600; font-size:clamp(20px,2.6vw,28px); color:var(--brown-deep); margin-top:14px; line-height:1.35; }
+.origin-body{ max-width:600px; margin:40px auto 0; display:flex; flex-direction:column; gap:16px; }
+.origin-locale{ max-width:600px; margin:48px auto 0; text-align:center; padding-top:36px; border-top:1px solid var(--border); }
+.origin-locale-k{ font-weight:700; font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--brown); margin-bottom:12px; }
+.origin-timeline{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:0; margin:56px auto 0; }
+.ot-word{ font-weight:700; font-size:14px; letter-spacing:0.06em; padding:12px 22px; border:1px solid var(--border); border-radius:100px; color:var(--text-2); opacity:.4; transition:all .5s var(--ease); position:relative; }
+.ot-word.on{ opacity:1; color:var(--ink); border-color:var(--brown); }
+.ot-word.ot-go{ display:flex; align-items:center; gap:8px; }
+.ot-arrow{ color:var(--text-3); margin:0 10px; font-size:15px; }
+.ot-bus{ font-size:13px; opacity:0; transform:translateX(-6px); transition:all .6s var(--ease); }
+.ot-bus.go{ opacity:1; transform:translateX(10px); }
+
+/* ===================== 02 THE PROBLEM ===================== */
+.problem-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px; margin-top:48px; max-width:820px; margin-left:auto; margin-right:auto; }
+.problem-timer{ display:flex; justify-content:center; align-items:baseline; gap:12px; margin:52px auto 0; }
+.pt-label{ font-weight:600; font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); }
+.pt-clock{ font-weight:700; font-size:22px; color:var(--brown-deep); font-variant-numeric:tabular-nums; }
+
+/* ===================== 02 THE CHALLENGE ===================== */
+.challenge-rail{ display:flex; justify-content:center; flex-wrap:wrap; gap:14px; margin-top:54px; }
+.challenge-step{
+  display:flex; flex-direction:column; align-items:center; gap:12px; width:150px; padding:26px 14px;
+  border:1px solid var(--border); border-radius:20px; background:var(--white);
+  opacity:.45; transform:translateY(8px); transition:all .6s var(--ease);
+}
+.challenge-step.on{opacity:1; transform:translateY(0); border-color:var(--brown); box-shadow:0 18px 40px -24px rgba(139,74,47,0.35);}
+.challenge-step .step-num{font-weight:700; font-size:12px; color:var(--brown); letter-spacing:0.08em;}
+.challenge-step .step-name{font-weight:700; font-size:14px; color:var(--ink); letter-spacing:0.02em;}
+.challenge-step .step-desc{font-size:12.5px; color:var(--text-2); text-align:center; line-height:1.4;}
+.challenge-arrow{align-self:center; color:var(--text-3); font-size:15px;}
+
+.edge-cases{ margin:56px auto 0; max-width:640px; display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
+.edge-case{
+  font-size:13px; font-weight:500; color:var(--brown-deep); background:var(--beige);
+  border:1px solid var(--border); padding:10px 18px; border-radius:100px;
+}
+
+/* ===================== 03 THE GOAL ===================== */
+.goal-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:56px; }
+.goal-card{ padding:34px 26px; border:1px solid var(--border); border-radius:20px; background:var(--cream); }
+.goal-card .num{ font-weight:700; font-size:13px; color:var(--brown); letter-spacing:0.06em; margin-bottom:18px; display:block; }
+.goal-card h3{font-size:18px; margin-bottom:10px; font-weight:600;}
+.goal-card p{font-size:14px;}
+
+/* ===================== 04 THE EXPERIENCE ===================== */
+.exp-decision{ text-align:center; margin:56px auto 0; max-width:560px; }
+.exp-decision .quote{ font-weight:600; font-size:clamp(19px,2.4vw,24px); color:var(--brown-deep); line-height:1.5; }
+
+.dual-flow{ display:flex; flex-direction:column; align-items:center; gap:22px; margin-top:54px; }
+.dual-badge{ font-weight:700; font-size:12.5px; letter-spacing:0.12em; text-transform:uppercase; color:#fff; background:var(--ink); padding:10px 24px; border-radius:100px; }
+.dual-cols{ display:grid; grid-template-columns:1fr 1fr; gap:26px; width:100%; max-width:760px; }
+.dual-col{ border:1px solid var(--border); border-radius:22px; padding:30px 24px; background:var(--white); }
+.dual-col-title{ font-weight:700; font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--brown); margin-bottom:8px; text-align:center; }
+.dual-col-sub{font-size:12.5px; color:var(--text-2); text-align:center; margin-bottom:20px;}
+.dual-step{ display:flex; flex-direction:column; align-items:center; }
+.dual-step > span{ font-weight:600; font-size:14px; padding:11px 0; width:100%; text-align:center; color:var(--ink); }
+.dual-step .dual-step-arrow{ color:var(--text-3); font-size:13px; font-weight:400; padding:0; }
+.dual-step span.gps-label{ display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+
+.exp-screens{ display:flex; justify-content:center; gap:28px; margin-top:60px; flex-wrap:wrap; }
+.exp-screens .screen-frame{width:190px;}
+
+/* ===================== 05 THE CORE FLOW ===================== */
+.coreflow-path{ max-width:900px; margin:52px auto 0; position:relative; }
+.coreflow-stages{ display:flex; justify-content:space-between; margin-top:-30px; flex-wrap:wrap; gap:20px 0; }
+.coreflow-stage{ flex:1; min-width:110px; text-align:center; opacity:0; transform:translateY(14px); transition:all .55s var(--ease); }
+.coreflow-stage.in{opacity:1; transform:translateY(0);}
+.coreflow-stage .stage-dot{ width:14px; height:14px; border-radius:50%; background:var(--white); border:3px solid var(--brown); margin:0 auto 14px; }
+.coreflow-stage .stage-name{font-weight:700; font-size:13.5px; letter-spacing:0.02em;}
+.coreflow-stage .stage-desc{font-size:12px; color:var(--text-2); margin-top:6px; max-width:150px; margin-left:auto; margin-right:auto; line-height:1.4;}
+
+/* ===================== 06 THE SCREENS ===================== */
+.showcase-section{ position:relative; background:var(--cream); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.showcase-intro{ text-align:center; max-width:640px; margin:0 auto 60px; }
+.showcase-intro .lead{ margin-top:16px; }
+.showcase-intro p{ margin-top:16px; }
+
+.showcase-track-outer{ position:relative; }
+.showcase-track{
+  display:flex; align-items:flex-start; gap:34px;
+  overflow-x:auto; scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
+  padding:14px 8vw 30px; margin:0 -8vw;
+  scrollbar-width:none; cursor:grab;
+}
+.showcase-track::-webkit-scrollbar{ display:none; }
+.showcase-track.dragging{ cursor:grabbing; scroll-behavior:auto; }
+
+.showcase-item{ flex-shrink:0; text-align:center; transition:transform .3s var(--ease); position:relative; z-index:1; }
+.showcase-item .screen-frame{width:280px;}
+.showcase-item:hover{ transform:translateY(-6px) scale(1.04); z-index:5; }
+.showcase-item:hover .screen-frame{ box-shadow:0 50px 100px -30px rgba(84,42,28,0.42); }
+.showcase-item-label{ margin-top:18px; font-size:13px; font-weight:600; color:var(--text-2); display:flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap; }
+.showcase-item-num{ font-size:10.5px; font-weight:700; color:var(--brown); background:var(--beige); border-radius:100px; padding:3px 8px; }
+.showcase-item-cap{margin-top:6px; font-size:12px; color:var(--text-3); max-width:220px; line-height:1.4;}
+
+.showcase-progress{ position:relative; height:3px; background:var(--beige); border-radius:10px; margin-top:6px; overflow:hidden; max-width:900px; margin-left:auto; margin-right:auto; }
+.showcase-progress-fill{ position:absolute; left:0; top:0; height:100%; background:var(--brown); border-radius:10px; }
+
+/* ===================== 07 THE COMPLETE JOURNEY ===================== */
+.journey-section{background:var(--white);}
+.journey-map{ max-width:920px; margin:54px auto 0; }
+.journey-primary{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:0; position:relative; }
+.journey-node{
+  display:flex; flex-direction:column; align-items:center; gap:10px; width:120px;
+  opacity:0; transform:translateY(14px); transition:all .55s var(--ease);
+}
+.journey-node.in{opacity:1; transform:translateY(0);}
+.journey-node .jn-dot{width:13px;height:13px;border-radius:50%;background:var(--white);border:3px solid var(--brown);}
+.journey-node .jn-name{font-weight:700; font-size:12.5px; text-align:center; letter-spacing:0.02em;}
+.journey-connector{ width:40px; height:2px; background:var(--border); position:relative; overflow:hidden; flex-shrink:0; align-self:flex-start; margin-top:5px; }
+.journey-connector .fill{position:absolute; inset:0; background:var(--brown); transform:scaleX(0); transform-origin:left; transition:transform .6s var(--ease);}
+.journey-connector.in .fill{transform:scaleX(1);}
+
+.journey-branch-wrap{ margin-top:60px; display:flex; justify-content:center; }
+.journey-branch-in{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+.journey-branch-arrow{color:var(--text-3); font-size:20px; opacity:0; transition:opacity .5s var(--ease);}
+.journey-branch-arrow.in{opacity:1;}
+.journey-branch-label{font-size:12px; color:var(--text-2); font-weight:600; letter-spacing:0.04em; text-transform:uppercase;}
+
+.journey-outcomes{ display:grid; grid-template-columns:1fr 1fr; gap:28px; max-width:820px; margin:22px auto 0; }
+.outcome-card{
+  border:1px solid var(--border); border-radius:22px; padding:28px 24px; background:var(--cream);
+  opacity:0; transform:translateY(16px); transition:all .6s var(--ease);
+}
+.outcome-card.in{opacity:1; transform:translateY(0);}
+.outcome-card.positive{border-color:rgba(79,122,90,0.35); background:rgba(79,122,90,0.06);}
+.outcome-card.alt{border-color:rgba(180,119,50,0.35); background:rgba(180,119,50,0.06);}
+.outcome-title{ font-weight:700; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:16px; display:flex; align-items:center; gap:8px;}
+.outcome-title.positive{color:var(--success);}
+.outcome-title.alt{color:var(--warning);}
+.outcome-flow{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:var(--ink);}
+.outcome-flow .arrow{color:var(--text-3); font-weight:400; font-size:13px;}
+.eta-chip{ display:inline-block; margin-left:6px; padding:3px 10px; border-radius:100px; background:var(--beige); color:var(--brown-deep); font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; opacity:1; transition:opacity .3s var(--ease); }
+.eta-chip.swap{opacity:0;}
+
+.journey-close{ text-align:center; margin-top:60px; }
+.journey-close .lead{font-size:clamp(22px,2.8vw,30px);}
+
+/* ===================== 08 THE SYSTEM ===================== */
+.system-board{ margin-top:44px; border:1px solid var(--border); border-radius:24px; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; }
+.sys-block{padding:40px; border-right:1px solid var(--border); border-bottom:1px solid var(--border);}
+.sys-block:nth-child(2n){border-right:none;}
+.sys-label{font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3); font-weight:600; margin-bottom:16px;}
+.sys-type-sample{font-size:32px; font-weight:700; color:var(--ink);}
+.sys-type-scale{margin-top:14px; display:flex; flex-direction:column; gap:6px;}
+.sys-type-scale span{font-size:12px; color:var(--text-2);}
+.sys-colors{display:flex; gap:10px; flex-wrap:wrap;}
+.sys-colors .sw{width:44px; height:44px; border-radius:12px; border:1px solid var(--border); position:relative;}
+.sys-components{display:flex; flex-wrap:wrap; gap:10px;}
+.sys-components span{font-size:12px; padding:8px 16px; border-radius:100px; border:1px solid var(--border); color:var(--text-2);}
+.sys-demo-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.sys-btn{padding:11px 22px; border-radius:100px; background:var(--brown); color:#fff; font-weight:600; font-size:13px;}
+.sys-btn.ghost{background:var(--white); color:var(--ink); border:1px solid var(--border);}
+.sys-pill{padding:8px 16px; border-radius:100px; background:var(--beige); color:var(--brown-deep); font-weight:600; font-size:12px;}
+.sys-status{padding:7px 14px; border-radius:100px; font-size:11.5px; font-weight:700;}
+.sys-status.success{background:rgba(79,122,90,0.12); color:var(--success);}
+.sys-status.warning{background:rgba(180,119,50,0.12); color:var(--warning);}
+.sys-status.error{background:rgba(168,74,66,0.12); color:var(--error);}
+.sys-icons-list{font-size:13px; color:var(--text-2); letter-spacing:0.02em; line-height:1.9;}
+
+/* ===================== 09 THE JOURNEY (recap) ===================== */
+.recap{text-align:center;}
+.recap-track{
+  position:relative;
+  max-width:860px;
+  margin:40px auto 8px;
+}
+.recap-route-svg{ position:absolute; top:50%; left:0; width:100%; height:2px; transform:translateY(-1px); z-index:0; opacity:.4; }
+.recap-track .bus-token{ top:50%; z-index:2; }
+.recap-flow{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:nowrap;
+  margin:0;
+  gap:0;
+}
+
+.recap-flow .node{
+  flex-shrink:0;
+  white-space:nowrap;
+}
+.recap-flow .node{ font-weight:600; font-size:14px; padding:13px 24px; border:1px solid var(--border); background:var(--white); border-radius:100px; opacity:0; transform:translateY(10px); transition:all .5s var(--ease);}
+.recap-flow .node.in{opacity:1; transform:translateY(0);}
+.recap-flow .arrow{
+  color:var(--text-3);
+  margin:0 8px;
+  font-size:16px;
+}
+.recap-line{font-size:clamp(18px,2.1vw,23px); color:var(--ink); font-weight:500; max-width:600px; margin:26px auto 0; line-height:1.5;}
+
+/* ===================== 10 EXPERIENCE IT ===================== */
+.section-experience{
+  height:calc(100vh - 72px);
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 8vw;
+  overflow:hidden;
+}
+.proto{
+  width:100%;
+  height:100%;
+  max-height:calc(100vh - 92px);
+  background:var(--beige);
+  border-radius:28px;
+  margin:0;
+  padding:20px 5vw;
+  text-align:center;
+  border:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.proto .eyebrow{margin-bottom:6px; justify-content:center;}
+.proto .lead{font-size:clamp(22px,2.6vw,34px); line-height:1.15;}
+.proto-frame{
+  margin:12px auto 0;
+  width:180px;
+  max-width:180px;
+  aspect-ratio:1659/3036;
+  border-radius:20px;
+  overflow:hidden;
+  background:var(--white);
+  border:1px dashed var(--text-3);
+  box-shadow:0 22px 50px -25px rgba(84,42,28,0.22);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  flex-shrink:0;
+}
+.proto-frame img{width:100%;height:100%;object-fit:contain;}
+.proto-frame video{width:100%;height:100%;object-fit:contain;display:block;}
+.proto-frame .proto-placeholder{
+  display:flex; flex-direction:column; align-items:center; gap:12px; padding:40px 16px; color:var(--text-2);
+}
+.proto-play{
+  width:48px; height:48px; border-radius:50%; background:var(--brown);
+  display:flex; align-items:center; justify-content:center;
+}
+.proto-play::after{
+  content:''; width:0; height:0;
+  border-top:8px solid transparent; border-bottom:8px solid transparent; border-left:12px solid #fff;
+  margin-left:3px;
+}
+.proto-caption{ margin-top:8px; font-size:11.5px; line-height:1.3; color:var(--text-2); max-width:280px; }
+.btn-primary{
+  display:inline-flex; align-items:center; gap:8px; margin-top:10px; padding:12px 26px; border-radius:100px;
+  background:var(--ink); color:#fff; font-weight:600; font-size:12.5px; transition:transform .3s var(--ease), background .3s;
+}
+.btn-primary:hover{background:var(--brown-deep); transform:translateY(-3px);}
+
+@media (max-width:700px){
+  .section-experience{height:calc(100vh - 64px); padding:8px 4vw;}
+  .proto{max-height:calc(100vh - 80px); padding:16px 4vw; border-radius:22px;}
+  .proto-frame{width:150px; max-width:150px;}
+  .proto .lead{font-size:22px;}
+}
+
+/* ===================== 11 WHAT I LEARNED ===================== */
+.learn-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px; margin-top:56px; }
+.learn-card{padding:32px 26px; border:1px solid var(--border); border-radius:20px; background:var(--cream);}
+.learn-card .num{font-weight:700; font-size:12.5px; color:var(--brown); letter-spacing:0.06em; margin-bottom:16px; display:block;}
+.learn-card h3{font-size:16px; margin-bottom:10px; font-weight:600; letter-spacing:-0.01em;}
+.learn-card p{font-size:13.5px;}
+
+.learn-close{ text-align:center; margin-top:64px; }
+.learn-flow{ display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:0; margin-top:20px; }
+.learn-flow .node{ font-weight:700; font-size:14px; padding:14px 26px; border-radius:100px; background:var(--ink); color:#fff; opacity:0; transform:scale(.85); transition:all .5s var(--ease);}
+.learn-flow .node.in{opacity:1; transform:scale(1);}
+.learn-flow .arrow{color:var(--text-3); margin:0 10px; font-size:16px;}
+
+/* ===================== 12 NEXT PROJECT ===================== */
+.next{ background:var(--ink); color:#fff; text-align:center; padding:150px 8vw 90px; }
+.next .k{color:var(--text-3); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:18px;}
+.next h2{color:#fff; font-size:clamp(32px,6vw,68px); font-weight:700;}
+.next h2 .arrow{color:var(--brown); display:inline-block; transition:transform .3s;}
+.next a:hover h2 .arrow{transform:translateX(10px);}
+.next .d{color:var(--text-3); margin-top:16px; font-size:14.5px;}
+.footer{ background:var(--ink); color:var(--text-3); text-align:center; padding:36px 8vw 56px; font-size:12.5px; border-top:1px solid rgba(255,255,255,0.08); }
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width:900px){
+  .goal-grid, .learn-grid, .problem-grid{grid-template-columns:1fr; gap:16px;}
+  .dual-cols{grid-template-columns:1fr;}
+  .system-board{grid-template-columns:1fr;}
+  .sys-block{border-right:none !important;}
+  .journey-outcomes{grid-template-columns:1fr;}
+  .journey-primary{flex-direction:column; gap:18px;}
+  .journey-connector{width:2px; height:34px; align-self:center; margin-top:0;}
+  .exp-screens .screen-frame{width:160px;}
+  .showcase-item .screen-frame{width:230px;}
+}
+@media (max-width:560px){
+  .section{padding:80px 6vw;}
+  .screen-frame{width:220px;}
+  .hero-phone-wrap .screen-frame{max-width:230px;}
+  .challenge-step{width:130px; padding:20px 12px;}
+  .showcase-track{gap:24px;}
+}
+</style>
+</head>
+<body>
+
+<div class="nav-progress" id="navProgress"></div>
+<nav class="nav">
+  <span class="nav-mark"><span class="dot"></span>BUSFLOW</span>
+  <a class="back-work" href="index.html#work" aria-label="Back to Work">← Back to Work</a>
+</nav>
+
+<!-- ============ 00 HERO ============ -->
+<section class="hero">
+  <div class="hero-word reveal-scale in">BUSFLOW<span>.</span></div>
+  <div class="hero-tagline reveal-scale in">"Know the bus. Know the time. Plan your day."</div>
+  <p class="hero-desc reveal-scale in">A mobile transit experience designed to make everyday bus journeys easier to understand, plan, and follow.</p>
+
+  <div class="hero-meta">
+    <div><div class="k">Role</div><div class="v">UI/UX Designer</div></div>
+    <div><div class="k">Platform</div><div class="v">Mobile App</div></div>
+    <div><div class="k">Location Focus</div><div class="v">Mangalore &amp; Udupi</div></div>
+    <div><div class="k">Tools</div><div class="v">Figma</div></div>
+  </div>
+
+  <div class="hero-stage">
+    <div class="hero-route-wrap" id="heroRouteWrap">
+      <svg class="hero-route-svg" viewBox="0 0 400 60" id="heroRouteSvg">
+        <path class="route-path" id="heroRoutePath" d="M10,44 C90,44 90,14 170,14 C250,14 250,44 330,44 C360,44 380,44 390,44" />
+      </svg>
+    </div>
+    <div class="hero-phone-wrap reveal-scale in">
+      <figure class="screen-frame"><img src="assets/busflow/mockup.png" alt="BusFlow home screen with departure location and destination search"></figure>
+    </div>
+    <div class="hero-bus-wrap" id="heroBusWrap">
+      <div class="bus-token" id="heroBusMarker">🚌</div>
+    </div>
+  </div>
+
+  <div class="scroll-ind"><span>Scroll</span><div class="line"></div></div>
+</section>
+
+<!-- ============ 01 WHY BUSFLOW ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">01 — The Origin</div>
+    <h2 class="lead">I wasn't trying to build another bus app.</h2>
+    <p class="origin-statement">I was trying to get my waiting time back.</p>
+  </div>
+
+  <div class="origin-body">
+    <p class="body-lg">I often found myself waiting at bus stands without knowing when the next bus would arrive. Even at familiar stops, I couldn't always tell which bus was coming or how long I would have to wait.</p>
+    <p class="body-lg">That uncertainty meant leaving early, waiting longer than necessary, or simply hoping the right bus would arrive.</p>
+    <p class="body-lg">I started thinking: what if I knew when the bus was coming before I left?</p>
+    <p class="body-lg">I could use that time differently — stay longer with friends, finish something important, or simply plan my day better.</p>
+  </div>
+
+  <div class="origin-locale reveal">
+    <div class="origin-locale-k">Designed with Mangalore &amp; Udupi in mind</div>
+    <p class="body-lg">BusFlow is a concept designed around the everyday local-bus experience in Mangalore and Udupi, where local and government buses are an important part of daily travel.</p>
+  </div>
+
+  <div class="origin-timeline reveal" id="originTimeline">
+    <span class="ot-word" data-word="WAIT">WAIT</span>
+    <span class="ot-arrow">→</span>
+    <span class="ot-word" data-word="CHECK">CHECK</span>
+    <span class="ot-arrow">→</span>
+    <span class="ot-word" data-word="PLAN">PLAN</span>
+    <span class="ot-arrow">→</span>
+    <span class="ot-word ot-go" data-word="GO">GO <span class="ot-bus" id="originBus">🚌</span></span>
+  </div>
+
+  <p class="context-close body-lg">The problem wasn't just finding a bus.<br>It was the uncertainty around waiting for one.</p>
+</section>
+
+<!-- ============ 02 THE PROBLEM ============ -->
+<section class="section" style="background:var(--cream); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">02 — The Problem</div>
+    <h2 class="lead">Every minute spent waiting is time you can't get back.</h2>
+  </div>
+
+  <div class="context-questions" id="contextQuestions">
+    <div class="context-q"><span class="qmark">01</span><span class="qtext">Where do I start?</span></div>
+    <div class="context-q"><span class="qmark">02</span><span class="qtext">Which bus should I take?</span></div>
+    <div class="context-q"><span class="qmark">03</span><span class="qtext">When does it leave?</span></div>
+    <div class="context-q"><span class="qmark">04</span><span class="qtext">Where will I arrive?</span></div>
+  </div>
+
+  <p class="context-close body-lg" style="margin-top:36px;">Without clear information about upcoming buses, users may leave unnecessarily early, wait longer than necessary, or simply hope the right bus arrives.</p>
+
+  <div class="problem-grid">
+    <div class="goal-card reveal"><span class="num">01</span><h3>Unclear Timing</h3><p>Knowing when the next bus arrives isn't always straightforward.</p></div>
+    <div class="goal-card reveal"><span class="num">02</span><h3>Familiar Stops, Same Uncertainty</h3><p>Knowing the stop doesn't always mean knowing which bus is coming next.</p></div>
+    <div class="goal-card reveal"><span class="num">03</span><h3>Leaving Early Becomes the Safe Choice</h3><p>Without timing information, users may leave earlier than necessary.</p></div>
+    <div class="goal-card reveal"><span class="num">04</span><h3>Waiting Replaces Planning</h3><p>Time that could be used elsewhere is spent waiting at the bus stop.</p></div>
+  </div>
+
+  <div class="problem-timer reveal" id="problemTimer">
+    <span class="pt-label">Waiting...</span>
+    <span class="pt-clock" id="problemClock">01:12</span>
+  </div>
+
+  <p class="context-close body-lg">BusFlow needed to shift the experience from "wait and hope" to "know and decide."</p>
+</section>
+
+<!-- ============ 03 THE GOAL ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">03 — The Goal</div>
+    <h2 class="lead">Make every travel decision easier.</h2>
+    <p class="body-lg" style="margin-top:18px;">The goal was to create a focused transit experience that helps users move from uncertainty to confidence.</p>
+  </div>
+
+  <div class="goal-grid">
+    <div class="goal-card reveal"><span class="num">01</span><h3>Clarity</h3><p>Make routes, departure times, platforms and ETAs easy to scan.</p></div>
+    <div class="goal-card reveal"><span class="num">02</span><h3>Flexibility</h3><p>Support both automatic GPS detection and manual location selection.</p></div>
+    <div class="goal-card reveal"><span class="num">03</span><h3>Guidance</h3><p>Always give users a useful next step — even when no buses are available.</p></div>
+  </div>
+</section>
+
+<!-- ============ 04 THE EXPERIENCE ============ -->
+<section class="section" style="background:var(--cream); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">04 — The Experience</div>
+    <h2 class="lead">One journey. Two ways to get started.</h2>
+  </div>
+
+  <div class="dual-flow reveal">
+    <div class="dual-badge">BUSFLOW</div>
+    <div class="dual-cols">
+      <div class="dual-col">
+        <div class="dual-col-title">Automatic</div>
+        <div class="dual-col-sub">When location access is allowed, BusFlow detects the user's current location automatically.</div>
+        <div class="dual-step">
+          <span>Splash</span><span class="dual-step-arrow">↓</span>
+          <span class="gps-label"><span class="gps-pin" id="gpsPin"></span>GPS</span><span class="dual-step-arrow">↓</span>
+          <span>Home</span>
+        </div>
+      </div>
+      <div class="dual-col">
+        <div class="dual-col-title">Manual</div>
+        <div class="dual-col-sub">If location access isn't available, users can manually choose their departure location.</div>
+        <div class="dual-step">
+          <span>Splash</span><span class="dual-step-arrow">↓</span>
+          <span>Manual Search</span><span class="dual-step-arrow">↓</span>
+          <span>Home</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exp-decision reveal">
+    <div class="quote">"Location permission should never become a roadblock."</div>
+  </div>
+
+  <div class="exp-screens">
+    <figure class="reveal"><figure class="screen-frame"><img src="assets/busflow/Splash.png" alt="BusFlow splash screen fetching nearby stands"></figure><div class="screen-caption">Splash</div></figure>
+    <figure class="reveal"><figure class="screen-frame"><img src="assets/busflow/Departure Search.png" alt="Select departure stand screen"></figure><div class="screen-caption">Manual Search</div></figure>
+    <figure class="reveal"><figure class="screen-frame"><img src="assets/busflow/GPS activate.png" alt="Home screen with location detected"></figure><div class="screen-caption">Home</div></figure>
+  </div>
+</section>
+
+<!-- ============ 05 THE CORE FLOW ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">05 — The Core Flow</div>
+    <h2 class="lead">From location to destination.</h2>
+  </div>
+
+  <div class="coreflow-path" id="coreflowPath">
+    <svg viewBox="0 0 900 60" width="100%" height="60">
+      <path class="route-path" id="coreflowLine" d="M20,30 L880,30" />
+    </svg>
+    <div class="bus-token" id="coreflowBus" style="top:24px;">🚌</div>
+    <div class="coreflow-stages">
+      <div class="coreflow-stage"><div class="stage-dot"></div><div class="stage-name">LOCATE</div><div class="stage-desc">Establish the current or selected departure point.</div></div>
+      <div class="coreflow-stage"><div class="stage-dot"></div><div class="stage-name">CHOOSE</div><div class="stage-desc">Search for a destination.</div></div>
+      <div class="coreflow-stage"><div class="stage-dot"></div><div class="stage-name">FIND</div><div class="stage-desc">Surface available buses.</div></div>
+      <div class="coreflow-stage"><div class="stage-dot"></div><div class="stage-name">COMPARE</div><div class="stage-desc">Understand timing, route and ETA.</div></div>
+      <div class="coreflow-stage"><div class="stage-dot"></div><div class="stage-name">PLAN</div><div class="stage-desc">Decide when and which bus to take.</div></div>
+      <div class="coreflow-stage"><div class="stage-dot"></div><div class="stage-name">TRACK</div><div class="stage-desc">Stay informed during the journey.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 THE SCREENS ============ -->
+<section class="section showcase-section">
+  <div class="showcase-intro">
+    <div class="eyebrow" style="justify-content:center;">06 — The Screens</div>
+    <h2 class="lead">Designed around the moments that matter.</h2>
+    <p class="body-lg">The complete BusFlow experience, screen by screen — from the first launch to a journey already underway.</p>
+  </div>
+
+  <div class="showcase-track-outer">
+    <div class="showcase-track reveal" data-showcase-track>
+      <div class="showcase-item">
+        <figure class="screen-frame"><img src="assets/busflow/splash.png" alt="Splash screen"></figure>
+        <div class="showcase-item-label"><span class="showcase-item-num">01</span>Splash</div>
+        <div class="showcase-item-cap">The experience begins by establishing the user's location.</div>
+      </div>
+      <div class="showcase-item">
+        <figure class="screen-frame"><img src="assets/busflow/GPS activate.png" alt="Home screen"></figure>
+        <div class="showcase-item-label"><span class="showcase-item-num">02</span>Home</div>
+        <div class="showcase-item-cap">A simple starting point for searching destinations and accessing the journey.</div>
+      </div>
+      <div class="showcase-item">
+        <figure class="screen-frame"><img src="assets/busflow/Destination Search.png" alt="Destination search screen"></figure>
+        <div class="showcase-item-label"><span class="showcase-item-num">03</span>Destination Search</div>
+        <div class="showcase-item-cap">Search for a destination or choose a frequently used location.</div>
+      </div>
+      <div class="showcase-item">
+        <figure class="screen-frame"><img src="assets/busflow/Available Bus Details.png" alt="Available bus details screen"></figure>
+        <div class="showcase-item-label"><span class="showcase-item-num">04</span>Available Bus Details</div>
+        <div class="showcase-item-cap">Compare available buses, departure times, platforms and ETAs.</div>
+      </div>
+      <div class="showcase-item">
+        <figure class="screen-frame"><img src="assets/busflow/Trip Overview.png" alt="Trip overview screen"></figure>
+        <div class="showcase-item-label"><span class="showcase-item-num">05</span>Trip Overview</div>
+        <div class="showcase-item-cap">Understand the complete journey before leaving.</div>
+      </div>
+      <div class="showcase-item">
+        <figure class="screen-frame"><img src="assets/busflow/Live Activity.png" alt="Live activity lock screen"></figure>
+        <div class="showcase-item-label"><span class="showcase-item-num">06</span>Live Activity</div>
+        <div class="showcase-item-cap">Keep important journey information visible while travelling.</div>
+      </div>
+    </div>
+    <div class="showcase-progress"><div class="showcase-progress-fill" data-showcase-fill></div></div>
+  </div>
+</section>
+
+<!-- ============ 07 THE COMPLETE JOURNEY ============ -->
+<section class="section journey-section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">07 — The Complete Journey</div>
+    <h2 class="lead">One flow. Two possible outcomes.</h2>
+  </div>
+
+  <div class="journey-map">
+    <div class="journey-primary" id="journeyPrimary">
+      <div class="journey-node"><div class="jn-dot"></div><div class="jn-name">Splash</div></div>
+      <div class="journey-connector"><div class="fill"></div></div>
+      <div class="journey-node"><div class="jn-dot"></div><div class="jn-name">GPS / Manual Location</div></div>
+      <div class="journey-connector"><div class="fill"></div></div>
+      <div class="journey-node"><div class="jn-dot"></div><div class="jn-name">Home</div></div>
+      <div class="journey-connector"><div class="fill"></div></div>
+      <div class="journey-node"><div class="jn-dot"></div><div class="jn-name">Select Destination</div></div>
+    </div>
+
+    <div class="journey-branch-wrap">
+      <div class="journey-branch-in">
+        <div class="journey-branch-arrow" id="branchArrow">↓</div>
+        <div class="journey-branch-label">Two possible outcomes</div>
+      </div>
+    </div>
+
+    <div class="journey-outcomes" id="journeyOutcomes">
+      <div class="outcome-card positive">
+        <div class="outcome-title positive">✓ Bus Available</div>
+        <div class="outcome-flow">
+          <span>Available Bus Details<span class="eta-chip" id="etaChip">08 min</span></span><span class="arrow">→</span>
+          <span>Trip Overview</span><span class="arrow">→</span>
+          <span>Live Activity</span>
+        </div>
+      </div>
+      <div class="outcome-card alt">
+        <div class="outcome-title alt">⟳ No Bus Available</div>
+        <div class="outcome-flow">
+          <span>No Bus</span><span class="arrow">→</span>
+          <span>Nearby Stops</span><span class="arrow">→</span>
+          <span>Notify Me</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="journey-close reveal">
+      <p class="lead">"When the expected route isn't available, BusFlow doesn't leave the user at a dead end."</p>
+      <p class="body-lg" style="margin-top:18px;">BusFlow doesn't just tell users where to go. It helps them decide when to go.</p>
+    </div>
+
+    <div class="exp-screens" style="margin-top:52px;">
+      <figure class="reveal"><figure class="screen-frame"><img src="assets/busflow/Available Bus Details.png" alt="Available bus details screen"></figure><div class="screen-caption">Available Bus Details</div></figure>
+      <figure class="reveal"><figure class="screen-frame"><img src="assets/busflow/No Bus.png" alt="No buses available screen with nearby stops and notify me"></figure><div class="screen-caption">No Bus</div></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 THE SYSTEM ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">08 — The System</div>
+    <h2 class="lead">Consistency makes information easier to scan.</h2>
+  </div>
+
+  <div class="system-board reveal">
+    <div class="sys-block">
+      <div class="sys-label">Typography</div>
+      <div class="sys-type-sample">Inter</div>
+      <div class="sys-type-scale">
+        <span>Departure time, ETA and platform receive stronger emphasis.</span>
+      </div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Color</div>
+      <div class="sys-colors">
+        <div class="sw" style="background:var(--brown);"></div>
+        <div class="sw" style="background:var(--brown-deep);"></div>
+        <div class="sw" style="background:var(--beige);"></div>
+        <div class="sw" style="background:var(--cream); border:1px solid var(--border);"></div>
+        <div class="sw" style="background:var(--ink);"></div>
+      </div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Buttons &amp; Pills</div>
+      <div class="sys-demo-row">
+        <span class="sys-btn">LEAVE IN 8 MINS</span>
+        <span class="sys-btn ghost">Notify Me</span>
+        <span class="sys-pill">Platform 2</span>
+      </div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Status Elements</div>
+      <div class="sys-demo-row">
+        <span class="sys-status success">Active</span>
+        <span class="sys-status warning">Leave in 41 mins</span>
+        <span class="sys-status error">No Buses</span>
+      </div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Components</div>
+      <div class="sys-components"><span>Bus Cards</span><span>Search Field</span><span>Route Stops</span><span>Filter Pills</span></div>
+    </div>
+    <div class="sys-block">
+      <div class="sys-label">Icons</div>
+      <div class="sys-icons-list">📍 Location · 🔍 Search · 🔔 Notify · 🚌 Bus · ⏱ ETA</div>
+    </div>
+  </div>
+
+  <p class="body-lg" style="text-align:center; max-width:560px; margin:40px auto 0;">A restrained palette and clear typography keep the interface calm while allowing important transit information to stand out.</p>
+</section>
+
+<!-- ============ 09 THE JOURNEY (RECAP) ============ -->
+<section class="section recap" style="background:var(--cream); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="eyebrow" style="justify-content:center;">09 — The Journey</div>
+  <h2 class="lead">From uncertainty to confidence.</h2>
+
+  <div class="recap-track" id="recapTrack">
+    <svg class="recap-route-svg" viewBox="0 0 900 4" preserveAspectRatio="none">
+      <path class="route-path" id="recapRoutePath" d="M10,2 L890,2" />
+    </svg>
+    <div class="bus-token" id="recapBus">🚌</div>
+    <div class="recap-flow" id="recapFlow">
+      <span class="node">LOCATE</span><span class="arrow">→</span>
+      <span class="node">CHOOSE</span><span class="arrow">→</span>
+      <span class="node">PLAN</span><span class="arrow">→</span>
+      <span class="node">TRACK</span><span class="arrow">→</span>
+      <span class="node">ARRIVE</span>
+    </div>
+  </div>
+
+  <p class="recap-line">BusFlow gives users information early enough to plan their time instead of spending it waiting.</p>
+</section>
+
+
+<!-- ============ 10 EXPERIENCE IT ============ -->
+<section class="section section-experience">
+  <div class="proto reveal">
+    <div class="eyebrow" style="justify-content:center;">10 — Experience It</div>
+
+    <h2 class="lead">Don't just read about BusFlow. Try it.</h2>
+
+    <p class="proto-caption">
+      Explore the interactive prototype and experience the journey yourself.
+    </p>
+
+    <a href="YOUR-FIGMA-PROTOTYPE-LINK"
+       class="btn-primary"
+       target="_blank">
+      View Prototype →
+    </a>
+  </div>
+</section>
+
+<!-- ============ 11 WHAT I LEARNED ============ -->
+<section class="section">
+  <div class="section-narrow" style="text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">11 — What I Learned</div>
+    <h2 class="lead">Transit UX is about designing for uncertainty.</h2>
+    <p class="body-lg" style="margin-top:18px;">BusFlow taught me that a transportation experience isn't only about showing available routes. It's about helping users make confident decisions before and during the journey.</p>
+  </div>
+
+  <div class="learn-grid">
+    <div class="learn-card reveal"><span class="num">01</span><h3>Permission shouldn't become a barrier</h3><p>GPS makes the experience faster, but manual location selection keeps the journey accessible when permission isn't granted.</p></div>
+    <div class="learn-card reveal"><span class="num">02</span><h3>Empty states need direction</h3><p>"No buses available" shouldn't be the end of the experience. Nearby stops and notification options give users a clear next step.</p></div>
+    <div class="learn-card reveal"><span class="num">03</span><h3>Timing is part of the experience</h3><p>Departure time, ETA and time-to-leave aren't secondary details. They are what users make decisions around.</p></div>
+    <div class="learn-card reveal"><span class="num">04</span><h3>Design for the moment before the journey</h3><p>I initially thought about BusFlow as a bus-finding experience. While designing it, I realized the more important problem happens before the bus arrives — deciding when to leave and how to use the waiting time.</p></div>
+  </div>
+
+  <div class="learn-close">
+    <p class="lead" style="max-width:520px; margin:0 auto;">I started with a bus problem.<br>I ended up designing around time.</p>
+    <div class="learn-flow" id="learnFlow">
+      <span class="node">LOCATE</span><span class="arrow">→</span>
+      <span class="node">CHOOSE</span><span class="arrow">→</span>
+      <span class="node">TRACK</span><span class="arrow">→</span>
+      <span class="node">ARRIVE</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 NEXT PROJECT ============ -->
+<a href="parkspot.html" style="display:block;">
+<section class="next">
+  <div class="k">Next up</div>
+  <h2>Parkspot. <span class="arrow">→</span></h2>
+  <div class="d">Never wonder where you parked again.</div>
+</section>
+</a>
+
+<footer class="footer">
+  BusFlow — A case study by Ravish Shetty · Designed &amp; built in Figma
+</footer>
+
+<script>
+const progress = document.getElementById('navProgress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  progress.style.width = scrolled + '%';
+});
+
+const revealEls = document.querySelectorAll('.reveal, .reveal-scale');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('in'); } });
+}, {threshold:0.18, rootMargin:'0px 0px -12% 0px'});
+revealEls.forEach(el => revealObserver.observe(el));
+
+/* Hero route draw + single bus pass */
+const heroRoutePath = document.getElementById('heroRoutePath');
+const heroBusMarker = document.getElementById('heroBusMarker');
+const heroObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      heroRoutePath.classList.add('in');
+      setTimeout(()=>{
+        heroBusMarker.classList.add('in');
+        heroBusMarker.style.left = '6%';
+        requestAnimationFrame(()=>{
+          setTimeout(()=>{ heroBusMarker.style.left = '94%'; }, 60);
+        });
+        setTimeout(()=>{ heroBusMarker.style.opacity = '0'; }, 2400);
+      }, 500);
+      heroObserver.disconnect();
+    }
+  });
+},{threshold:0.3});
+heroObserver.observe(document.querySelector('.hero-stage'));
+
+/* 01 Context questions sequential reveal */
+const contextQuestions = document.getElementById('contextQuestions');
+const contextObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      contextQuestions.querySelectorAll('.context-q').forEach((el,i)=>{ setTimeout(()=> el.classList.add('in'), i*130); });
+      contextObserver.disconnect();
+    }
+  });
+},{threshold:0.4, rootMargin:'0px 0px -12% 0px'});
+contextObserver.observe(contextQuestions);
+
+/* 01 Origin timeline: WAIT -> CHECK -> PLAN -> GO, bus departs once */
+const originTimeline = document.getElementById('originTimeline');
+const originBus = document.getElementById('originBus');
+const originObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const words = originTimeline.querySelectorAll('.ot-word');
+      words.forEach((el,i)=>{ setTimeout(()=> el.classList.add('on'), i*150); });
+      setTimeout(()=>{ originBus.classList.add('go'); }, words.length*150 + 200);
+      originObserver.disconnect();
+    }
+  });
+},{threshold:0.4, rootMargin:'0px 0px -12% 0px'});
+originObserver.observe(originTimeline);
+
+/* 02 Problem timer: subtle waiting counter, then stop */
+const problemTimer = document.getElementById('problemTimer');
+const problemClock = document.getElementById('problemClock');
+const problemObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const ticks = ['01:12','01:13','01:14'];
+      ticks.forEach((t,i)=>{ setTimeout(()=>{ problemClock.textContent = t; }, i*700); });
+      problemObserver.disconnect();
+    }
+  });
+},{threshold:0.5});
+problemObserver.observe(problemTimer);
+
+/* 05 Core flow path draw + stage reveal + bus travels through */
+const coreflowLine = document.getElementById('coreflowLine');
+const coreflowStages = document.querySelectorAll('.coreflow-stage');
+const coreflowBus = document.getElementById('coreflowBus');
+const coreflowObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      coreflowLine.classList.add('in');
+      coreflowBus.classList.add('in');
+      coreflowStages.forEach((el,i)=>{
+        setTimeout(()=>{
+          el.classList.add('in');
+          const pct = (i/(coreflowStages.length-1))*94 + 3;
+          coreflowBus.style.left = pct + '%';
+        }, 250 + i*140);
+      });
+      setTimeout(()=>{ coreflowBus.style.opacity = '0'; }, 250 + coreflowStages.length*140 + 900);
+      coreflowObserver.disconnect();
+    }
+  });
+},{threshold:0.3, rootMargin:'0px 0px -12% 0px'});
+coreflowObserver.observe(document.getElementById('coreflowPath'));
+
+/* 07 Journey primary path + branch reveal */
+const journeyPrimary = document.getElementById('journeyPrimary');
+const journeyOutcomes = document.getElementById('journeyOutcomes');
+const branchArrow = document.getElementById('branchArrow');
+const journeyObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const nodes = journeyPrimary.querySelectorAll('.journey-node');
+      const connectors = journeyPrimary.querySelectorAll('.journey-connector');
+      nodes.forEach((el,i)=>{
+        setTimeout(()=> el.classList.add('in'), i*140);
+      });
+      connectors.forEach((el,i)=>{
+        setTimeout(()=> el.classList.add('in'), 130 + i*140);
+      });
+      setTimeout(()=>{ branchArrow.classList.add('in'); }, nodes.length*140 + 150);
+      const outcomesDelay = nodes.length*140 + 400;
+      setTimeout(()=>{
+        journeyOutcomes.querySelectorAll('.outcome-card').forEach((el,i)=>{ setTimeout(()=> el.classList.add('in'), i*140); });
+      }, outcomesDelay);
+      const etaChip = document.getElementById('etaChip');
+      if(etaChip){
+        setTimeout(()=>{
+          etaChip.classList.add('swap');
+          setTimeout(()=>{ etaChip.textContent = '07 min'; etaChip.classList.remove('swap'); }, 300);
+        }, outcomesDelay + 900);
+      }
+      journeyObserver.disconnect();
+    }
+  });
+},{threshold:0.25, rootMargin:'0px 0px -12% 0px'});
+journeyObserver.observe(journeyPrimary);
+
+/* 09 Recap: nodes reveal, then bus travels once and stops at ARRIVE */
+const recapTrack = document.getElementById('recapTrack');
+const recapFlow = document.getElementById('recapFlow');
+const recapRoutePath = document.getElementById('recapRoutePath');
+const recapBus = document.getElementById('recapBus');
+const recapObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      recapRoutePath.classList.add('in');
+      const nodes = recapFlow.querySelectorAll('.node');
+      nodes.forEach((el,i)=>{ setTimeout(()=> el.classList.add('in'), i*130); });
+      const busDelay = nodes.length*130 + 300;
+      setTimeout(()=>{
+        recapBus.classList.add('in');
+        recapBus.style.left = '2%';
+        requestAnimationFrame(()=>{
+          setTimeout(()=>{ recapBus.style.left = '97%'; }, 60);
+        });
+      }, busDelay);
+      recapObserver.disconnect();
+    }
+  });
+},{threshold:0.35, rootMargin:'0px 0px -12% 0px'});
+recapObserver.observe(recapTrack);
+
+/* 11 Learn flow sequential (arrival) */
+const learnFlow = document.getElementById('learnFlow');
+const learnObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      learnFlow.querySelectorAll('.node').forEach((el,i)=>{ setTimeout(()=> el.classList.add('in'), i*140); });
+      learnObserver.disconnect();
+    }
+  });
+},{threshold:0.4, rootMargin:'0px 0px -12% 0px'});
+learnObserver.observe(learnFlow);
+
+/* 04 GPS pulse: dot -> 1-2 expanding rings -> settle (no continuous loop) */
+const gpsPin = document.getElementById('gpsPin');
+if(gpsPin){
+  const gpsObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        setTimeout(()=>{
+          gpsPin.classList.add('pulse-twice');
+          setTimeout(()=>{ gpsPin.classList.add('settled'); }, 2000);
+        }, 200);
+        gpsObserver.disconnect();
+      }
+    });
+  },{threshold:0.5, rootMargin:'0px 0px -12% 0px'});
+  gpsObserver.observe(gpsPin);
+}
+</script>
+
+<script>
+/* Section 06 — screens showcase: draggable horizontal scroll + progress indicator */
+(function(){
+  var tracks = document.querySelectorAll('[data-showcase-track]');
+  tracks.forEach(function(track){
+    var wrap = track.closest('.showcase-track-outer');
+    var fill = wrap ? wrap.querySelector('[data-showcase-fill]') : null;
+
+    function updateProgress(){
+      if(!fill) return;
+      var bar = fill.parentElement;
+      var barWidth = bar.clientWidth;
+      var ratio = track.clientWidth / track.scrollWidth;
+      var thumbWidth = Math.max(60, barWidth * ratio);
+      var maxScroll = track.scrollWidth - track.clientWidth;
+      var maxLeft = barWidth - thumbWidth;
+      var left = maxScroll > 0 ? (track.scrollLeft / maxScroll) * maxLeft : 0;
+      fill.style.width = thumbWidth + 'px';
+      fill.style.transform = 'translateX(' + left + 'px)';
+    }
+    track.addEventListener('scroll', updateProgress);
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+
+    var isDown = false, startX = 0, startScroll = 0;
+    track.addEventListener('mousedown', function(e){
+      isDown = true;
+      track.classList.add('dragging');
+      startX = e.pageX;
+      startScroll = track.scrollLeft;
+    });
+    window.addEventListener('mouseup', function(){
+      isDown = false;
+      track.classList.remove('dragging');
+    });
+    track.addEventListener('mouseleave', function(){
+      isDown = false;
+      track.classList.remove('dragging');
+    });
+    track.addEventListener('mousemove', function(e){
+      if(!isDown) return;
+      e.preventDefault();
+      track.scrollLeft = startScroll - (e.pageX - startX);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
