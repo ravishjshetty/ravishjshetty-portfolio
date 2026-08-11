@@ -278,7 +278,10 @@ runLoader(() => {
   transitionOverlay.className = "page-transition-overlay";
   document.body.appendChild(transitionOverlay);
   gsap.set(transitionOverlay, { yPercent: 101 });
-
+  window.addEventListener("pageshow", () => {
+  gsap.killTweensOf(transitionOverlay);
+  gsap.set(transitionOverlay, { yPercent: 101 });
+});
   workCards.forEach((card) => {
     const href = card.getAttribute("href");
     if (!href || href.startsWith("#")) return; // preserves in-page anchors (e.g. "Currently Designing")
