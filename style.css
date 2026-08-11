@@ -1240,19 +1240,19 @@ body.has-custom-cursor button { cursor: none; }
     }
 
     .hero-portrait-layer {
-        position: absolute;
-        top: 210px;
-        left: 50%;
-        right: auto;
-        bottom: auto;
+    position: absolute;
+    top: 180px;
+    left: 50%;
+    right: auto;
+    bottom: auto;
 
-        width: 280px;
-        max-width: none;
+    width: 245px;
+    max-width: none;
 
-        transform: translateX(-50%);
-        z-index: 1;
-        pointer-events: none;
-    }
+    transform: translateX(-50%);
+    z-index: 1;
+    pointer-events: none;
+}
 
     .portrait-wrap {
         width: 100%;
