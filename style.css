@@ -1232,12 +1232,22 @@ body.has-custom-cursor button { cursor: none; }
 
 @media (max-width: 968px) {
 
+    .hero {
+        position: relative;
+        min-height: 100svh;
+        height: auto;
+        overflow: hidden;
+    }
+
     .hero-portrait-layer {
         position: absolute;
-        top: 105px;
+        top: 210px;
         left: 50%;
-        width: 68%;
-        max-width: 330px;
+        right: auto;
+        bottom: auto;
+
+        width: 280px;
+        max-width: none;
 
         transform: translateX(-50%);
         z-index: 1;
@@ -1262,9 +1272,8 @@ body.has-custom-cursor button { cursor: none; }
         width: 100%;
         padding: 0 28px;
         box-sizing: border-box;
-
-        margin-top: 350px;
-
+        margin-top: 390px;
         z-index: 5;
     }
+
 }
