@@ -279,7 +279,18 @@ runLoader(() => {
   document.body.appendChild(transitionOverlay);
   gsap.set(transitionOverlay, { yPercent: 101 });
 
-  workCards.forEach((card) => {
+// Fix browser Back/Forward navigation (bfcache)
+window.addEventListener("pageshow", () => {
+  gsap.killTweensOf(transitionOverlay);
+
+  gsap.set(transitionOverlay, {
+    yPercent: 101,
+    opacity: 1,
+    clearProps: "transform"
+  });
+});
+
+workCards.forEach((card) => {
     const href = card.getAttribute("href");
     if (!href || href.startsWith("#")) return; // preserves in-page anchors (e.g. "Currently Designing")
 
