@@ -1232,27 +1232,15 @@ body.has-custom-cursor button { cursor: none; }
 
 @media (max-width: 968px) {
 
-    .hero {
-        position: relative;
-        min-height: 100svh;
-        height: auto;
-        overflow: hidden;
-    }
-
-    /* Portrait container */
     .hero-portrait-layer {
         position: absolute;
-        top: 95px;
+        top: 105px;
         left: 50%;
-        right: auto;
-        bottom: auto;
-
-        width: 58%;
-        max-width: 300px;
+        width: 68%;
+        max-width: 330px;
 
         transform: translateX(-50%);
         z-index: 1;
-
         pointer-events: none;
     }
 
@@ -1265,36 +1253,18 @@ body.has-custom-cursor button { cursor: none; }
         display: block;
         width: 100%;
         height: auto;
-
         object-fit: contain;
-
         opacity: 0.55;
     }
 
-    /* Move the text down below the portrait */
     .hero-content {
         position: relative;
-
         width: 100%;
         padding: 0 28px;
         box-sizing: border-box;
 
-        margin-top: 390px;
+        margin-top: 350px;
 
         z-index: 5;
-    }
-
-    .hero-left,
-    .hero-right {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .hero-left h1 {
-        max-width: 100%;
-    }
-
-    .hero-right p {
-        max-width: 100%;
     }
 }
