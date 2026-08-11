@@ -6,6 +6,28 @@
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Mobile navigation
+const navbar = document.querySelector(".navbar");
+const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
+const mobileNavLinks = document.querySelectorAll(".nav-links a");
+
+if (mobileMenuBtn && navbar) {
+
+    mobileMenuBtn.addEventListener("click", () => {
+        const isOpen = navbar.classList.toggle("menu-open");
+
+        mobileMenuBtn.setAttribute("aria-expanded", isOpen);
+        document.body.classList.toggle("menu-open", isOpen);
+    });
+
+    mobileNavLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+            navbar.classList.remove("menu-open");
+            mobileMenuBtn.setAttribute("aria-expanded", "false");
+            document.body.classList.remove("menu-open");
+        });
+    });
+}
 
   /* If GSAP failed to load for any reason, just make sure the loader
      doesn't block the page forever, and leave everything else exactly
