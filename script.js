@@ -112,6 +112,27 @@ document.addEventListener("DOMContentLoaded", () => {
      3. HERO — signature entrance (initial states set before paint)
   ================================================================== */
   const navbar = document.querySelector(".navbar");
+  
+  // Mobile navigation
+const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
+const mobileNavLinks = document.querySelectorAll(".nav-links a");
+
+if (mobileMenuBtn && navbar) {
+  mobileMenuBtn.addEventListener("click", () => {
+    const isOpen = navbar.classList.toggle("menu-open");
+
+    mobileMenuBtn.setAttribute("aria-expanded", isOpen);
+    document.body.classList.toggle("menu-open", isOpen);
+  });
+
+  mobileNavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      navbar.classList.remove("menu-open");
+      mobileMenuBtn.setAttribute("aria-expanded", "false");
+      document.body.classList.remove("menu-open");
+    });
+  });
+}
   const heroStatus = document.querySelector(".status");
   const heroDesc = document.querySelector(".hero-right p");
   const heroBtn = document.querySelector(".hero-btn");
