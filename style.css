@@ -1030,3 +1030,84 @@ body.has-custom-cursor button { cursor: none; }
     .custom-cursor { display: none !important; }
     body.has-custom-cursor, body.has-custom-cursor a, body.has-custom-cursor button { cursor: auto; }
 }
+/* =========================================================
+   MOBILE HERO FIX
+   ========================================================= */
+@media (max-width: 968px) {
+
+    .hero {
+        min-height: 100svh;
+        height: auto;
+        overflow: hidden;
+    }
+
+    .hero-portrait-layer {
+        left: 50%;
+        bottom: 0;
+        width: 100%;
+        transform: translateX(-50%);
+    }
+
+    .portrait-wrap {
+        width: 100%;
+        max-width: 620px;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .hero-content {
+        position: absolute;
+        left: 0;
+        bottom: 32px;
+        width: 100%;
+        padding: 0 24px;
+        box-sizing: border-box;
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+
+        transform: none;
+        z-index: 5;
+    }
+
+    .hero-left,
+    .hero-right {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .status {
+        margin-bottom: 14px;
+        font-size: 13px;
+    }
+
+    .hero-left h1 {
+        font-size: clamp(30px, 8vw, 42px);
+        line-height: 1.05;
+        letter-spacing: -1.5px;
+        max-width: 100%;
+    }
+
+    .hero-right p {
+        font-size: 14px;
+        line-height: 1.55;
+        max-width: 340px;
+        margin-bottom: 18px;
+    }
+
+    .hero-btn {
+        padding: 12px 22px;
+        font-size: 14px;
+    }
+
+    .hero-fade {
+        height: 35%;
+        z-index: 2;
+    }
+}
