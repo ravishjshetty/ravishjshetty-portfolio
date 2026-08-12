@@ -651,29 +651,57 @@ figure{margin:0;}
   .showcase-item .screen-frame{width:230px;}
 }
 @media (max-width:560px){
-  .nav {
-    padding: 16px 20px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .nav-mark {
-    flex-shrink: 0;
-  }
-
-  .back-work {
-    padding: 8px 12px;
-    font-size: 11px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    box-sizing: border-box;
-  }
-
   .section{padding:80px 6vw;}
   .screen-frame{width:220px;}
   .hero-phone-wrap .screen-frame{max-width:230px;}
   .challenge-step{width:130px; padding:20px 12px;}
   .showcase-track{gap:24px;}
+}
+@media (max-width: 700px) {
+
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+    }
+
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+
+        padding: 16px 20px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        overflow: hidden;
+    }
+
+    .nav-mark {
+        flex-shrink: 0;
+    }
+
+    .back-work {
+        display: inline-flex;
+        flex-shrink: 0;
+
+        margin-left: auto;
+        margin-right: 0;
+
+        padding: 8px 12px;
+        font-size: 11px;
+        white-space: nowrap;
+
+        box-sizing: border-box;
+    }
 }
 </style>
 </head>
