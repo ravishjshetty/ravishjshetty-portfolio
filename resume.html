@@ -167,19 +167,22 @@
     }
 
     .pdf-frame-wrap {
-      width: 100%;
-      aspect-ratio: 0.7071;
-      background: white;
-      overflow: hidden;
-    }
+  width: 100%;
+  background: white;
+  overflow: hidden;
+  line-height: 0;
+}
 
-    .pdf-frame {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      background: white;
-    }
+.resume-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
 
     .fallback {
       display: none;
@@ -260,13 +263,13 @@
       </div>
 
       <div class="pdf-frame-wrap">
-        <iframe
-          class="pdf-frame"
-          src="assets/ravishshetty.pdf#toolbar=0&navpanes=0&scrollbar=1&view=FitH"
-          title="Ravish Shetty Resume PDF"
-          loading="eager">
-        </iframe>
-      </div>
+  <img
+    class="resume-image"
+    src="assets/ravishshetty-resume.webp"
+    alt="Ravish Shetty Resume"
+    draggable="false"
+  >
+</div>
 
       <div class="fallback">
         Your browser can’t preview the PDF here.<br>
