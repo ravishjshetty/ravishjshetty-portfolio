@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resume | Ravish Shetty</title>
   <meta name="description" content="Ravish Shetty — Product Designer | UX/UI Designer. View and download resume.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+
   <style>
     :root {
       --bg: #0f2019;
@@ -18,9 +23,13 @@
       --nav-shadow: 0 8px 30px rgba(0,0,0,.10);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       margin: 0;
@@ -31,7 +40,11 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    a { color: inherit; }
+    a {
+      color: inherit;
+    }
+
+    /* NAVBAR */
 
     .top-nav {
       position: fixed;
@@ -42,10 +55,12 @@
       width: min(484px, calc(100vw - 28px));
       min-height: 44px;
       padding: 0 14px 0 18px;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+
       background: rgba(255,255,255,.98);
       border-radius: 13px;
       box-shadow: var(--nav-shadow);
@@ -74,7 +89,9 @@
       transition: opacity .2s ease;
     }
 
-    .nav-links a:hover { opacity: .55; }
+    .nav-links a:hover {
+      opacity: .55;
+    }
 
     .nav-socials {
       display: flex;
@@ -93,7 +110,12 @@
       transition: transform .2s ease, opacity .2s ease;
     }
 
-    .social-link:hover { transform: translateY(-1px); opacity: .65; }
+    .social-link:hover {
+      transform: translateY(-1px);
+      opacity: .65;
+    }
+
+    /* PAGE */
 
     main {
       min-height: 100vh;
@@ -111,18 +133,24 @@
       box-shadow: 0 28px 70px rgba(0,0,0,.25);
     }
 
+    /* TOOLBAR */
+
     .resume-toolbar {
       min-height: 72px;
       padding: 16px 21px;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+
       background: #f5f9f7;
       border-bottom: 1px solid #e7ece9;
     }
 
-    .resume-meta { min-width: 0; }
+    .resume-meta {
+      min-width: 0;
+    }
 
     .resume-meta h1 {
       margin: 0 0 4px;
@@ -142,17 +170,22 @@
 
     .download-btn {
       flex: 0 0 auto;
+
       display: inline-flex;
       align-items: center;
       gap: 8px;
+
       padding: 12px 17px;
       border-radius: 999px;
+
       background: var(--accent);
       color: white;
       text-decoration: none;
+
       font-size: 11px;
       line-height: 1;
       font-weight: 800;
+
       transition: transform .2s ease, filter .2s ease;
     }
 
@@ -166,23 +199,64 @@
       line-height: 1;
     }
 
-    .pdf-frame-wrap {
-  width: 100%;
-  background: white;
-  overflow: hidden;
-  line-height: 0;
-}
+    /* PDF VIEWER */
 
-.resume-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-  pointer-events: none;
-}
+    .pdf-viewer {
+      width: 100%;
+      background: #fff;
+      position: relative;
 
+      /*
+        Prevent the resume itself from becoming a separate
+        scrolling / dragging area.
+      */
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    .pdf-page {
+      position: relative;
+      width: 100%;
+      background: #fff;
+      line-height: 0;
+    }
+
+    .pdf-page canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /*
+      PDF.js creates clickable link annotations here.
+    */
+    .link-layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .link-layer a {
+      position: absolute;
+      display: block;
+      text-decoration: none;
+      cursor: pointer;
+
+      /*
+        Keep links clickable without visually changing
+        the resume.
+      */
+      background: transparent;
+    }
+
+    .link-layer a:hover {
+      background: rgba(229,27,62,.06);
+    }
+
+    /* ERROR / FALLBACK */
 
     .fallback {
       display: none;
@@ -204,78 +278,424 @@
       font-weight: 700;
     }
 
+    /* MOBILE */
+
     @media (max-width: 640px) {
+
       .top-nav {
         min-height: 42px;
         padding-left: 14px;
         padding-right: 12px;
       }
 
-      .nav-links { gap: 14px; font-size: 10px; }
-      .nav-socials { gap: 8px; }
-      .nav-brand { font-size: 11px; }
+      .nav-links {
+        gap: 14px;
+        font-size: 10px;
+      }
 
-      main { padding-top: 120px; padding-left: 12px; padding-right: 12px; }
+      .nav-socials {
+        gap: 8px;
+      }
+
+      .nav-brand {
+        font-size: 11px;
+      }
+
+      main {
+        padding-top: 120px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
 
       .resume-toolbar {
         padding: 13px 14px;
         min-height: 66px;
       }
 
-      .resume-meta h1 { font-size: 12px; }
-      .resume-meta p { font-size: 8px; }
-      .download-btn { padding: 10px 13px; font-size: 10px; }
+      .resume-meta h1 {
+        font-size: 12px;
+      }
+
+      .resume-meta p {
+        font-size: 8px;
+      }
+
+      .download-btn {
+        padding: 10px 13px;
+        font-size: 10px;
+      }
     }
 
     @media (max-width: 430px) {
-      .nav-brand { display: none; }
-      .nav-links { gap: 18px; }
-      .top-nav { justify-content: center; }
-      .nav-socials { display: none; }
+
+      .nav-brand {
+        display: none;
+      }
+
+      .nav-links {
+        gap: 18px;
+      }
+
+      .top-nav {
+        justify-content: center;
+      }
+
+      .nav-socials {
+        display: none;
+      }
     }
   </style>
 </head>
+
 <body>
+
+  <!-- NAVBAR -->
+
   <header class="top-nav" aria-label="Main navigation">
-    <a class="nav-brand" href="index.html">Hi, I’m Ravish</a>
+
+    <a class="nav-brand" href="index.html">
+      Hi, I’m Ravish
+    </a>
+
     <nav class="nav-links">
       <a href="index.html#about">about</a>
       <a href="index.html#work">work</a>
       <a href="resume.html" aria-current="page">resume</a>
       <a href="index.html#contact">contact</a>
     </nav>
+
     <div class="nav-socials">
-      <a class="social-link" href="https://www.linkedin.com/in/ravish-shetty-4a9375283" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+      <a
+        class="social-link"
+        href="https://www.linkedin.com/in/ravish-shetty-4a9375283"
+        target="_blank"
+        rel="noopener"
+        aria-label="LinkedIn"
+      >
+        in
+      </a>
     </div>
+
   </header>
 
+
+  <!-- MAIN -->
+
   <main>
-    <section class="resume-shell" aria-label="Ravish Shetty resume">
+
+    <section
+      class="resume-shell"
+      aria-label="Ravish Shetty resume"
+    >
+
+      <!-- TOOLBAR -->
+
       <div class="resume-toolbar">
+
         <div class="resume-meta">
           <h1>Ravish’s Resume</h1>
           <p>Last updated on Sep 2026</p>
         </div>
-        <a class="download-btn" href="assets/ravishshetty.pdf" download>
+
+        <a
+          class="download-btn"
+          href="assets/ravishshetty.pdf"
+          download
+        >
           <span class="download-icon">↓</span>
           <span>Download PDF</span>
         </a>
+
       </div>
 
-      <div class="pdf-frame-wrap">
-  <img
-    class="resume-image"
-    src="assets/ravishshetty-resume.webp"
-    alt="Ravish Shetty Resume"
-    draggable="false"
-  >
-</div>
 
-      <div class="fallback">
-        Your browser can’t preview the PDF here.<br>
-        <a href="assets/ravishshetty.pdf" target="_blank" rel="noopener">Open Resume PDF</a>
+      <!-- PDF -->
+
+      <div
+        class="pdf-viewer"
+        id="pdfViewer"
+      ></div>
+
+
+      <!-- FALLBACK -->
+
+      <div
+        class="fallback"
+        id="fallback"
+      >
+        Your browser can’t preview the resume here.<br>
+
+        <a
+          href="assets/ravishshetty.pdf"
+          target="_blank"
+          rel="noopener"
+        >
+          Open Resume PDF
+        </a>
       </div>
+
     </section>
+
   </main>
+
+
+  <!-- PDF.JS SCRIPT -->
+
+  <script type="module">
+
+    import {
+      getDocument,
+      GlobalWorkerOptions
+    } from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
+
+    GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
+
+
+    const pdfUrl = "assets/ravishshetty.pdf";
+
+    const viewer = document.getElementById("pdfViewer");
+    const fallback = document.getElementById("fallback");
+
+
+    async function renderResume() {
+
+      try {
+
+        const pdf = await getDocument(pdfUrl).promise;
+
+        /*
+          Your resume is currently one page.
+        */
+
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+
+          const page = await pdf.getPage(pageNumber);
+
+          const originalViewport = page.getViewport({
+            scale: 1
+          });
+
+          /*
+            Fit the PDF exactly to the width of the
+            resume card.
+          */
+
+          const containerWidth = viewer.clientWidth;
+
+          const scale =
+            containerWidth / originalViewport.width;
+
+          const viewport = page.getViewport({
+            scale: scale
+          });
+
+
+          /* PAGE CONTAINER */
+
+          const pageContainer =
+            document.createElement("div");
+
+          pageContainer.className = "pdf-page";
+
+          pageContainer.style.width =
+            `${viewport.width}px`;
+
+          pageContainer.style.height =
+            `${viewport.height}px`;
+
+
+          /* CANVAS */
+
+          const canvas =
+            document.createElement("canvas");
+
+          const context =
+            canvas.getContext("2d");
+
+          const devicePixelRatio =
+            window.devicePixelRatio || 1;
+
+          canvas.width =
+            Math.floor(viewport.width * devicePixelRatio);
+
+          canvas.height =
+            Math.floor(viewport.height * devicePixelRatio);
+
+          canvas.style.width =
+            `${viewport.width}px`;
+
+          canvas.style.height =
+            `${viewport.height}px`;
+
+          context.setTransform(
+            devicePixelRatio,
+            0,
+            0,
+            devicePixelRatio,
+            0,
+            0
+          );
+
+
+          /* LINK LAYER */
+
+          const linkLayer =
+            document.createElement("div");
+
+          linkLayer.className =
+            "link-layer";
+
+
+          /*
+            Read the actual links embedded
+            inside your PDF.
+          */
+
+          const annotations =
+            await page.getAnnotations({
+              intent: "display"
+            });
+
+
+          annotations.forEach(annotation => {
+
+            if (
+              annotation.subtype !== "Link" ||
+              !annotation.rect
+            ) {
+              return;
+            }
+
+
+            const rect =
+              viewport.convertToViewportRectangle(
+                annotation.rect
+              );
+
+            const left =
+              Math.min(rect[0], rect[2]);
+
+            const top =
+              Math.min(rect[1], rect[3]);
+
+            const width =
+              Math.abs(rect[2] - rect[0]);
+
+            const height =
+              Math.abs(rect[3] - rect[1]);
+
+
+            const link =
+              document.createElement("a");
+
+            link.style.left =
+              `${left}px`;
+
+            link.style.top =
+              `${top}px`;
+
+            link.style.width =
+              `${width}px`;
+
+            link.style.height =
+              `${height}px`;
+
+
+            /*
+              External URL
+            */
+
+            if (annotation.url) {
+
+              link.href =
+                annotation.url;
+
+              link.target =
+                "_blank";
+
+              link.rel =
+                "noopener noreferrer";
+
+            }
+
+
+            /*
+              Internal PDF destination.
+              This is not needed for your current
+              one-page resume, but keeps the renderer
+              robust.
+            */
+
+            else if (annotation.dest) {
+
+              link.href =
+                "#";
+
+              link.addEventListener(
+                "click",
+                event => {
+                  event.preventDefault();
+                }
+              );
+
+            }
+
+
+            if (
+              annotation.title
+            ) {
+              link.setAttribute(
+                "aria-label",
+                annotation.title
+              );
+            }
+
+
+            linkLayer.appendChild(link);
+
+          });
+
+
+          pageContainer.appendChild(canvas);
+
+          pageContainer.appendChild(linkLayer);
+
+          viewer.appendChild(pageContainer);
+
+
+          /*
+            Render actual PDF page.
+          */
+
+          await page.render({
+            canvasContext: context,
+            viewport: viewport
+          }).promise;
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Unable to render resume:",
+          error
+        );
+
+        viewer.style.display =
+          "none";
+
+        fallback.style.display =
+          "block";
+
+      }
+
+    }
+
+
+    renderResume();
+
+  </script>
+
 </body>
 </html>
