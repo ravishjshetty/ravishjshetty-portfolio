@@ -513,29 +513,35 @@
           const context =
             canvas.getContext("2d");
 
-          const devicePixelRatio =
-            window.devicePixelRatio || 1;
+// Render at a higher internal resolution so the resume
+// stays sharp when the browser/page is zoomed.
+const devicePixelRatio = window.devicePixelRatio || 1;
+const renderScale = Math.min(
+  Math.max(devicePixelRatio * 2, 2),
+  4
+);
 
-          canvas.width =
-            Math.floor(viewport.width * devicePixelRatio);
+canvas.width =
+  Math.ceil(viewport.width * renderScale);
 
-          canvas.height =
-            Math.floor(viewport.height * devicePixelRatio);
+canvas.height =
+  Math.ceil(viewport.height * renderScale);
 
-          canvas.style.width =
-            `${viewport.width}px`;
+// Keep the displayed size unchanged.
+canvas.style.width =
+  `${viewport.width}px`;
 
-          canvas.style.height =
-            `${viewport.height}px`;
+canvas.style.height =
+  `${viewport.height}px`;
 
-          context.setTransform(
-            devicePixelRatio,
-            0,
-            0,
-            devicePixelRatio,
-            0,
-            0
-          );
+context.setTransform(
+  renderScale,
+  0,
+  0,
+  renderScale,
+  0,
+  0
+);
 
 
           /* LINK LAYER */
@@ -694,7 +700,16 @@
 
 
     renderResume();
+let lastDpr = window.devicePixelRatio;
 
+setInterval(() => {
+  const currentDpr = window.devicePixelRatio;
+
+  if (currentDpr !== lastDpr) {
+    lastDpr = currentDpr;
+    renderPDF();
+  }
+}, 500);
   </script>
 
 </body>
