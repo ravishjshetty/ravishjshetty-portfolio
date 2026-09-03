@@ -205,57 +205,51 @@ runLoader(() => {
   }
 
   /* ==================================================================
-     2. NAVBAR SCROLL INTELLIGENCE
-  ================================================================== */
-  (function initNavbar() {
-    if (!navbar) return;
-    const heroHeight = heroSection ? heroSection.offsetHeight : 600;
-    let lastY = window.scrollY;
+   2. NAVBAR — HERO / NON-HERO STATE
+================================================================== */
+
+(function initNavbarHeroState() {
+
+    if (!navbar || !heroSection) return;
+
     let ticking = false;
 
-    function onScroll() {
-      const y = window.scrollY;
-      navbar.classList.toggle("navbar--scrolled", y > heroHeight * 0.6);
+    function updateNavbar() {
 
-      if (!prefersReducedMotion) {
-        if (y > lastY && y > heroHeight) {
-          navbar.classList.add("navbar--hidden");
+        const heroBottom = heroSection.getBoundingClientRect().bottom;
+
+        if (heroBottom <= 100) {
+            navbar.classList.add("navbar--compact");
         } else {
-          navbar.classList.remove("navbar--hidden");
+            navbar.classList.remove("navbar--compact");
         }
-      }
-      lastY = y;
-      ticking = false;
+
+        ticking = false;
     }
 
-    window.addEventListener("scroll", () => {
-      if (!ticking) {
-        window.requestAnimationFrame(onScroll);
-        ticking = true;
-      }
-    }, { passive: true });
+    function requestUpdate() {
 
-    // Active-section indicator on nav links
-    const navLinks = Array.from(document.querySelectorAll(".nav-links a[href^='#']"));
-    const sections = navLinks
-      .map((a) => document.querySelector(a.getAttribute("href")))
-      .filter((el) => el && el.id);
+        if (!ticking) {
+            window.requestAnimationFrame(updateNavbar);
+            ticking = true;
+        }
 
-    if ("IntersectionObserver" in window && sections.length) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const id = "#" + entry.target.id;
-          const link = navLinks.find((a) => a.getAttribute("href") === id);
-          if (!link) return;
-          navLinks.forEach((a) => a.classList.remove("active"));
-          link.classList.add("active");
-        });
-      }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
-
-      sections.forEach((s) => io.observe(s));
     }
-  })();
+
+    window.addEventListener(
+        "scroll",
+        requestUpdate,
+        { passive: true }
+    );
+
+    window.addEventListener(
+        "resize",
+        requestUpdate
+    );
+
+    updateNavbar();
+
+})();
 
   /* ==================================================================
      4. SELECTED WORK — stagger entrance + cursor highlight

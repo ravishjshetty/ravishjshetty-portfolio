@@ -1411,3 +1411,42 @@ body.has-custom-cursor button { cursor: none; }
         display: none;
     }
 }
+/* =========================================================
+   NAVBAR — HERO / NON-HERO STATE
+   ========================================================= */
+
+.top-nav {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+}
+
+/* Keep links centered */
+.top-nav .nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================================
+   WHEN OUTSIDE HERO
+   ========================================================= */
+
+.top-nav.navbar--compact {
+    grid-template-columns: 1fr auto;
+}
+
+/* Completely remove greeting */
+.top-nav.navbar--compact .nav-brand {
+    display: none;
+}
+
+/* Center navigation */
+.top-nav.navbar--compact .nav-links {
+    justify-self: center;
+}
+
+/* Keep LinkedIn on right */
+.top-nav.navbar--compact .nav-socials {
+    justify-self: end;
+}
