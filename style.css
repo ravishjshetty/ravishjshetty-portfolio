@@ -1271,3 +1271,143 @@ body.has-custom-cursor button { cursor: none; }
         z-index: 5;
     }
 }
+/* ==========================================================================
+   RESUME-STYLE FLOATING NAVBAR
+   Shared visual treatment with resume.html
+   ========================================================================== */
+.navbar.top-nav {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    width: min(484px, calc(100vw - 28px));
+    min-height: 44px;
+    height: 44px;
+    padding: 0 14px 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(255,255,255,.98);
+    border-radius: 13px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.10);
+    border: 1px solid rgba(15,32,25,.08);
+    color: #142019;
+}
+
+.navbar.top-nav .nav-brand {
+    color: #142019;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.navbar.top-nav .nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    font-size: 12px;
+    font-weight: 500;
+    flex: 1;
+    margin: 0;
+}
+
+.navbar.top-nav .nav-links a {
+    color: #142019;
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    font-weight: 500;
+    transition: opacity .2s ease;
+}
+
+.navbar.top-nav .nav-links a:hover {
+    color: #142019;
+    opacity: .55;
+}
+
+.navbar.top-nav .nav-links a::after {
+    display: none;
+}
+
+.navbar.top-nav .nav-socials {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+}
+
+.navbar.top-nav .social-link {
+    width: 17px;
+    height: 17px;
+    display: grid;
+    place-items: center;
+    color: #142019;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 800;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.navbar.top-nav .social-link:hover {
+    transform: translateY(-1px);
+    opacity: .65;
+}
+
+.navbar.top-nav.navbar--scrolled {
+    background: rgba(255,255,255,.98);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 8px 30px rgba(0,0,0,.10);
+}
+
+@media (max-width: 640px) {
+    .navbar.top-nav {
+        min-height: 42px;
+        height: 42px;
+        padding-left: 14px;
+        padding-right: 12px;
+    }
+
+    .navbar.top-nav .nav-links {
+        gap: 14px;
+        font-size: 10px;
+    }
+
+    .navbar.top-nav .nav-links a {
+        font-size: 10px;
+    }
+
+    .navbar.top-nav .nav-socials {
+        gap: 8px;
+    }
+
+    .navbar.top-nav .nav-brand {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 430px) {
+    .navbar.top-nav .nav-brand {
+        display: none;
+    }
+
+    .navbar.top-nav .nav-links {
+        gap: 18px;
+    }
+
+    .navbar.top-nav {
+        justify-content: center;
+    }
+
+    .navbar.top-nav .nav-socials {
+        display: none;
+    }
+}
