@@ -1277,21 +1277,21 @@ body.has-custom-cursor button { cursor: none; }
    ========================================================================== */
 .navbar.top-nav {
     position: fixed;
-    top: 12px;
+    top: 22px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
-    width: min(484px, calc(100vw - 28px));
-    min-height: 44px;
-    height: 44px;
-    padding: 0 14px 0 18px;
+    width: min(560px, calc(100vw - 40px));
+    min-height: 64px;
+    height: 64px;
+    padding: 0 22px 0 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 14px;
     background: rgba(255,255,255,.98);
-    border-radius: 13px;
-    box-shadow: 0 8px 30px rgba(0,0,0,.10);
+    border-radius: 22px;
+    box-shadow: 0 10px 34px rgba(0,0,0,.11);
     border: 1px solid rgba(15,32,25,.08);
     color: #142019;
     transition:
@@ -1306,12 +1306,12 @@ body.has-custom-cursor button { cursor: none; }
 .navbar.top-nav .nav-brand {
     color: #142019;
     text-decoration: none;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 700;
     white-space: nowrap;
     flex-shrink: 0;
     overflow: hidden;
-    max-width: 160px;
+    max-width: 200px;
     opacity: 1;
     transform: scale(1);
     transform-origin: left center;
@@ -1326,8 +1326,8 @@ body.has-custom-cursor button { cursor: none; }
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    font-size: 12px;
+    gap: 6px;
+    font-size: 15px;
     font-weight: 500;
     flex: 1;
     margin: 0;
@@ -1340,9 +1340,9 @@ body.has-custom-cursor button { cursor: none; }
     color: #142019;
     text-decoration: none;
     margin: 0;
-    padding: 7px 13px;
+    padding: 10px 16px;
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 500;
     transition: color .25s ease;
 }
@@ -1361,7 +1361,7 @@ body.has-custom-cursor button { cursor: none; }
     position: absolute;
     top: 50%;
     left: 0;
-    height: 28px;
+    height: 38px;
     width: 0;
     border-radius: 999px;
     background: rgba(99, 102, 241, .13);
@@ -1378,12 +1378,12 @@ body.has-custom-cursor button { cursor: none; }
 .navbar.top-nav .nav-socials {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     flex-shrink: 0;
     padding: 0;
     border: 0;
     overflow: hidden;
-    max-width: 60px;
+    max-width: 90px;
     opacity: 1;
     transform: scale(1);
     transform-origin: right center;
@@ -1395,13 +1395,13 @@ body.has-custom-cursor button { cursor: none; }
 }
 
 .navbar.top-nav .social-link {
-    width: 17px;
-    height: 17px;
+    width: 22px;
+    height: 22px;
     display: grid;
     place-items: center;
     color: #142019;
     text-decoration: none;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 800;
     transition: transform .2s ease, opacity .2s ease;
 }
@@ -1421,8 +1421,8 @@ body.has-custom-cursor button { cursor: none; }
 /* Compact / shrunk state — reached once the hero has scrolled past.
    Brand and socials collapse away, leaving just the centered link pill. */
 .navbar.top-nav.navbar--compact {
-    width: min(300px, calc(100vw - 28px));
-    padding: 0 10px;
+    width: min(370px, calc(100vw - 40px));
+    padding: 0 14px;
     gap: 0;
     border-radius: 999px;
 }
@@ -1445,32 +1445,46 @@ body.has-custom-cursor button { cursor: none; }
 
 @media (max-width: 640px) {
     .navbar.top-nav {
-        min-height: 42px;
-        height: 42px;
-        padding-left: 14px;
-        padding-right: 12px;
+        top: 16px;
+        min-height: 52px;
+        height: 52px;
+        padding-left: 18px;
+        padding-right: 16px;
+        width: min(420px, calc(100vw - 28px));
     }
 
     .navbar.top-nav .nav-links {
-        gap: 0;
-        font-size: 10px;
+        gap: 2px;
+        font-size: 12px;
     }
 
     .navbar.top-nav .nav-links a {
-        font-size: 10px;
-        padding: 6px 9px;
+        font-size: 12px;
+        padding: 8px 11px;
+    }
+
+    .navbar.top-nav .nav-indicator {
+        height: 32px;
     }
 
     .navbar.top-nav .nav-socials {
-        gap: 8px;
+        gap: 10px;
+        max-width: 70px;
+    }
+
+    .navbar.top-nav .social-link {
+        width: 19px;
+        height: 19px;
+        font-size: 12px;
     }
 
     .navbar.top-nav .nav-brand {
-        font-size: 11px;
+        font-size: 13px;
+        max-width: 150px;
     }
 
     .navbar.top-nav.navbar--compact {
-        width: min(230px, calc(100vw - 28px));
+        width: min(260px, calc(100vw - 28px));
     }
 }
 
