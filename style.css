@@ -1294,6 +1294,13 @@ body.has-custom-cursor button { cursor: none; }
     box-shadow: 0 8px 30px rgba(0,0,0,.10);
     border: 1px solid rgba(15,32,25,.08);
     color: #142019;
+    transition:
+        width .5s cubic-bezier(0.19, 1, 0.22, 1),
+        padding .5s cubic-bezier(0.19, 1, 0.22, 1),
+        gap .5s cubic-bezier(0.19, 1, 0.22, 1),
+        border-radius .5s cubic-bezier(0.19, 1, 0.22, 1),
+        box-shadow .35s ease,
+        background .35s ease;
 }
 
 .navbar.top-nav .nav-brand {
@@ -1303,36 +1310,69 @@ body.has-custom-cursor button { cursor: none; }
     font-weight: 700;
     white-space: nowrap;
     flex-shrink: 0;
+    overflow: hidden;
+    max-width: 160px;
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: left center;
+    transition:
+        max-width .45s cubic-bezier(0.19, 1, 0.22, 1),
+        opacity .3s ease,
+        transform .45s cubic-bezier(0.19, 1, 0.22, 1),
+        margin .45s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .navbar.top-nav .nav-links {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 26px;
+    gap: 4px;
     font-size: 12px;
     font-weight: 500;
     flex: 1;
     margin: 0;
+    position: relative;
 }
 
 .navbar.top-nav .nav-links a {
+    position: relative;
+    z-index: 1;
     color: #142019;
     text-decoration: none;
     margin: 0;
-    padding: 0;
+    padding: 7px 13px;
+    border-radius: 999px;
     font-size: 12px;
     font-weight: 500;
-    transition: opacity .2s ease;
+    transition: color .25s ease;
 }
 
 .navbar.top-nav .nav-links a:hover {
     color: #142019;
-    opacity: .55;
+    opacity: 1;
 }
 
 .navbar.top-nav .nav-links a::after {
     display: none;
+}
+
+/* Sliding hover pill — follows the cursor between links (JS-positioned) */
+.navbar.top-nav .nav-indicator {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 28px;
+    width: 0;
+    border-radius: 999px;
+    background: rgba(99, 102, 241, .13);
+    transform: translate(0, -50%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition:
+        transform .35s cubic-bezier(0.19, 1, 0.22, 1),
+        width .35s cubic-bezier(0.19, 1, 0.22, 1),
+        opacity .2s ease;
 }
 
 .navbar.top-nav .nav-socials {
@@ -1342,6 +1382,16 @@ body.has-custom-cursor button { cursor: none; }
     flex-shrink: 0;
     padding: 0;
     border: 0;
+    overflow: hidden;
+    max-width: 60px;
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: right center;
+    transition:
+        max-width .45s cubic-bezier(0.19, 1, 0.22, 1),
+        opacity .3s ease,
+        transform .45s cubic-bezier(0.19, 1, 0.22, 1),
+        margin .45s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .navbar.top-nav .social-link {
@@ -1368,6 +1418,31 @@ body.has-custom-cursor button { cursor: none; }
     box-shadow: 0 8px 30px rgba(0,0,0,.10);
 }
 
+/* Compact / shrunk state — reached once the hero has scrolled past.
+   Brand and socials collapse away, leaving just the centered link pill. */
+.navbar.top-nav.navbar--compact {
+    width: min(300px, calc(100vw - 28px));
+    padding: 0 10px;
+    gap: 0;
+    border-radius: 999px;
+}
+
+.navbar.top-nav.navbar--compact .nav-brand {
+    max-width: 0;
+    opacity: 0;
+    transform: scale(.85);
+    margin-right: -12px;
+    pointer-events: none;
+}
+
+.navbar.top-nav.navbar--compact .nav-socials {
+    max-width: 0;
+    opacity: 0;
+    transform: scale(.85);
+    margin-left: -12px;
+    pointer-events: none;
+}
+
 @media (max-width: 640px) {
     .navbar.top-nav {
         min-height: 42px;
@@ -1377,12 +1452,13 @@ body.has-custom-cursor button { cursor: none; }
     }
 
     .navbar.top-nav .nav-links {
-        gap: 14px;
+        gap: 0;
         font-size: 10px;
     }
 
     .navbar.top-nav .nav-links a {
         font-size: 10px;
+        padding: 6px 9px;
     }
 
     .navbar.top-nav .nav-socials {
@@ -1391,6 +1467,10 @@ body.has-custom-cursor button { cursor: none; }
 
     .navbar.top-nav .nav-brand {
         font-size: 11px;
+    }
+
+    .navbar.top-nav.navbar--compact {
+        width: min(230px, calc(100vw - 28px));
     }
 }
 
@@ -1413,40 +1493,6 @@ body.has-custom-cursor button { cursor: none; }
 }
 /* =========================================================
    NAVBAR — HERO / NON-HERO STATE
+   (superseded by the animated flex collapse defined above;
+   kept empty intentionally so nothing fights the transition)
    ========================================================= */
-
-.top-nav {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-}
-
-/* Keep links centered */
-.top-nav .nav-links {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* =========================================================
-   WHEN OUTSIDE HERO
-   ========================================================= */
-
-.top-nav.navbar--compact {
-    grid-template-columns: 1fr auto;
-}
-
-/* Completely remove greeting */
-.top-nav.navbar--compact .nav-brand {
-    display: none;
-}
-
-/* Center navigation */
-.top-nav.navbar--compact .nav-links {
-    justify-self: center;
-}
-
-/* Keep LinkedIn on right */
-.top-nav.navbar--compact .nav-socials {
-    justify-self: end;
-}

@@ -252,6 +252,49 @@ runLoader(() => {
 })();
 
   /* ==================================================================
+   2b. NAVBAR — sliding hover pill between links
+================================================================== */
+
+(function initNavIndicator() {
+
+    const navLinksEl = document.querySelector(".navbar.top-nav .nav-links");
+    if (!navLinksEl || isCoarsePointer) return;
+
+    const links = Array.from(navLinksEl.querySelectorAll("a"));
+    if (!links.length) return;
+
+    const indicator = document.createElement("span");
+    indicator.className = "nav-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+    navLinksEl.prepend(indicator);
+
+    function moveIndicatorTo(link) {
+        const linkBox = link.getBoundingClientRect();
+        const containerBox = navLinksEl.getBoundingClientRect();
+
+        indicator.style.width = `${linkBox.width}px`;
+        indicator.style.transform = `translate(${linkBox.left - containerBox.left}px, -50%)`;
+        indicator.style.opacity = "1";
+    }
+
+    links.forEach((link) => {
+        link.addEventListener("mouseenter", () => moveIndicatorTo(link));
+    });
+
+    navLinksEl.addEventListener("mouseleave", () => {
+        indicator.style.opacity = "0";
+    });
+
+    // Keep the indicator glued to its link if the navbar resizes
+    // (e.g. expand/compact transition, or viewport resize)
+    window.addEventListener("resize", () => {
+        const hovered = navLinksEl.querySelector("a:hover");
+        if (hovered) moveIndicatorTo(hovered);
+    });
+
+})();
+
+  /* ==================================================================
      4. SELECTED WORK — stagger entrance + cursor highlight
   ================================================================== */
   const workCards = gsap.utils.toArray(".work-card");
