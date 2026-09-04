@@ -1748,6 +1748,47 @@ body.has-custom-cursor button { cursor: none; }
    MOBILE HERO — PORTRAIT ABOVE INTRO
    ========================================================= */
 
+@media (max-width: 968px) {
+
+    .hero-portrait-layer {
+        position: absolute;
+        top: 26px;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+
+        width: 300px;
+        max-width: none;
+
+        transform: translateX(-50%);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .portrait-wrap {
+        width: 100%;
+        max-width: none;
+    }
+
+    .hero-image {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        opacity: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        width: 100%;
+        padding: 0 28px;
+        box-sizing: border-box;
+
+        margin-top: 285px;
+
+        z-index: 5;
+    }
+}
 /* ==========================================================================
    RESUME-STYLE FLOATING NAVBAR
    Shared visual treatment with resume.html
@@ -1809,6 +1850,16 @@ body.has-custom-cursor button { cursor: none; }
     flex: 1;
     margin: 0;
     position: relative;
+    inset: auto;
+    width: auto;
+    height: auto;
+    background: none;
+    padding: 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    z-index: auto;
 }
 
 .navbar.top-nav .nav-links a {
@@ -1821,6 +1872,7 @@ body.has-custom-cursor button { cursor: none; }
     border-radius: 999px;
     font-size: 15px;
     font-weight: 500;
+    letter-spacing: normal;
     transition: color .25s ease;
 }
 
