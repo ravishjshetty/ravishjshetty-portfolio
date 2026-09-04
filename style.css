@@ -2104,3 +2104,38 @@ body.has-custom-cursor button { cursor: none; }
         top: 78px;
     }
 }
+
+/* =========================================================
+   HERO MOBILE — FINAL CENTERING FIX
+   Three earlier @media(max-width:968px) blocks all set
+   `.hero-portrait-layer`'s position (once to bottom-anchor it,
+   once to pin it near the top for the "portrait above intro"
+   layout, once more to nudge it to top:82px/78px for the navbar
+   redesign), and `.hero` was switched from a fixed 100vh to
+   `height:auto; min-height:100svh`. Because the portrait and the
+   `.hero-tagline` are both position:absolute, neither contributes
+   to that auto height, so the section still stretches to fill the
+   full screen — it just leaves everything squeezed under the
+   navbar with a large dead gap above the tagline (see screenshot).
+   This last block wins the cascade (same specificity, declared
+   last) and re-centers the portrait vertically inside the
+   full-height hero so the gap closes, matching the desktop layout.
+   ========================================================= */
+@media (max-width: 968px) {
+    .hero {
+        height: 100svh;
+        min-height: 100svh;
+    }
+
+    .hero-portrait-layer {
+        top: 50%;
+        bottom: auto;
+        transform: translate(-50%, -54%);
+    }
+}
+
+@media (max-width: 430px) {
+    .hero-portrait-layer {
+        transform: translate(-50%, -52%);
+    }
+}
