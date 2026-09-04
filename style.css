@@ -1850,16 +1850,6 @@ body.has-custom-cursor button { cursor: none; }
     flex: 1;
     margin: 0;
     position: relative;
-    inset: auto;
-    width: auto;
-    height: auto;
-    background: none;
-    padding: 0;
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: none;
-    z-index: auto;
 }
 
 .navbar.top-nav .nav-links a {
@@ -1872,7 +1862,6 @@ body.has-custom-cursor button { cursor: none; }
     border-radius: 999px;
     font-size: 15px;
     font-weight: 500;
-    letter-spacing: normal;
     transition: color .25s ease;
 }
 
@@ -2039,3 +2028,79 @@ body.has-custom-cursor button { cursor: none; }
    (superseded by the animated flex collapse defined above;
    kept empty intentionally so nothing fights the transition)
    ========================================================= */
+
+/* =========================================================
+   FINAL MOBILE HERO/NAV FIX
+   Prevent the legacy mobile-menu rules from turning the
+   floating portfolio navbar into a vertical full-screen menu.
+   ========================================================= */
+@media (max-width: 968px) {
+    .navbar.top-nav .nav-links {
+        position: static;
+        inset: auto;
+        width: auto;
+        height: auto;
+        background: transparent;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        padding: 0;
+        margin: 0;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: none;
+        z-index: auto;
+    }
+
+    .navbar.top-nav .nav-links a {
+        margin: 0;
+        padding: 8px 10px;
+        font-size: 12px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .navbar.top-nav .nav-indicator {
+        display: none;
+    }
+
+    .navbar.top-nav .mobile-menu-btn {
+        display: none;
+    }
+
+    .navbar.top-nav {
+        top: 16px;
+        height: 52px;
+        min-height: 52px;
+        width: min(420px, calc(100vw - 28px));
+        padding: 0 12px;
+        gap: 4px;
+        justify-content: center;
+    }
+
+    .hero-portrait-layer {
+        top: 82px;
+    }
+}
+
+@media (max-width: 430px) {
+    .navbar.top-nav {
+        width: calc(100vw - 24px);
+        padding: 0 8px;
+    }
+
+    .navbar.top-nav .nav-links {
+        gap: 0;
+    }
+
+    .navbar.top-nav .nav-links a {
+        padding: 8px 8px;
+        font-size: 11.5px;
+    }
+
+    .hero-portrait-layer {
+        top: 78px;
+    }
+}
