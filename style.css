@@ -2007,20 +2007,58 @@ body.has-custom-cursor button { cursor: none; }
 }
 
 @media (max-width: 430px) {
-    .navbar.top-nav .nav-brand {
-        display: none;
-    }
-
-    .navbar.top-nav .nav-links {
-        gap: 18px;
-    }
 
     .navbar.top-nav {
-        justify-content: center;
+        width: calc(100vw - 24px);
+        min-height: 58px;
+        height: 58px;
+        padding: 0 14px;
+        gap: 8px;
+        justify-content: space-between;
+        box-sizing: border-box;
     }
 
+    /* SHOW BRAND ON MOBILE */
+    .navbar.top-nav .nav-brand {
+        display: block;
+        flex-shrink: 1;
+        width: auto;
+        max-width: 112px;
+        min-width: 0;
+
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        opacity: 1;
+        transform: scale(1);
+        margin: 0;
+    }
+
+    /* Hide social icons on mobile */
     .navbar.top-nav .nav-socials {
         display: none;
+    }
+
+    /* Navigation */
+    .navbar.top-nav .nav-links {
+        flex: 1;
+        min-width: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        gap: 0;
+        margin: 0;
+    }
+
+    .navbar.top-nav .nav-links a {
+        padding: 8px 5px;
+        font-size: 11px;
+        white-space: nowrap;
     }
 }
 /* =========================================================
@@ -2137,5 +2175,72 @@ body.has-custom-cursor button { cursor: none; }
 @media (max-width: 430px) {
     .hero-portrait-layer {
         transform: translate(-50%, -52%);
+    }
+}
+/* ==========================================
+   DESKTOP-STYLE NAVBAR FOR ALL SCREEN SIZES
+   ========================================== */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px 40px; /* Standard desktop padding */
+    box-sizing: border-box;
+}
+
+.nav-brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #111827;
+    text-decoration: none;
+    white-space: nowrap; /* Prevents text from breaking into two lines */
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 24px; /* Even spacing between links */
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #4b5563;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-links a:hover {
+    color: #111827;
+}
+
+/* Hide any mobile menu button if present */
+.mobile-menu-btn {
+    display: none !important;
+}
+
+
+/* ==========================================
+   MOBILE SCALING (Prevents overflow on small screens)
+   ========================================== */
+
+@media (max-width: 600px) {
+    .navbar {
+        padding: 16px 18px; /* Slightly tighter padding for small screens */
+    }
+
+    .nav-brand {
+        font-size: 0.95rem; /* Slightly smaller brand font */
+    }
+
+    .nav-links {
+        gap: 12px; /* Tighter gap between links on phone screens */
+    }
+
+    .nav-links a {
+        font-size: 0.85rem; /* Scaled down link text to fit all 4 links */
     }
 }
