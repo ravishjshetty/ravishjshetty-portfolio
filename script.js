@@ -170,6 +170,7 @@ if (mobileMenuBtn && navbar) {
 
 runLoader(() => {
   runHero();
+  if (orbitBubbles) orbitBubbles.burst();
 
   // If coming from a case study, return directly to the Work section
   if (window.location.hash === "#work") {
@@ -186,23 +187,282 @@ runLoader(() => {
   }
 });
 
-  /* Subtle cursor parallax on the portrait — desktop only */
-  if (!isCoarsePointer && !prefersReducedMotion && heroImage && heroSection) {
-    const xTo = gsap.quickTo(heroImage, "x", { duration: 0.6, ease: "power3.out" });
-    const yTo = gsap.quickTo(heroImage, "y", { duration: 0.6, ease: "power3.out" });
+  /* Cursor-tracking 3D tilt + pupil gaze on the avatar — desktop only
+     (mirrors the "look toward cursor" motion from the reference video:
+      the head turns in perspective 3D, and the pupils shift a few px
+      independently within the eyes for a more human "looking at you"
+      feel, rather than the whole head being a single rigid object). */
+  const avatarTilt = document.getElementById("avatarTilt");
+  const avatarScene = document.getElementById("avatarScene");
+  const eyeLeft = document.getElementById("eyeLeft");
+  const eyeRight = document.getElementById("eyeRight");
 
+  if (!isCoarsePointer && !prefersReducedMotion && avatarTilt && avatarScene) {
+    const MAX_TILT = 20; // degrees, head yaw/pitch
+
+    const rotateXTo = gsap.quickTo(avatarTilt, "rotationX", { duration: 0.45, ease: "power3.out" });
+    const rotateYTo = gsap.quickTo(avatarTilt, "rotationY", { duration: 0.45, ease: "power3.out" });
+
+    let eyeXTo, eyeYTo, eyeXTo2, eyeYTo2;
+    if (eyeLeft && eyeRight) {
+      gsap.set([eyeLeft, eyeRight], { xPercent: -50, yPercent: -50 });
+      eyeXTo  = gsap.quickTo(eyeLeft,  "x", { duration: 0.3, ease: "power3.out" });
+      eyeYTo  = gsap.quickTo(eyeLeft,  "y", { duration: 0.3, ease: "power3.out" });
+      eyeXTo2 = gsap.quickTo(eyeRight, "x", { duration: 0.3, ease: "power3.out" });
+      eyeYTo2 = gsap.quickTo(eyeRight, "y", { duration: 0.3, ease: "power3.out" });
+    }
+
+    const MAX_EYE_SHIFT = 3.2; // px — small so it reads as a gaze, not a bulge
+
+    // React to the cursor across the whole hero, not just the avatar box,
+    // so it feels like the character is aware of you anywhere on screen.
     heroSection.addEventListener("mousemove", (e) => {
       const rect = heroSection.getBoundingClientRect();
       const relX = (e.clientX - rect.left) / rect.width - 0.5;
       const relY = (e.clientY - rect.top) / rect.height - 0.5;
-      xTo(relX * 14); // ~ +/-7px
-      yTo(relY * 10); // ~ +/-5px
+
+      rotateYTo(relX * MAX_TILT * 2);   // turn left/right
+      rotateXTo(-relY * MAX_TILT);      // tilt up/down (inverted for natural feel)
+
+      if (eyeXTo) {
+        eyeXTo(relX * MAX_EYE_SHIFT * 2);
+        eyeYTo(relY * MAX_EYE_SHIFT);
+        eyeXTo2(relX * MAX_EYE_SHIFT * 2);
+        eyeYTo2(relY * MAX_EYE_SHIFT);
+      }
     });
+
     heroSection.addEventListener("mouseleave", () => {
-      xTo(0);
-      yTo(0);
+      rotateXTo(0);
+      rotateYTo(0);
+      if (eyeXTo) {
+        eyeXTo(0); eyeYTo(0);
+        eyeXTo2(0); eyeYTo2(0);
+      }
     });
   }
+
+  /* ==================================================================
+     FLOATING APP BUBBLES — a fixed, asymmetric scatter around the
+     avatar's head & shoulders (matching the reference layout), each
+     bubble a different size and sitting at its own fixed spot. On
+     load they start collapsed at the avatar's center and burst
+     outward into place with a springy overshoot (Apple Memoji
+     watch-face style), then settle into a gentle continuous bob.
+     Position (dx/dy) and size are expressed as a fraction of the
+     avatar's rendered width, so the whole cluster scales responsively
+     without extra breakpoints.
+  ================================================================== */
+  const orbitBubbles = (function initOrbitBubbles() {
+    const orbitField = document.getElementById("orbitField");
+    const avatarScene = document.getElementById("avatarScene");
+    if (!orbitField || !avatarScene) return null;
+
+    const bubbleEls = Array.from(orbitField.querySelectorAll(".orbit-bubble"));
+    if (!bubbleEls.length) return null;
+
+    // One config entry per bubble, in DOM order:
+    // Figma, About, Get in touch, LinkedIn, GitHub, Instagram, Resume
+    // dx/dy: fixed offset from avatar center (× avatarWidth) that each
+    // bubble settles into after the reveal — this also defines its own
+    // fixed orbital radius/angle for the idle rotation that follows.
+    // size: bubble diameter (× avatarWidth) — deliberately uneven,
+    // like the reference image.
+    // bobAmp/bobSpeed/phase: tiny per-bubble float/scale wobble used
+    // only in the idle phase, once everything has already stopped.
+    // NOTE: dx/dy/size were tuned by measuring the reference "keep
+    // inside this box" screenshot against the avatar's actual rendered
+    // scale.
+    const configs = [
+      { dx: -0.435, dy: -0.166, size: 0.235, bobAmp: 4, bobSpeed: 1.3 }, // Figma      — upper-left (shrunk to marked size)
+      { dx:  0.555, dy:  0.049, size: 0.212, bobAmp: 4, bobSpeed: 1.1 }, // About      — shrunk to marked size
+      { dx:  0.200, dy:  0.516, size: 0.205, bobAmp: 3, bobSpeed: 1.9 }, // Get in touch — lower-center-right
+      { dx:  0.534, dy: -0.160, size: 0.160, bobAmp: 3, bobSpeed: 1.6 }, // LinkedIn   — small, upper-right
+      { dx: -0.514, dy:  0.067, size: 0.120, bobAmp: 3, bobSpeed: 1.2 }, // GitHub     — small, left
+      { dx: -0.477, dy:  0.400, size: 0.170, bobAmp: 4, bobSpeed: 1.5 }, // Instagram  — lower-left (shrunk to marked size)
+      { dx:  0.037, dy: -0.346, size: 0.184, bobAmp: 3, bobSpeed: 1.4 }  // Resume     — top-center (shrunk to marked size)
+    ];
+
+    const bubbles = bubbleEls.map((el, i) => {
+      const cfg = configs[i] || { dx: 0, dy: 0, size: 0.3, bobAmp: 4, bobSpeed: 1.4 };
+      return Object.assign({ el, phase: Math.random() * Math.PI * 2 }, cfg);
+    });
+
+    let avatarWidth = avatarScene.getBoundingClientRect().width || 340;
+
+    function sizeBubbles() {
+      bubbles.forEach((b) => {
+        const sizePx = avatarWidth * b.size;
+        b.el.style.setProperty("--bsize", `${sizePx}px`);
+        b.el.style.setProperty("--isize", `${sizePx * 0.42}px`);
+      });
+    }
+    sizeBubbles();
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        avatarWidth = avatarScene.getBoundingClientRect().width || avatarWidth;
+        sizeBubbles();
+      }, 150);
+    });
+
+    // ---- IDLE PHASE (only starts after the reveal has fully stopped) ----
+    // Each bubble keeps its own fixed distance from the avatar (set by
+    // dx/dy above) and slowly sweeps around it, plus a small independent
+    // float/scale wobble layered on top — subtle enough to read as
+    // gentle drifting in 3D space, not a visible spin.
+    const ORBIT_DEG_PER_SEC = 2; // ~180s per full revolution — barely perceptible
+
+    function place(t) {
+      const angleStep = prefersReducedMotion ? 0 : t * ORBIT_DEG_PER_SEC * (Math.PI / 180);
+      bubbles.forEach((b) => {
+        const finalX = avatarWidth * b.dx;
+        const finalY = avatarWidth * b.dy;
+        const r = Math.hypot(finalX, finalY);
+        const baseAngle = Math.atan2(finalY, finalX);
+        const angle = baseAngle + angleStep;
+        const floatBob = prefersReducedMotion ? 0 : Math.sin(t * b.bobSpeed + b.phase) * b.bobAmp;
+        const scaleWobble = prefersReducedMotion ? 1 : 1 + Math.sin(t * b.bobSpeed * 0.6 + b.phase) * 0.025;
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle) + floatBob;
+        b.el.style.transform = `translate(${x}px, ${y}px) scale(${scaleWobble})`;
+      });
+    }
+
+    function startIdle() {
+      let start = null;
+      function tick(ts) {
+        if (start === null) start = ts;
+        place((ts - start) / 1000);
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    if (prefersReducedMotion) {
+      place(0);
+      return { burst: () => {} };
+    }
+
+    // Collapse every bubble down to a dot at the avatar's center before
+    // the reveal plays, so there's something to emerge from.
+    bubbles.forEach((b) => {
+      b.el.style.opacity = "0";
+      b.el.style.transform = "translate(0px, 0px) scale(0.15)";
+    });
+
+    let hasBurst = false;
+    function burst() {
+      if (hasBurst) return;
+      hasBurst = true;
+
+      if (typeof gsap === "undefined") {
+        // No GSAP available — just reveal bubbles in place and idle.
+        place(0);
+        bubbles.forEach((b) => { b.el.style.opacity = "1"; });
+        startIdle();
+        return;
+      }
+
+      // Reveal phase only: scale up + move straight outward from behind
+      // the avatar to each bubble's final position, then STOP. No
+      // rotation or orbiting happens here — that's reserved entirely
+      // for the idle phase, which only begins once every bubble has
+      // arrived and this timeline has fully completed.
+      const master = gsap.timeline({ onComplete: startIdle });
+      const STAGGER = 0.08;
+
+      bubbles.forEach((b, i) => {
+        const finalX = avatarWidth * b.dx;
+        const finalY = avatarWidth * b.dy;
+
+        master.to(b.el, {
+          x: finalX,
+          y: finalY,
+          scale: 1,
+          opacity: 1,
+          duration: 0.75,
+          ease: "power3.out" // smooth deceleration straight into place, no orbit, no overshoot
+        }, i * STAGGER);
+      });
+    }
+
+    return { burst };
+  })();
+
+
+
+  /* ==================================================================
+     ABOUT POPUP — triggered from the orbiting "About" bubble
+  ================================================================== */
+  (function initAboutPopup() {
+    const trigger = document.getElementById("aboutBubbleBtn");
+    const popup = document.getElementById("aboutPopup");
+    const backdrop = document.getElementById("aboutPopupBackdrop");
+    const closeBtn = document.getElementById("aboutPopupClose");
+    if (!trigger || !popup || !backdrop) return;
+
+    function openPopup() {
+      popup.classList.add("is-open");
+      backdrop.classList.add("is-open");
+      popup.setAttribute("aria-hidden", "false");
+      trigger.setAttribute("aria-expanded", "true");
+    }
+    function closePopup() {
+      popup.classList.remove("is-open");
+      backdrop.classList.remove("is-open");
+      popup.setAttribute("aria-hidden", "true");
+      trigger.setAttribute("aria-expanded", "false");
+    }
+
+    trigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      popup.classList.contains("is-open") ? closePopup() : openPopup();
+    });
+    closeBtn.addEventListener("click", closePopup);
+    backdrop.addEventListener("click", closePopup);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePopup();
+    });
+  })();
+
+
+  /* ==================================================================
+     GET IN TOUCH POPUP — triggered from the orbiting "Get in touch" bubble
+  ================================================================== */
+  (function initConnectPopup() {
+    const trigger = document.getElementById("connectBubbleBtn");
+    const popup = document.getElementById("connectPopup");
+    const backdrop = document.getElementById("connectPopupBackdrop");
+    const closeBtn = document.getElementById("connectPopupClose");
+    if (!trigger || !popup || !backdrop) return;
+
+    function openPopup() {
+      popup.classList.add("is-open");
+      backdrop.classList.add("is-open");
+      popup.setAttribute("aria-hidden", "false");
+      trigger.setAttribute("aria-expanded", "true");
+    }
+    function closePopup() {
+      popup.classList.remove("is-open");
+      backdrop.classList.remove("is-open");
+      popup.setAttribute("aria-hidden", "true");
+      trigger.setAttribute("aria-expanded", "false");
+    }
+
+    trigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      popup.classList.contains("is-open") ? closePopup() : openPopup();
+    });
+    closeBtn.addEventListener("click", closePopup);
+    backdrop.addEventListener("click", closePopup);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePopup();
+    });
+  })();
+
 
   /* ==================================================================
    2. NAVBAR — HERO / NON-HERO STATE

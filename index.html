@@ -32,15 +32,6 @@
             <a href="#contact">contact</a>
         </nav>
 
-        <div class="nav-socials">
-            <a
-                class="social-link"
-                href="https://www.linkedin.com/in/ravish-shetty-4a9375283"
-                target="_blank"
-                rel="noopener"
-                aria-label="LinkedIn"
-            >in</a>
-        </div>
     </header>
     
     <main>
@@ -55,40 +46,162 @@
 <section id="about" class="about-section container"></section>
     <div class="hero-portrait-layer">
         <div class="portrait-wrap">
-            <img src="assets/images/prfl.png"
-                 alt="Ravish"
-                 class="hero-image">
+
+            <!-- Floating app bubbles orbiting the profile -->
+            <div class="orbit-field" id="orbitField" aria-hidden="false">
+
+                <!-- Figma (decorative only — does nothing on click) -->
+                <div class="orbit-bubble is-back">
+                    <button type="button" class="bubble bubble-figma" aria-label="Figma">
+                        <img src="assets/figma-icon.png" alt="" class="bubble-img">
+                    </button>
+                </div>
+
+                <!-- Resume -->
+                <div class="orbit-bubble is-back">
+                    <a class="bubble bubble-resume" href="resume.html" aria-label="Resume">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm7 1.5L18.5 9H14a1 1 0 0 1-1-1V3.5zM8 13h8v1.6H8V13zm0 3.4h8V18H8v-1.6z"/></svg>
+                    </a>
+                </div>
+
+                <!-- Instagram -->
+                <div class="orbit-bubble is-front">
+                    <a class="bubble bubble-instagram" href="https://instagram.com/_.shexxy._" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.75 2C4.57 2 2 4.57 2 7.75v8.5C2 19.43 4.57 22 7.75 22h8.5C19.43 22 22 19.43 22 16.25v-8.5C22 4.57 19.43 2 16.25 2h-8.5zm0 2h8.5A3.75 3.75 0 0 1 20 7.75v8.5A3.75 3.75 0 0 1 16.25 20h-8.5A3.75 3.75 0 0 1 4 16.25v-8.5A3.75 3.75 0 0 1 7.75 4zm9.5 1a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+                    </a>
+                </div>
+
+                <!-- LinkedIn -->
+                <div class="orbit-bubble is-back">
+                    <a class="bubble bubble-linkedin" href="https://www.linkedin.com/in/ravish-shetty-4a9375283" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                    </a>
+                </div>
+
+                <!-- GitHub -->
+                <div class="orbit-bubble is-front">
+                    <a class="bubble bubble-github" href="https://github.com/ravishshetty" target="_blank" rel="noopener" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
+                    </a>
+                </div>
+
+                <!-- Get in touch (opens popup) -->
+                <div class="orbit-bubble is-front">
+                    <button type="button" class="bubble bubble-mail" id="connectBubbleBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="connectPopup" aria-label="Get in touch">
+                        <img src="assets/lets-connect.png" alt="" class="bubble-img">
+                    </button>
+                </div>
+
+                <!-- About (opens popup) -->
+                <div class="orbit-bubble is-front">
+                    <button type="button" class="bubble bubble-about" id="aboutBubbleBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="aboutPopup" aria-label="About me">
+                        <img src="assets/stalk-me-here.png" alt="" class="bubble-img">
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="avatar-scene" id="avatarScene">
+
+                <!-- Ambient glow beneath the character -->
+                <div class="avatar-pedestal-glow"></div>
+
+                <!-- Idle float wrapper (CSS bob animation) -->
+                <div class="avatar-float">
+                    <!-- Cursor-tracking tilt wrapper (JS controlled) -->
+                    <div class="avatar-tilt" id="avatarTilt">
+                        <img src="assets/avatar-3d.png"
+                             alt="Ravish"
+                             class="hero-image">
+                        <span class="avatar-eye avatar-eye-left" id="eyeLeft"></span>
+                        <span class="avatar-eye avatar-eye-right" id="eyeRight"></span>
+                    </div>
+                </div>
+
+                <!-- Glass pedestal disc -->
+                <div class="avatar-disc"></div>
+                <div class="avatar-disc-reflection"></div>
+
+            </div>
         </div>
     </div>
 
     <!-- Bottom Fade -->
     <div class="hero-fade"></div>
 
-    <!-- Content -->
-    <div class="hero-content container">
-
-        <div class="hero-left">
-
-            <h1>
-                I turn everyday problems into simple, thoughtful digital experiences.
-            </h1>
-
-        </div>
-
-        <div class="hero-right">
-
-            <p>
-I’m a Product designer and engineering graduate from Mangalore, passionate about turning ideas into clean, intuitive, and engaging digital experiences.            </p>
-
-            <a href="#contact" class="hero-btn">
-                Let's Connect
-            </a>
-
-        </div>
-
-    </div>
+    <!-- Centered one-line tagline -->
+    <p class="hero-tagline">
+        <span class="dot"></span>
+        <span>I design experiences.</span>
+    </p>
 
 </section>
+
+<!-- About-me popup, opened from the orbiting "About" bubble -->
+<div class="about-popup-backdrop" id="aboutPopupBackdrop"></div>
+<div class="about-popup" id="aboutPopup" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="aboutPopupTitle">
+    <button type="button" class="about-popup-close" id="aboutPopupClose" aria-label="Close">&times;</button>
+
+    <div class="about-card-photo">
+        <img src="assets/profilee.jpg" alt="Ravish J Shetty" class="about-card-photo-img">
+        <span class="about-card-badge" aria-hidden="true">👋</span>
+    </div>
+
+    <div class="about-card-body">
+        <h3 id="aboutPopupTitle" class="about-card-name">Ravish J Shetty</h3>
+        <p class="about-card-role">Product Designer</p>
+
+        <div class="about-card-meta">
+            <span class="about-card-meta-label">Currently</span>
+            <span class="about-card-meta-value">Open to New Projects</span>
+        </div>
+
+        <div class="about-card-divider" aria-hidden="true">
+            <span class="dot"></span>
+            <span class="line"></span>
+            <span class="dot"></span>
+        </div>
+
+        <p class="about-card-desc">I’m a Product designer and engineering graduate from Mangalore, passionate about turning ideas into clean, intuitive, and engaging digital experiences.</p>
+
+        <a href="resume.html" class="about-card-cta">
+            <span>View Resume</span>
+            <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<!-- Get in touch popup, opened from the orbiting "Get in touch" bubble -->
+<div class="connect-popup-backdrop" id="connectPopupBackdrop"></div>
+<div class="connect-popup" id="connectPopup" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="connectPopupTitle">
+    <div class="connect-popup-hero">
+        <button type="button" class="connect-popup-close" id="connectPopupClose" aria-label="Close">&times;</button>
+        <div class="connect-popup-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5C3 4.12 4.12 3 5.5 3h13C19.88 3 21 4.12 21 5.5v13c0 1.38-1.12 2.5-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13zm2.2.3 6.09 5.11a1.1 1.1 0 0 0 1.42 0L18.8 5.8a1 1 0 0 0-.3-.05H5.5c-.1 0-.2.02-.3.05zM19 7.4l-6 5.03a3.1 3.1 0 0 1-4 0L3 7.4v11.1c0 .28.22.5.5.5h13a.5.5 0 0 0 .5-.5V7.4z"/></svg>
+        </div>
+    </div>
+    <div class="connect-popup-body">
+        <h3 id="connectPopupTitle">Get<br>in touch</h3>
+        <div class="connect-popup-links">
+            <!-- TODO: replace the number below (91XXXXXXXXXX) with your real WhatsApp number -->
+            <a class="connect-pill" href="https://wa.me/918431334372" target="_blank" rel="noopener">
+                <span class="connect-pill-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.3 0-.5 0-.1-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.2 3.4 5.3 4.7.7.3 1.3.5 1.8.7.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.1-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.9.9-3-.2-.3A8.2 8.2 0 1 1 20.2 12 8.2 8.2 0 0 1 12 20.2z"/></svg>
+                </span>
+                <span>Slide into my WhatsApp dm</span>
+            </a>
+            <a class="connect-pill" href="mailto:ravishjshetty@gmail.com">
+                <span class="connect-pill-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <span>Drop an email to my inbox</span>
+            </a>
+        </div>
+    </div>
+</div>
 
 <!-- SELECTED WORK SECTION -->
 <section id="work" class="work-section container">
