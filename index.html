@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Caveat:wght@600&display=swap" rel="stylesheet">
     <noscript><style>.premium-loader{display:none;}</style></noscript>
 </head>
 <body>
@@ -24,7 +25,7 @@
     
     <!-- MAIN NAVBAR -->
     <header class="navbar top-nav load-anim-nav" aria-label="Main navigation">
-<a class="nav-brand" href="index.html">Hola, I’m Ravish</a>
+        <a class="nav-brand" href="index.html">rjs</a>
         <nav class="nav-links">
             <a href="#about">about</a>
             <a href="#work">work</a>
@@ -42,174 +43,105 @@
   <div class="ambient-glow glow-1"></div>
   <div class="ambient-glow glow-2"></div>
 
-<section class="hero">
-<section id="about" class="about-section container"></section>
-    <div class="hero-portrait-layer">
-        <div class="portrait-wrap">
+<!-- ============ SCROLL-DRIVEN HERO (pinned 500vh, GSAP ScrollTrigger) ============ -->
+<section class="hero" id="hero" aria-label="Ravish's world">
+  <!-- Pixel-art stage: 30x17-tile canvas, scaled up with image-rendering:pixelated -->
+  <div class="sh-stage" id="shStage">
+    <canvas id="shCanvas" width="480" height="272" role="img" aria-label="Pixel-art scene: Ravish walks from the garden through a door to his desk and easel"></canvas>
+    <!-- Intro greeting bubble (positioned + typed by hero.js) -->
+    <div class="sh-hello" id="shHello" aria-live="polite"><span class="sh-hello-ghost" id="shHelloGhost" aria-hidden="true"></span><span class="sh-hello-type" id="shHelloText"></span></div>
+  </div>
+  <div class="sh-fade" id="shFade" aria-hidden="true"></div>
 
-            <!-- Floating app bubbles orbiting the profile -->
-            <div class="orbit-field" id="orbitField" aria-hidden="false">
+  <div class="sh-headline" id="shHeadline">
+    <h1>I sketch, I shoot, I grow things.<em>Then I design.</em></h1>
+    <p>Product designer. Engineering graduate who taught himself to design.</p>
+  </div>
 
-                <!-- Figma (decorative only — does nothing on click) -->
-                <div class="orbit-bubble is-back">
-                    <button type="button" class="bubble bubble-figma" aria-label="Figma">
-                        <img src="assets/figma-icon.png" alt="" class="bubble-img">
-                    </button>
-                </div>
+  <!-- GBA-style dialog (typewriter) -->
+  <div class="sh-dialog" id="shDialog" aria-live="polite"><span id="shText"></span><b aria-hidden="true">&#9660;</b></div>
 
-                <!-- Resume -->
-                <div class="orbit-bubble is-back">
-                    <a class="bubble bubble-resume" href="resume.html" aria-label="Resume">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm7 1.5L18.5 9H14a1 1 0 0 1-1-1V3.5zM8 13h8v1.6H8V13zm0 3.4h8V18H8v-1.6z"/></svg>
-                    </a>
-                </div>
 
-                <!-- Instagram -->
-                <div class="orbit-bubble is-front">
-                    <a class="bubble bubble-instagram" href="https://instagram.com/_.shexxy._" target="_blank" rel="noopener" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.75 2C4.57 2 2 4.57 2 7.75v8.5C2 19.43 4.57 22 7.75 22h8.5C19.43 22 22 19.43 22 16.25v-8.5C22 4.57 19.43 2 16.25 2h-8.5zm0 2h8.5A3.75 3.75 0 0 1 20 7.75v8.5A3.75 3.75 0 0 1 16.25 20h-8.5A3.75 3.75 0 0 1 4 16.25v-8.5A3.75 3.75 0 0 1 7.75 4zm9.5 1a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
-                    </a>
-                </div>
-
-                <!-- LinkedIn -->
-                <div class="orbit-bubble is-back">
-                    <a class="bubble bubble-linkedin" href="https://www.linkedin.com/in/ravish-shetty-4a9375283" target="_blank" rel="noopener" aria-label="LinkedIn">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
-                    </a>
-                </div>
-
-                <!-- GitHub -->
-                <div class="orbit-bubble is-front">
-                    <a class="bubble bubble-github" href="https://github.com/ravishshetty" target="_blank" rel="noopener" aria-label="GitHub">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
-                    </a>
-                </div>
-
-                <!-- Get in touch (opens popup) -->
-                <div class="orbit-bubble is-front">
-                    <button type="button" class="bubble bubble-mail" id="connectBubbleBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="connectPopup" aria-label="Get in touch">
-                        <img src="assets/lets-connect.png" alt="" class="bubble-img">
-                    </button>
-                </div>
-
-                <!-- About (opens popup) -->
-                <div class="orbit-bubble is-front">
-                    <button type="button" class="bubble bubble-about" id="aboutBubbleBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="aboutPopup" aria-label="About me">
-                        <img src="assets/stalk-me-here.png" alt="" class="bubble-img">
-                    </button>
-                </div>
-
-            </div>
-
-            <div class="avatar-scene" id="avatarScene">
-
-                <!-- Ambient glow beneath the character -->
-                <div class="avatar-pedestal-glow"></div>
-
-                <!-- Idle float wrapper (CSS bob animation) -->
-                <div class="avatar-float">
-                    <!-- Cursor-tracking tilt wrapper (JS controlled) -->
-                    <div class="avatar-tilt" id="avatarTilt">
-                        <img src="assets/avatar-3d.png"
-                             alt="Ravish"
-                             class="hero-image">
-                        <span class="avatar-eye avatar-eye-left" id="eyeLeft"></span>
-                        <span class="avatar-eye avatar-eye-right" id="eyeRight"></span>
-                    </div>
-                </div>
-
-                <!-- Glass pedestal disc -->
-                <div class="avatar-disc"></div>
-                <div class="avatar-disc-reflection"></div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Fade -->
-    <div class="hero-fade"></div>
-
-    <!-- Centered one-line tagline -->
-    <p class="hero-tagline">
-        <span class="dot"></span>
-        <span>I design experiences.</span>
-    </p>
-
+  <div class="sh-dots" id="shDots" aria-hidden="true"></div>
 </section>
 
-<!-- About-me popup, opened from the orbiting "About" bubble -->
-<div class="about-popup-backdrop" id="aboutPopupBackdrop"></div>
-<div class="about-popup" id="aboutPopup" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="aboutPopupTitle">
-    <button type="button" class="about-popup-close" id="aboutPopupClose" aria-label="Close">&times;</button>
+<!-- anchor so the "about" nav link lands on the next section -->
+<span id="about" aria-hidden="true"></span>
 
-    <div class="about-card-photo">
-        <img src="assets/profilee.jpg" alt="Ravish J Shetty" class="about-card-photo-img">
-        <span class="about-card-badge" aria-hidden="true">👋</span>
-    </div>
+<!-- NEW ABOUT STORY SECTION -->
+  <section class="section about-story-section" id="about-story">
+      <div class="container-large">
+          <div class="about-story-grid">
 
-    <div class="about-card-body">
-        <h3 id="aboutPopupTitle" class="about-card-name">Ravish J Shetty</h3>
-        <p class="about-card-role">Product Designer</p>
+              <!-- LEFT: Big Typography -->
+              <div class="story-text-col">
+                  <div class="story-header">
+                      <span class="star-icon">✦</span>
+                      <span class="section-subtitle">HOW I GOT HERE</span>
+                  </div>
 
-        <div class="about-card-meta">
-            <span class="about-card-meta-label">Currently</span>
-            <span class="about-card-meta-value">Open to New Projects</span>
-        </div>
+                  <h2 class="story-heading">
+                      I started as an <span class="hl-green">engineering student</span>, learning
+                      <span class="ul-red">how systems work</span>. Then I got curious about
+                      <span class="hl-gold">why people struggle to use them</span>. So I taught myself design,
+                      and I’ve been fixing the <span class="ul-wavy">“wait, what do I tap?”</span>
+                      moments ever since.
+                  </h2>
 
-        <div class="about-card-divider" aria-hidden="true">
-            <span class="dot"></span>
-            <span class="line"></span>
-            <span class="dot"></span>
-        </div>
+                  <p class="story-footer-note">↓ Selected Work comes next</p>
+              </div>
 
-        <p class="about-card-desc">I’m a Product designer and engineering graduate from Mangalore, passionate about turning ideas into clean, intuitive, and engaging digital experiences.</p>
+              <!-- RIGHT: Interactive Sticky Notes -->
+              <div class="story-notes-col">
+                  <span class="handwritten-hint"></span>
 
-        <a href="resume.html" class="about-card-cta">
-            <span>View Resume</span>
-            <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="7" y1="17" x2="17" y2="7"></line>
-                <polyline points="7 7 17 7 17 17"></polyline>
-            </svg>
-        </a>
-    </div>
-</div>
+                  <!-- Note 1: MITE photo card -->
+                  <div class="sticky-note note-photo-card note-yellow" id="note-edu">
+                      <div class="note-tape"></div>
+                      <div class="note-content">
+                          <div class="note-photo">
+                              <!-- TODO: replace the src with your MITE image link -->
+                              <img src="assets/images/mite.jpg" alt="MITE campus" loading="lazy" onerror="this.style.display='none'">
+                          </div>
+                          <p class="note-caption">Where my journey began.</p>
+                      </div>
+                  </div>
 
-<!-- Get in touch popup, opened from the orbiting "Get in touch" bubble -->
-<div class="connect-popup-backdrop" id="connectPopupBackdrop"></div>
-<div class="connect-popup" id="connectPopup" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="connectPopupTitle">
-    <div class="connect-popup-hero">
-        <button type="button" class="connect-popup-close" id="connectPopupClose" aria-label="Close">&times;</button>
-        <div class="connect-popup-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5C3 4.12 4.12 3 5.5 3h13C19.88 3 21 4.12 21 5.5v13c0 1.38-1.12 2.5-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13zm2.2.3 6.09 5.11a1.1 1.1 0 0 0 1.42 0L18.8 5.8a1 1 0 0 0-.3-.05H5.5c-.1 0-.2.02-.3.05zM19 7.4l-6 5.03a3.1 3.1 0 0 1-4 0L3 7.4v11.1c0 .28.22.5.5.5h13a.5.5 0 0 0 .5-.5V7.4z"/></svg>
-        </div>
-    </div>
-    <div class="connect-popup-body">
-        <h3 id="connectPopupTitle">Get<br>in touch</h3>
-        <div class="connect-popup-links">
-            <!-- TODO: replace the number below (91XXXXXXXXXX) with your real WhatsApp number -->
-            <a class="connect-pill" href="https://wa.me/918431334372" target="_blank" rel="noopener">
-                <span class="connect-pill-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.3 0-.5 0-.1-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.2 3.4 5.3 4.7.7.3 1.3.5 1.8.7.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.1-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.9.9-3-.2-.3A8.2 8.2 0 1 1 20.2 12 8.2 8.2 0 0 1 12 20.2z"/></svg>
-                </span>
-                <span>Slide into my WhatsApp dm</span>
-            </a>
-            <a class="connect-pill" href="mailto:ravishjshetty@gmail.com">
-                <span class="connect-pill-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                </span>
-                <span>Drop an email to my inbox</span>
-            </a>
-        </div>
-    </div>
-</div>
+                  <!-- Note 3: Discovering UI/UX (same card layout as before, new text) -->
+                  <div class="sticky-note note-blue" id="note-tools">
+                      <div class="note-tape"></div>
+                      <div class="note-content">
+                          <p class="note-label">A UI/UX workshop in my second year sparked my interest in design. </p>
+                          <p class="note-label">What started with curiosity about Figma turned into a passion for creating better digital experiences.</p>
+
+                        </div>
+                  </div>
+
+                  <!-- Note 2: College memories photo card -->
+                  <div class="sticky-note note-photo-card note-pink" id="note-exp">
+                      <div class="note-tape"></div>
+                      <div class="note-content">
+                          <div class="note-photo">
+                              <!-- TODO: replace the src with your college friends / trips / events image link -->
+                              <img src="assets/images/miteise.png" alt="College friends, trips and events" loading="lazy" onerror="this.style.display='none'">
+                          </div>
+                          <p class="note-caption">The memories I made.</p>
+                      </div>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+  </section>
 
 <!-- SELECTED WORK SECTION -->
-<section id="work" class="work-section container">
+<div class="torn torn-a" style="--up:#1c1c1c" aria-hidden="true"></div>
+        <section id="work" class="work-section container">
 
   <!-- Section Header -->
   <div class="work-header">
-    <span class="eyebrow">01 / PORTFOLIO</span>
-    <h2 class="section-title">Selected Work</h2>
+    <span class="eyebrow">01 / PROJECTS</span>
+    <h2 class="section-title">Selected <span class="hl">Work</span></h2>
   </div>
 
   <!-- 2x2 Cards Grid -->
@@ -278,6 +210,7 @@
 </section>
 
         <!-- 02 / DESIGN PHILOSOPHY -->
+        <div class="torn torn-b" style="--up:#1c1c1c" aria-hidden="true"></div>
         <section class="section container-small text-center">
             <span class="section-subtitle">02 / PHILOSOPHY</span>
             <h2 class="philosophy-text">
@@ -285,84 +218,138 @@
             </h2>
         </section>
 
-        <!-- 03 / CAREER EXPERIENCE -->
-        <section id="journey" class="section container-large">
-            <div class="section-header">
-                <span class="section-subtitle">03 / EXPERIENCE</span>
-                <h2 class="section-title">Career Journey</h2>
-            </div>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="time-meta"><h4>2022 - 2026</h4><span>Degree</span></div>
-                    <div class="time-content">
-                        <h3>B.E. Information Science & Engineering</h3>
-                        <p>Mangalore Institute of Technology & Engineering (7.65 CGPA). Built solid foundations in software engineering and structured systems logic.</p>
-                    </div>
+        <!-- 03 / CAREER JOURNEY: scroll-driven lily map -->
+        <div class="torn torn-c" style="--up:#1c1c1c" aria-hidden="true"></div>
+        <section id="journey" class="jm-section" aria-labelledby="jmTitle">
+            <noscript><style>.jm-section{height:auto}.jm-sticky{position:static;height:auto;padding:80px 20px}.jm-map,.jm-vignette,.jm-pins,.jm-nav,.jm-compass,.jm-prog,.jm-skip,.jm-start{display:none}.jm-head{position:static}.jm-cards{position:static;display:grid;gap:20px;max-width:380px;margin:30px auto 0}.jm-card{position:static;opacity:1;visibility:visible;transform:none;width:auto}</style></noscript>
+            <div class="jm-sticky" id="jmStage">
+                <svg class="jm-map" id="jmMap" aria-hidden="true" focusable="false"><g id="jmWorld"></g></svg>
+                <div class="jm-vignette"></div>
+                <div class="jm-pins" id="jmPins" aria-hidden="true"></div>
+                <div class="jm-nav" id="jmNav" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 3 5 20l7-4 7 4z"/></svg>
                 </div>
 
-                <div class="timeline-item">
-                    <div class="time-meta"><h4>2024 - 2025</h4><span>Self-Driven</span></div>
-                    <div class="time-content">
-                        <h3>Product Specialization</h3>
-                        <p>Mastered modern design methodologies, interface design, auto layout architecture, user research, and interactive prototyping.</p>
-                    </div>
+                <div class="jm-head" id="jmHead">
+                    <span class="jm-eyebrow"><i></i>03 / THE JOURNEY</span>
+                    <h2 class="jm-title" id="jmTitle">Grown from code,<br><span class="jm-hl">blooming into design.</span></h2>
+                    <p class="jm-sub">Three stops so far, and the flower is still blooming. Scroll to walk the path.</p>
+                </div>
+                <button type="button" class="jm-start" id="jmStart">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13l-6 2.5L9 17l-6 2.5zM9 4v13M15 6.5v13"/></svg>
+                    <span id="jmStartL">Start the walk</span>
+                </button>
+
+                <div class="jm-cards" id="jmCards">
+                    <article class="jm-card" style="--c:#1fb6a6" aria-label="Stop 1">
+                        <header class="jm-card-top">
+                            <span class="jm-card-ico">BE</span>
+                            <div><strong>Mangalore Institute of Technology &amp; Engineering</strong><small>2022 &ndash; 2026 &middot; Degree</small></div>
+                            <em>01 / 04</em>
+                        </header>
+                        <div class="jm-card-body">
+                            <h3>It started with code.</h3>
+                            <p>B.E. in <b>Information Science &amp; Engineering</b>. I built solid foundations in software engineering and structured systems logic, the roots everything else grows from.</p>
+                            <div class="jm-stats"><div><b>7.65</b><span>CGPA</span></div><div><b>4 yrs</b><span>of engineering</span></div></div>
+                            <div class="jm-gallery">
+                                <span class="jm-gal-label">GALLERY</span>
+                                <div class="jm-gal-row">
+                                    <button type="button" class="jm-ph" style="--r:-3deg" aria-label="Open photo: Day one at MITE"><span class="jm-ph-img"><img src="assets/journey/mite-1.jpg" alt="Day one at MITE" loading="lazy" draggable="false" onerror="this.remove()"></span><span class="jm-ph-cap">Day one at MITE</span></button>
+                                    <button type="button" class="jm-ph" style="--r:-2deg" aria-label="Open photo: Friends & fests"><span class="jm-ph-img"><img src="assets/journey/mite-2.jpg" alt="Friends & fests" loading="lazy" draggable="false" onerror="this.remove()"></span><span class="jm-ph-cap">Friends & fests</span></button>
+                                    <button type="button" class="jm-ph" style="--r:3deg" aria-label="Open photo: Graduation day"><span class="jm-ph-img"><img src="assets/journey/mite-3.jpg" alt="Graduation day" loading="lazy" draggable="false" onerror="this.remove()"></span><span class="jm-ph-cap">Graduation day</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="jm-card" style="--c:#8b5cf6" aria-label="Stop 2">
+                        <header class="jm-card-top">
+                            <span class="jm-card-ico">PS</span>
+                            <div><strong>Product Specialization</strong><small>2024 &ndash; 2025 &middot; Self-driven</small></div>
+                            <em>02 / 04</em>
+                        </header>
+                        <div class="jm-card-body">
+                            <h3>Then I taught myself to design.</h3>
+                            <p>I mastered modern design methodologies, <b>interface design</b>, auto layout architecture, <b>user research</b> and interactive prototyping, one obsessive project at a time.</p>
+                            <div class="jm-tags"><span>Interface design</span><span>Auto layout</span><span>User research</span><span>Prototyping</span></div>
+                            <div class="jm-gallery">
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="jm-card" style="--c:#ff8a4c" aria-label="Stop 3">
+                        <header class="jm-card-top">
+                            <span class="jm-card-ico">AT</span>
+                            <div><strong>Accolade Tech</strong><small>Feb &ndash; May 2026 &middot; UI/UX Design Intern</small></div>
+                            <em>03 / 04</em>
+                        </header>
+                        <div class="jm-card-body">
+                            <h3>Design met real users.</h3>
+                            <p>Delivered <b>60+ responsive screens</b> and <b>20+ interactive prototypes</b> across 4  client applications.</p>
+                            <div class="jm-stats"><div><b>60+</b><span>screens</span></div><div><b>20+</b><span>prototypes</span></div><div><b>4</b><span>Client Projects</span></div></div>
+                            <div class="jm-gallery">
+                                <span class="jm-gal-label">GALLERY</span>
+                                <div class="jm-gal-row">
+                                    <button type="button" class="jm-ph" style="--r:-3deg" aria-label="Open photo: Team day"><span class="jm-ph-img"><img src="assets/journey/accolade-2.jpeg" alt="Team day" loading="lazy" draggable="false" onerror="this.remove()"></span><span class="jm-ph-cap">Team day</span></button>
+                                    <button type="button" class="jm-ph" style="--r:-2deg" aria-label="Open photo: Memento of Recognition"><span class="jm-ph-img"><img src="assets/journey/acc.jpeg" alt="Memento of Recognition" loading="lazy" draggable="false" onerror="this.remove()"></span><span class="jm-ph-cap">Commitment to excellence</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="jm-card" style="--c:#9aa0ab" aria-label="Stop 4">
+                        <header class="jm-card-top">
+                            <span class="jm-card-ico">?</span>
+                            <div><strong>You are here</strong><small>2026 &middot; To be continued</small></div>
+                            <em>04 / 04</em>
+                        </header>
+                        <div class="jm-card-body">
+                            <h3>The next petal is still being drawn.</h3>
+                            <p> My journey is still unfolding. Maybe the next chapter begins with your team.</p>
+                        </div>
+                    </article>
                 </div>
 
-                <div class="timeline-item">
-                    <div class="time-meta"><h4>Feb - May 2026</h4><span>Accolade Tech</span></div>
-                    <div class="time-content">
-                        <h3>UI/UX Design Intern</h3>
-                        <p>Delivered 60+ responsive screens and 50+ interactive prototypes across 4 live production client applications.</p>
-                    </div>
-                </div>
+                <div class="jm-compass" id="jmCompass" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18"/><g id="jmNeedle"><path d="M20 6l4.5 14h-9z" fill="#ff5a4d"/><path d="M20 34l-4.5-14h9z" fill="#d4d4d8"/></g></svg></div>
+                <div class="jm-prog" id="jmProg" aria-hidden="true"><span class="jm-dots" id="jmDots"></span><span class="jm-prog-l" id="jmProgL"></span></div>
+                <button type="button" class="jm-skip" id="jmSkip">Skip journey &darr;</button>
             </div>
         </section>
 
         <!-- 04 / DESIGN PROCESS -->
-        <section id="process" class="section container-large">
+        <div class="torn torn-a" style="--up:#1a1a1a" aria-hidden="true"></div>
+        <section id="process" class="section container-large proc">
             <div class="section-header">
                 <span class="section-subtitle">04 / BLUEPRINT</span>
-                <h2 class="section-title">Design Process</h2>
+                <h2 class="section-title">Design <span class="hl">Process</span></h2>
+                <p class="sec-lead">Four stops, always in this order. Scroll to ride the route, or tap a stop.</p>
             </div>
-            
-            <div class="process-grid">
-                <div class="process-step">
-                    <span class="step-num">01</span>
-                    <h3>Discover</h3>
-                    <p>User interviews, market audit, and mapping real audience needs.</p>
+            <div class="route-stage" id="routeStage">
+                <div class="route-line"><i class="route-fill" id="routeFill"></i></div>
+                <div class="route-bus" id="routeBus" aria-hidden="true">
+                    <svg viewBox="0 0 120 66" width="100%"><rect x="4" y="6" width="112" height="46" rx="13" fill="#f5c542"/><rect x="4" y="36" width="112" height="7" fill="#e3a72a"/><g fill="#1c1c1c" opacity=".88"><rect x="13" y="15" width="19" height="15" rx="4"/><rect x="37" y="15" width="19" height="15" rx="4"/><rect x="61" y="15" width="19" height="15" rx="4"/><rect x="85" y="15" width="24" height="15" rx="5"/></g><circle cx="113" cy="42" r="3" fill="#fff6c0"/><g><circle cx="32" cy="54" r="9.5" fill="#151515"/><circle cx="32" cy="54" r="4" fill="#8a8a8a"/><circle cx="90" cy="54" r="9.5" fill="#151515"/><circle cx="90" cy="54" r="4" fill="#8a8a8a"/></g></svg>
                 </div>
-                <div class="process-step">
-                    <span class="step-num">02</span>
-                    <h3>Structure</h3>
-                    <p>Information architecture, wireframes, and frictionless user flows.</p>
-                </div>
-                <div class="process-step">
-                    <span class="step-num">03</span>
-                    <h3>Design</h3>
-                    <p>High-fidelity UI, design tokens, responsive layouts, and interactive prototypes.</p>
-                </div>
-                <div class="process-step">
-                    <span class="step-num">04</span>
-                    <h3>Deliver</h3>
-                    <p>Usability validation testing and seamless developer handoff specs.</p>
-                </div>
+                <ol class="route-stops" id="routeStops"></ol>
             </div>
+            <article class="ticket" id="ticket" aria-live="polite"></article>
         </section>
 
         <!-- 05 / SKILLS & TOOLS -->
-        <section class="section light-grey-block">
+        <div class="torn torn-b" style="--up:#1c1c1c" aria-hidden="true"></div>
+        <section class="section light-grey-block skl">
             <div class="container-large">
                 <div class="section-header">
                     <span class="section-subtitle">05 / CAPABILITIES</span>
-                    <h2 class="section-title">Skills & Tools</h2>
+                    <h2 class="section-title">Skills & <span class="hl">Tools</span></h2>
+                    <p class="sec-lead">My skills, laid out like a Figma file. Click a frame or a layer, or drag the frames around.</p>
                 </div>
-                
-                <div class="skills-pill-wrapper">
-                    <!-- Mini Tool Cards with SVG Logos & Hover Tooltips -->
-                    <div class="skill-category-box">
-                        <h3>Design Tools</h3>
-                        <div class="tools-grid">
+                <div class="fg-window" id="fg">
+                    <div class="fg-bar"><i></i><i></i><i></i><span class="fg-file">Ravish · Skills.fig</span><span class="fg-zoom">100%</span></div>
+                    <div class="fg-body">
+                        <aside class="fg-layers" aria-label="Layers"><b>Layers</b><ul id="fgLayers"></ul></aside>
+                        <div class="fg-canvas skills-pill-wrapper" id="fgCanvas">
+                            <section class="fg-frame" data-name="Design Tools" tabindex="0">
+                                <div class="tools-grid">
                             <div class="tool-card">
                                 <svg class="tool-icon" viewBox="0 0 38 57" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M19 28.5C19 23.2533 23.2533 19 28.5 19C33.7467 19 38 23.2533 38 28.5C38 33.7467 33.7467 38 28.5 38H19V28.5Z" fill="#1ABCFE"/>
@@ -391,28 +378,65 @@
                                 <span class="tool-name">Google Stitch</span>
                             </div>
 
-                        </div>
-                    </div>
+                                <div class="tool-card">
+                                    <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 0h16v8h-8zM4 8h8l8 8H4zM4 16h8v8z" fill="#111"/></svg>
+                                    <span class="tool-name">Framer</span>
+                                </div>
 
-                    <!-- Clean Text Pills for Competencies -->
-                    <div class="skill-category-box">
-                        <h3>Core Competencies</h3>
-                        <div class="tags-group">
-                            <span class="tool-tag">User Research</span>
-                            <span class="tool-tag">Wireframing</span>
-                            <span class="tool-tag">Prototyping</span>
-                            <span class="tool-tag">Design Systems</span>
-                            <span class="tool-tag">Usability Testing</span>
-                        </div>
-                    </div>
+                                <div class="tool-card">
+                                    <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="#A259FF"/><path d="M12 4.5l1.7 4.8 4.8 1.7-4.8 1.7L12 17.5l-1.7-4.8L5.5 11l4.8-1.7z" fill="#fff"/></svg>
+                                    <span class="tool-name">Figma Make</span>
+                                </div>
 
-                    <!-- Renamed to Development Skills -->
-                    <div class="skill-category-box">
-                        <h3>Technical Skills</h3>
-                        <div class="tags-group">
-                            <span class="tool-tag">HTML / CSS</span>
-                            <span class="tool-tag">SQL Fundamentals</span>
-                            <span class="tool-tag">Responsive Web Design</span>
+                                <div class="tool-card">
+                                    <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#330000"/><text x="12" y="16.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="11" fill="#FF9A00">Ai</text></svg>
+                                    <span class="tool-name">Adobe Illustrator</span>
+                                </div>
+
+                                <div class="tool-card">
+                                    <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#001E36"/><text x="12" y="16.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="11" fill="#31A8FF">Ps</text></svg>
+                                    <span class="tool-name">Adobe Photoshop</span>
+                                </div>
+
+                        </div>
+                            </section>
+                            <section class="fg-frame" data-name="Core Competencies" tabindex="0">
+                                <div class="tags-group">
+                                    <span class="tool-tag">User Research</span>
+                                    <span class="tool-tag">Interaction Design</span>
+                                    <span class="tool-tag">Information Architecture</span>
+                                    <span class="tool-tag">User Flows &amp; Journey Mapping</span>
+                                    <span class="tool-tag">Wireframing &amp; Prototyping</span>
+                                    <span class="tool-tag">Design Systems</span>
+                                    <span class="tool-tag">Usability Testing</span>
+                                    <span class="tool-tag">Accessibility (WCAG)</span>
+                                    <span class="tool-tag">Product Thinking</span>
+                                    <span class="tool-tag">Developer Handoff</span>
+                                </div>
+                            </section>
+                            <section class="fg-frame" data-name="Technical Skills" tabindex="0">
+                                <div class="tags-group">
+                                    <span class="tool-tag">HTML</span>
+                                    <span class="tool-tag">CSS</span>
+                                    <span class="tool-tag">Responsive Web Design</span>
+                                    <span class="tool-tag">Design Tokens</span>
+                                    <span class="tool-tag">Component Architecture</span>
+                                </div>
+                            </section>
+                            <section class="fg-frame" data-name="AI Tools" tabindex="0">
+                                <div class="tools-grid">
+                                    <div class="tool-card">
+                                        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="12" fill="#10A37F"/><path d="M12 5l5.2 3v6L12 17l-5.2-3V8z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 5v6m0 0l5.2 3M12 11L6.8 14" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+                                        <span class="tool-name">ChatGPT</span>
+                                    </div>
+
+                                    <div class="tool-card">
+                                        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#D97757" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(0 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(40 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(80 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(120 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(160 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(200 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(240 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(280 12 12)"/><line x1="12" y1="12" x2="12" y2="3.5" transform="rotate(320 12 12)"/></g></svg>
+                                        <span class="tool-name">Claude</span>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="fg-cursor" aria-hidden="true"><svg width="18" height="20" viewBox="0 0 18 20"><path d="M1 1 L1 15 L5 11.5 L8 18.5 L10.6 17.4 L7.6 10.6 L13 10.6 Z" fill="#a259ff" stroke="#fff" stroke-width="1.2"/></svg><span>Ravish</span></div>
                         </div>
                     </div>
                 </div>
@@ -420,136 +444,137 @@
         </section>
         
        <!-- 06 / RECOGNITION -->
-        <section class="section container-large">
+        <div class="torn torn-c" style="--up:#1a1a1a" aria-hidden="true"></div>
+        <section id="achievements" class="section container-large ach">
             <div class="section-header">
                 <span class="section-subtitle">06 / RECOGNITION</span>
-                <h2 class="section-title">Achievements</h2>
+                <h2 class="section-title"><span class="hl">Achievements</span></h2>
+                <p class="sec-lead">Pick something off the shelf to read its story.</p>
             </div>
-            
-            <div class="achievements-grid">
-                <!-- Card 1: Internship Award (Primary) -->
-                <div class="badge-card">
-                    <div class="badge-icon-wrapper">
-                        <svg class="badge-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                            <path d="M4 22h16"/>
-                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-                        </svg>
-                    </div>
-                    <h3>Commitment to Excellence</h3>
-                    <span class="badge-org">Accolade Tech Solutions Pvt. Ltd.</span>
-                    <p>Awarded the memento in recognition of dedication, consistent performance, and key contributions during my UI/UX Design Internship.</p>
+            <div class="shelf-wrap">
+                <div class="shelf" id="shelf" role="group" aria-label="Achievements shelf">
+                    <button type="button" class="trophy on" data-i="0" aria-pressed="true"><i class="spot"></i>
+                        <svg viewBox="0 0 160 190" aria-hidden="true"><defs><linearGradient id="gw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8733a"/><stop offset="1" stop-color="#6b4220"/></linearGradient></defs><rect x="14" y="10" width="132" height="150" rx="9" fill="url(#gw)"/><rect x="26" y="22" width="108" height="126" rx="5" fill="#1b1b1b" stroke="#d9ae4a" stroke-width="3"/><polygon fill="#d9ae4a" points="80,36 85,50 100,50 88,59 93,73 80,64 67,73 72,59 60,50 75,50"/><g fill="#d9ae4a" font-weight="800" text-anchor="middle"><text x="80" y="96" font-size="11">COMMITMENT</text><text x="80" y="111" font-size="11">TO EXCELLENCE</text></g><rect x="52" y="120" width="56" height="3" rx="1.5" fill="#d9ae4a" opacity=".6"/><rect x="62" y="130" width="36" height="3" rx="1.5" fill="#d9ae4a" opacity=".4"/><rect x="56" y="160" width="48" height="12" fill="#5a3a1a"/><rect x="38" y="170" width="84" height="9" rx="3" fill="#4a2f15"/></svg>
+                        <span class="name">Commitment to Excellence</span></button>
+                    <button type="button" class="trophy" data-i="1" aria-pressed="false"><i class="spot"></i>
+                        <svg viewBox="0 0 160 190" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#c9922c"/></linearGradient></defs><path d="M36 44 H20 C10 44 10 80 38 88" fill="none" stroke="url(#gg)" stroke-width="9" stroke-linecap="round"/><path d="M124 44 H140 C150 44 150 80 122 88" fill="none" stroke="url(#gg)" stroke-width="9" stroke-linecap="round"/><path d="M34 26 H126 V72 C126 112 106 134 80 134 C54 134 34 112 34 72 Z" fill="url(#gg)"/><path d="M48 36 H58 V74 C58 96 64 112 74 122 C56 116 48 98 48 72 Z" fill="#fff" opacity=".28"/><rect x="72" y="132" width="16" height="30" fill="#d9a53a"/><rect x="52" y="160" width="56" height="12" rx="3" fill="url(#gg)"/><rect x="40" y="170" width="80" height="12" rx="4" fill="#6b4220"/><polygon fill="#fff3c4" points="80,48 85,62 100,62 88,71 93,86 80,77 67,86 72,71 60,62 75,62"/></svg>
+                        <span class="name">First Prize Winner</span></button>
+                    <button type="button" class="trophy" data-i="2" aria-pressed="false"><i class="spot"></i>
+                        <svg viewBox="0 0 200 190" aria-hidden="true"><g stroke="#8a5a2b" stroke-width="5" fill="#f3efe4"><g transform="rotate(-9 62 120)"><rect x="18" y="52" width="88" height="112" rx="3"/></g><g transform="rotate(8 140 120)"><rect x="98" y="58" width="88" height="106" rx="3"/></g><rect x="56" y="28" width="90" height="136" rx="3"/></g><g fill="#c9c3b3"><rect x="68" y="54" width="66" height="5" rx="2"/><rect x="74" y="66" width="54" height="4" rx="2"/><rect x="68" y="102" width="66" height="4" rx="2"/><rect x="68" y="112" width="50" height="4" rx="2"/></g><circle cx="101" cy="140" r="12" fill="#c2452d"/><circle cx="101" cy="140" r="6" fill="none" stroke="#f3efe4" stroke-width="2"/><g fill="#c9c3b3"><rect x="28" y="84" width="52" height="4" rx="2" transform="rotate(-9 62 120)"/><rect x="112" y="86" width="52" height="4" rx="2" transform="rotate(8 140 120)"/></g></svg>
+                        <span class="name">Certifications</span></button>
                 </div>
-
-                <!-- Card 2: College Competition -->
-                <div class="badge-card">
-                    <div class="badge-icon-wrapper">
-                        <svg class="badge-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="8" r="6"/>
-                            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
-                        </svg>
-                    </div>
-                    <h3>First Prize Winner</h3>
-                    <span class="badge-org">Circuit Symphony Expo</span>
-                    <p>Secured First Prize in the expo organized by the Dept. of Information Science & Engineering for technical innovation and problem-solving.</p>
-                </div>
-
-                <!-- Card 3: Certifications -->
-                <div class="badge-card">
-                    <div class="badge-icon-wrapper">
-                        <svg class="badge-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
-                            <path d="M14 2v4a1 1 0 0 0 1 1h4"/>
-                            <path d="M10 9H8"/>
-                            <path d="M16 13H8"/>
-                            <path d="M16 17H8"/>
-                        </svg>
-                    </div>
-                    <h3>Certifications</h3>
-                    <span class="badge-org">Continuous Learning</span>
-                    <ul class="cert-list">
-                        <li>Accenture – Data Analytics & Visualization</li>
-                        <li>Oracle SQL Bootcamp</li>
-                        <li>Postman API Student Program</li>
-                    </ul>
-                </div>
+                <div class="shelf-board"></div>
             </div>
+            <article class="placard" id="placard" aria-live="polite"></article>
         </section>
 
-        <!-- 07 / BEYOND DESIGN -->
-        <section id="beyond" class="section beyond-section container-large">
+        <!-- 07 / BEYOND DESIGN : corkboard -->
+        <div class="torn torn-a" style="--up:#1c1c1c" aria-hidden="true"></div>
+        <section id="beyond" class="section beyond-section beyond-full">
+          <div class="bd-inner">
             <div class="beyond-header text-center">
                 <span class="section-subtitle">07 / BEYOND</span>
-                <h2 class="section-title">Beyond the Screen</h2>
+                <h2 class="section-title">Beyond the <span class="hl">Screen</span></h2>
                 <p class="beyond-lead">
                     Design doesn't end when I close Figma. The experiences outside work continue to shape how I observe, think, and create.
                 </p>
             </div>
 
-            <div class="beyond-grid">
-                <!-- Card 1: Sketch Artist -->
-                <div class="beyond-card">
-                    <div class="beyond-icon-circle">
-                        <svg class="beyond-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-                        </svg>
-                    </div>
-                    <h3>Sketch Artist</h3>
-                    <p>Creating realistic pencil sketches has strengthened my observation, attention to detail, and visual thinking.</p>
-                    <a href="https://www.instagram.com/_.skxtchxr._?igsh=MXQ1YnhkZjk3eHJ4Yg==" target="_blank" class="beyond-link">
-                        <span>View Instagram Gallery</span>
-                        <svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="7" y1="17" x2="17" y2="7"></line>
-                            <polyline points="7 7 17 7 17 17"></polyline>
-                        </svg>
-                    </a>
+            <!--
+              HOW TO ADD MORE THINGS TO THE BOARD
+              1) Photos: drop an image into assets/beyond/ using the filename shown in each polaroid's <img src>.
+                 It appears automatically. To add a new polaroid, copy one <figure class="bd-item bd-polaroid"> block,
+                 change --x / --y (position in %), --r (tilt in degrees), --pin (pin colour), the image name and the caption.
+              2) Sticky notes: copy a <div class="bd-item bd-sticky"> block and edit the text.
+              Visitors can drag every item around on desktop.
+            -->
+            <div class="bd-frame">
+              <div class="bd-board" id="bdBoard">
+
+                <!-- Notepad -->
+                <div class="bd-item bd-notepad" style="--x:3%;--y:4%;--r:-1.5deg;--pin:#2f6fd0;--w:270px;">
+                    <span class="bd-pin"></span>
+                    <small class="bd-label">Outside the ordinary.</small>
+                    <h3>A little world of my own.</h3>
+
+                    <p class="bd-sub">Currently into</p>
+                    <ul>
+                        <li>Random sketches</li>
+                        <li>Chasing good frames</li>
+                        <li>Growing plants</li>
+                        <li>Mountain trails</li>
+                    </ul>
+
+                    <p class="bd-sub">Little joys</p>
+                    <ul>
+                        <li>Good music</li>
+                        <li>Dog days, adventures</li>
+                    </ul>
                 </div>
 
-                <!-- Card 2: Creative Leadership -->
-                <div class="beyond-card">
-                    <div class="beyond-icon-circle">
-                        <svg class="beyond-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
-                            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
-                            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
-                            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
-                            <path d="M12 2C6.5 2 2 6.5 2 12c0 3.5 2.5 6.5 6 7 1 .1 1.5-.7 1.5-1.2v-.6c0-.5.4-.9.9-.9 1.1 0 2.1-.9 2.1-2 0-.5.2-1 .6-1.4l1.3-1.3c.4-.4.6-.9.6-1.4V8c0-3.3-2.7-6-6-6z"/>
-                        </svg>
+                <!-- The sketchbook -->
+                <div class="bd-item bd-book" style="--x:33%;--y:6%;--r:0deg;--pin:#c0392b;--w:340px;">
+                    <span class="bd-pin"></span>
+                    <div class="sb-stage" id="sbStage" data-sketches="assets/sketches/1.jpg, assets/sketches/2.jpg, assets/sketches/3.jpg, assets/sketches/4.jpg, assets/sketches/5.jpg, assets/sketches/6.jpg, assets/sketches/7.jpg, assets/sketches/8.jpg, assets/sketches/10.jpg ">
+                        <!-- Add your sketch images in data-sketches, comma separated, e.g.
+                             data-sketches="assets/sketches/1.jpg, assets/sketches/2.jpg, assets/sketches/3.jpg"
+                             Leave it empty to show placeholder doodles. -->
+                        <div class="sb-wrap" id="sbWrap" tabindex="0" role="group" aria-label="Sketchbook. Tap to open and turn pages, or use the left and right arrow keys.">
+                            <div class="sb-book" id="sbBook"></div>
+                            <div class="sb-floor"></div>
+                        </div>
                     </div>
-                    <h3>Creative Leadership</h3>
-                    <p>As Palette Club Coordinator, I organized creative activities, collaborated with students, and encouraged creative thinking.</p>
+                    <div class="sb-ctl">
+                        <button type="button" class="sb-btn" id="sbPrev" aria-label="Previous page">&larr;</button>
+                        <span class="sb-stat" id="sbStat" aria-live="polite">Tap the book</span>
+                        <button type="button" class="sb-btn" id="sbPlay">Play</button>
+                        <button type="button" class="sb-btn" id="sbNext" aria-label="Next page">&rarr;</button>
+                    </div>
                 </div>
 
-                <!-- Card 3: Visual Storytelling -->
-                <div class="beyond-card">
-                    <div class="beyond-icon-circle">
-                        <svg class="beyond-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-                            <circle cx="12" cy="13" r="3"/>
-                        </svg>
-                    </div>
-                    <h3>Visual Storytelling</h3>
+                <figure class="bd-item bd-polaroid" style="--x:74%;--y:3%;--r:4deg;--pin:#c0392b;--w:168px;">
+                    <span class="bd-pin"></span>
+                    <div class="bd-ph"><img src="assets/beyond/dog.jpg" alt="Cuties" draggable="false" onerror="this.remove()"></div>
+                    <figcaption>my cuties</figcaption>
+                </figure>
+                <figure class="bd-item bd-polaroid" style="--x:3%;--y:52%;--r:-4deg;--pin:#d4a017;--w:168px;">
+                    <span class="bd-pin"></span>
+                    <div class="bd-ph"><img src="assets/beyond/meme.jpg.jpeg" alt="Holaa!" draggable="false" onerror="this.remove()"></div>
+                    <figcaption>hey there !</figcaption>
+                </figure>
+                <figure class="bd-item bd-polaroid" style="--x:25%;--y:58%;--r:3deg;--pin:#2e9b5b;--w:168px;">
+                    <span class="bd-pin"></span>
+                    <div class="bd-ph"><img src="assets/beyond/lily.jpg" alt="My garden" draggable="false" onerror="this.remove()"></div>
+                    <figcaption>my little garden</figcaption>
+                </figure>
+
+                <!-- Sticky notes (your own words) -->
+                <div class="bd-item bd-sticky bd-yellow" style="--x:76%;--y:41%;--r:-3deg;--pin:#7e57c2;--w:205px;">
+                    <span class="bd-tape"></span>
+                    <h4>Visual storytelling</h4>
                     <p>Videography taught me composition, framing, lighting, and storytelling—skills I apply directly to interface design.</p>
                 </div>
 
-                <!-- Card 4: Always Learning -->
-                <div class="beyond-card">
-                    <div class="beyond-icon-circle">
-                        <svg class="beyond-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 7 0 4.4-3.6 8-8 8h-2z"/>
-                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-                        </svg>
-                    </div>
-                    <h3>Always Learning</h3>
+                <div class="bd-item bd-sticky bd-purple" style="--x:46%;--y:55%;--r:2deg;--w:215px;">
+                    <span class="bd-tape"></span>
+                    <h4>Creative leadership</h4>
+                    <p>As Palette Club Coordinator, I organized creative activities, collaborated with students, and encouraged creative thinking.</p>
+                </div>
+
+                <div class="bd-item bd-sticky bd-green" style="--x:68%;--y:68%;--r:-2deg;--w:215px;">
+                    <span class="bd-tape"></span>
+                    <h4>Always learning</h4>
                     <p>Whether learning new tools, experimenting with ideas, or spending time gardening, I enjoy continuous personal growth.</p>
                 </div>
+
+                <p class="bd-hint">psst, everything on this board can be dragged.</p>
+              </div>
             </div>
+          </div>
         </section>
 
         <!-- 08 / CONTACT & FOOTER -->
+        <div class="torn torn-b" style="--up:#1a1a1a" aria-hidden="true"></div>
         <section id="contact" class="section contact-footer-section dark-theme-block">
             <div class="container-small text-center">
                 
@@ -597,5 +622,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="script.js"></script>
+    <script src="hero.js"></script>
+    <script src="sketchbook.js"></script>
+    <script src="sections.js"></script>
+    <script src="journeymap.js"></script>
 </body>
 </html>

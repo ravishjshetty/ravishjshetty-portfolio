@@ -8,10 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -20,7 +17,6 @@
       --ink: #142019;
       --muted: #65736d;
       --accent: #e51b3e;
-      --nav-shadow: 0 8px 30px rgba(0,0,0,.10);
     }
 
     * {
@@ -44,82 +40,88 @@
       color: inherit;
     }
 
-    /* NAVBAR */
+    /* NAVBAR (same floating pill as the home page) */
 
     .top-nav {
       position: fixed;
-      top: 12px;
+      bottom: clamp(12px, 2.2vh, 22px);
       left: 50%;
       transform: translateX(-50%);
       z-index: 100;
-      width: min(484px, calc(100vw - 28px));
-      min-height: 44px;
-      padding: 0 14px 0 18px;
+      width: fit-content;
+      max-width: calc(100vw - 40px);
+      height: 64px;
+      min-height: 64px;
+      padding: 0 16px 0 28px;
 
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 22px;
 
-      background: rgba(255,255,255,.98);
-      border-radius: 13px;
-      box-shadow: var(--nav-shadow);
-      border: 1px solid rgba(15,32,25,.08);
+      font-family: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      color: #f4f4f5;
+      background: rgba(30,30,30,.9);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 22px;
+      box-shadow: 0 -6px 30px rgba(0,0,0,.45);
     }
 
     .nav-brand {
-      font-size: 12px;
-      font-weight: 800;
+      flex-shrink: 0;
+      color: #f4f4f5;
+      font-size: 15px;
+      font-weight: 700;
       white-space: nowrap;
       text-decoration: none;
     }
 
     .nav-links {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 26px;
-      font-size: 12px;
-      font-weight: 500;
-      flex: 1;
+      gap: 6px;
     }
 
     .nav-links a {
+      position: relative;
+      z-index: 1;
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: #e4e4e7;
+      font-size: 15px;
+      font-weight: 500;
       text-decoration: none;
-      transition: opacity .2s ease;
+      white-space: nowrap;
     }
 
-    .nav-links a:hover {
-      opacity: .55;
-    }
-
-    .nav-socials {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .social-link {
-      width: 17px;
-      height: 17px;
-      display: grid;
-      place-items: center;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 800;
-      transition: transform .2s ease, opacity .2s ease;
-    }
-
-    .social-link:hover {
-      transform: translateY(-1px);
-      opacity: .65;
+    /* Sliding hover pill (positioned by the small script at the bottom) */
+    .nav-indicator {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 0;
+      height: 38px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      transform: translate(0, -50%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+      transition:
+        transform .35s cubic-bezier(0.19, 1, 0.22, 1),
+        width .35s cubic-bezier(0.19, 1, 0.22, 1),
+        opacity .2s ease;
     }
 
     /* PAGE */
 
     main {
       min-height: 100vh;
-      padding: 184px 20px 80px;
+      padding: 48px 20px 140px;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -278,31 +280,62 @@
       font-weight: 700;
     }
 
+    /* TABLET */
+
+    @media (max-width: 968px) {
+
+      .top-nav {
+        height: 52px;
+        min-height: 52px;
+      }
+
+      .nav-links {
+        gap: 2px;
+      }
+
+      .nav-links a {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .nav-indicator {
+        display: none;
+      }
+    }
+
     /* MOBILE */
 
     @media (max-width: 640px) {
 
       .top-nav {
-        min-height: 42px;
-        padding-left: 14px;
-        padding-right: 12px;
+        height: 52px;
+        min-height: 52px;
+        gap: 14px;
+        padding: 0 12px 0 18px;
+        justify-content: center;
+        max-width: calc(100vw - 24px);
       }
 
       .nav-links {
-        gap: 14px;
-        font-size: 10px;
+        gap: 0;
       }
 
-      .nav-socials {
-        gap: 8px;
+      .nav-links a {
+        padding: 8px 7px;
+        font-size: 12px;
+      }
+
+      .nav-indicator {
+        display: none;
       }
 
       .nav-brand {
-        font-size: 11px;
+        font-size: 13px;
       }
 
       main {
-        padding-top: 120px;
+        padding-top: 32px;
+        padding-bottom: 120px;
         padding-left: 12px;
         padding-right: 12px;
       }
@@ -329,19 +362,18 @@
     @media (max-width: 430px) {
 
       .nav-brand {
-        display: none;
+        max-width: 112px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 11px;
       }
+    }
 
-      .nav-links {
-        gap: 18px;
-      }
+    @media (max-width: 380px) {
 
-      .top-nav {
-        justify-content: center;
-      }
-
-      .nav-socials {
-        display: none;
+      .nav-links a {
+        padding: 8px 6px;
+        font-size: 11.5px;
       }
     }
   </style>
@@ -353,9 +385,7 @@
 
   <header class="top-nav" aria-label="Main navigation">
 
-    <a class="nav-brand" href="index.html">
-      Hola, I’m Ravish
-    </a>
+    <a class="nav-brand" href="index.html">rjs</a>
 
     <nav class="nav-links">
       <a href="index.html#about">about</a>
@@ -386,7 +416,7 @@
 
         <a
           class="download-btn"
-          href="assets/ravishshetty.pdf"
+          href="assets/ravishshetty_.pdf"
           download
         >
           <span class="download-icon">↓</span>
@@ -413,7 +443,7 @@
         Your browser can’t preview the resume here.<br>
 
         <a
-          href="assets/ravishshetty.pdf"
+          href="assets/ravishshetty_.pdf"
           target="_blank"
           rel="noopener"
         >
@@ -439,17 +469,27 @@
       "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
 
 
-    const pdfUrl = "assets/ravishshetty.pdf";
+    const pdfUrl = "assets/ravishshetty_.pdf";
 
     const viewer = document.getElementById("pdfViewer");
     const fallback = document.getElementById("fallback");
 
 
+    let pdfDoc = null;
+    let renderToken = 0;
+
     async function renderResume() {
+
+      const token = ++renderToken;
 
       try {
 
-        const pdf = await getDocument(pdfUrl).promise;
+        pdfDoc = pdfDoc || await getDocument(pdfUrl).promise;
+        const pdf = pdfDoc;
+
+        if (token !== renderToken) return;
+
+        viewer.replaceChildren();
 
         /*
           Your resume is currently one page.
@@ -458,6 +498,8 @@
         for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
 
           const page = await pdf.getPage(pageNumber);
+
+          if (token !== renderToken) return;
 
           const originalViewport = page.getViewport({
             scale: 1
@@ -687,16 +729,48 @@ context.setTransform(
 
 
     renderResume();
-let lastDpr = window.devicePixelRatio;
 
-setInterval(() => {
-  const currentDpr = window.devicePixelRatio;
 
-  if (currentDpr !== lastDpr) {
-    lastDpr = currentDpr;
-    renderPDF();
-  }
-}, 500);
+    /*
+      Browser zoom / moving between screens changes the pixel
+      ratio. Re-render so the resume stays sharp.
+    */
+
+    let lastDpr = window.devicePixelRatio;
+
+    setInterval(() => {
+      if (window.devicePixelRatio !== lastDpr) {
+        lastDpr = window.devicePixelRatio;
+        renderResume();
+      }
+    }, 500);
+  </script>
+
+  <script>
+    (function () {
+      const nav = document.querySelector(".top-nav .nav-links");
+      if (!nav || matchMedia("(hover: none), (pointer: coarse)").matches) return;
+
+      const links = Array.from(nav.querySelectorAll("a"));
+      const pill = document.createElement("span");
+      pill.className = "nav-indicator";
+      pill.setAttribute("aria-hidden", "true");
+      nav.prepend(pill);
+
+      function moveTo(link) {
+        const a = link.getBoundingClientRect(), b = nav.getBoundingClientRect();
+        pill.style.width = a.width + "px";
+        pill.style.transform = "translate(" + (a.left - b.left) + "px, -50%)";
+        pill.style.opacity = "1";
+      }
+
+      links.forEach((l) => l.addEventListener("mouseenter", () => moveTo(l)));
+      nav.addEventListener("mouseleave", () => { pill.style.opacity = "0"; });
+      addEventListener("resize", () => {
+        const h = nav.querySelector("a:hover");
+        if (h) moveTo(h);
+      });
+    })();
   </script>
 
 </body>
